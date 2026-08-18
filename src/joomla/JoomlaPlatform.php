@@ -7,13 +7,16 @@
 
 namespace Hikari\Flipbook\Platform;
 
+use Hikari\Flipbook\Core\Shop;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
 
 /** The Joomla side of the Platform contract. */
-final class JoomlaPlatform implements Platform
+final class JoomlaPlatform implements Platform, Shop
 {
     /** @var Registry */
     private $params;
@@ -85,5 +88,45 @@ final class JoomlaPlatform implements Platform
         }
 
         $assets->registerAndUseScript($name, 'media/' . $this->media . '/' . $path, [], ['type' => 'module']);
+    }
+
+    /**
+     * A HikaShop product, where the site has HikaShop. Nothing else is asked: a
+     * shop the site does not have is not an error, it is a hotspot that stays a
+     * plain region.
+     *
+     * @return array{url:string,name:string}|null
+     */
+    public function product(string $id): ?array
+    {
+        $id = (int) $id;
+
+        if ($id <= 0 || !is_dir(JPATH_ROOT . '/components/com_hikashop')) {
+            return null;
+        }
+
+        $db    = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['product_name', 'product_alias']))
+            ->from($db->quoteName('#__hikashop_product'))
+            ->where($db->quoteName('product_id') . ' = :id')
+            ->where($db->quoteName('product_published') . ' = 1')
+            ->bind(':id', $id, ParameterType::INTEGER);
+
+        try {
+            $row = $db->setQuery($query)->loadAssoc();
+        } catch (\Throwable $e) {
+            // A site with the folder but not the tables, mid-install or mid-removal.
+            return null;
+        }
+
+        if ($row === null) {
+            return null;
+        }
+
+        $url = 'index.php?option=com_hikashop&ctrl=product&task=show&cid=' . $id
+            . '&name=' . urlencode((string) $row['product_alias']);
+
+        return ['url' => Route::_($url), 'name' => (string) $row['product_name']];
     }
 }

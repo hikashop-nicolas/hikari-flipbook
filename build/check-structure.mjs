@@ -161,6 +161,11 @@ if (!(await exists(wp))) {
   if (headerVersion !== v) fail("wordpress", `header version ${headerVersion} does not match package.json ${v}`);
   if (!/Text Domain:\s*hikari-flipbook/.test(main)) fail("wordpress", "the header names no text domain");
 
+  // The constant is what every asset URL is stamped with, so a stale one leaves
+  // browsers on the old bundle after an update: the update appears not to work.
+  const constant = main.match(/HIKARI_FLIPBOOK_VERSION['"],\s*['"]([^'"]+)/)?.[1];
+  if (constant !== v) fail("wordpress", `HIKARI_FLIPBOOK_VERSION is ${constant}, not ${v}`);
+
   const readme = await read(join(wp, "readme.txt"));
   const stable = readme.match(/^Stable tag:\s*(.+)$/m)?.[1]?.trim();
   if (stable !== v) fail("wordpress", `readme.txt stable tag ${stable} does not match package.json ${v}`);

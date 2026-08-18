@@ -42,6 +42,10 @@
     "maxHeight": {
       "type": "string",
       "default": ""
+    },
+    "hotspotsShown": {
+      "type": "string",
+      "default": ""
     }
   },
   "editorScript": "file:./editor.js"

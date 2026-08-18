@@ -1,0 +1,25 @@
+<?php
+/**
+ * @package     Hikari.Flipbook
+ * @copyright   Copyright (C) 2026 Hikari Software. All rights reserved.
+ * @license     GNU General Public License version 3 or later
+ */
+
+namespace Hikari\Flipbook\Core;
+
+/**
+ * A host that has a shop behind it.
+ *
+ * This is what makes a catalogue shoppable: a hotspot says which product it is
+ * over, and the host turns that into a link a reader can follow. It is separate
+ * from Platform because a site without a shop is not a broken site, and a host
+ * that cannot answer simply does not implement this.
+ */
+interface Shop
+{
+    /**
+     * @param  string $id The shop's own product id, as a site stored it.
+     * @return array{url:string,name:string}|null Null when there is no such product.
+     */
+    public function product(string $id): ?array;
+}

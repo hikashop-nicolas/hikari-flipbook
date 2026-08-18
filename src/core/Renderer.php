@@ -33,10 +33,16 @@ final class Renderer
 
         $urls = Paths::urls($this->platform, $source);
 
+        $options = $config->toViewer();
+
+        if (isset($options['hotspots'])) {
+            $options['hotspots'] = $this->shoppable($options['hotspots']);
+        }
+
         $payload = [
             'kind'     => $source->kind(),
             'pages'    => $urls,
-            'options'  => $config->toViewer(),
+            'options'  => $options,
             'lightbox' => (bool) $config->get('lightbox'),
             // Hotspots are invisible until a reader hovers one, which is right for
             // a magazine and wrong for a catalogue that is meant to be shoppable.
@@ -68,6 +74,47 @@ final class Renderer
             $this->platform->escape($this->style($config)),
             $json === false ? '{}' : $json
         );
+    }
+
+    /**
+     * Turns "this region is product 42" into a link to product 42.
+     *
+     * The resolving happens here rather than in the browser so that a hotspot is
+     * an ordinary link in the page: it works without the shop knowing anything
+     * about flipbooks, it can be opened in a new tab, and a reader using a screen
+     * reader hears the product's name rather than "button".
+     *
+     * @param  array<int,array<string,mixed>> $hotspots
+     * @return array<int,array<string,mixed>>
+     */
+    private function shoppable(array $hotspots): array
+    {
+        if (!$this->platform instanceof Shop) {
+            return $hotspots;
+        }
+
+        foreach ($hotspots as &$spot) {
+            $id = (string) ($spot['data']['product'] ?? '');
+
+            // A link the site typed itself wins: it said where it wanted to go.
+            if ($id === '' || isset($spot['href'])) {
+                continue;
+            }
+
+            $product = $this->platform->product($id);
+
+            if ($product === null) {
+                continue;
+            }
+
+            $spot['href'] = $product['url'];
+
+            if (!isset($spot['label']) && $product['name'] !== '') {
+                $spot['label'] = $product['name'];
+            }
+        }
+
+        return $hotspots;
     }
 
     /** Colour choices ride on the container as custom properties, not as rules. */

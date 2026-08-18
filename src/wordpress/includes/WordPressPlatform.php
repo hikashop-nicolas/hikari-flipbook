@@ -7,12 +7,14 @@
 
 namespace Hikari\Flipbook\Platform;
 
+use Hikari\Flipbook\Core\Shop;
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
 /** The WordPress side of the Platform contract. */
-final class WordPressPlatform implements Platform
+final class WordPressPlatform implements Platform, Shop
 {
     /** @var array<string,mixed> */
     private $params;
@@ -161,5 +163,28 @@ final class WordPressPlatform implements Platform
             10,
             2
         );
+    }
+
+    /**
+     * A WooCommerce product, where the site has WooCommerce. A site without a
+     * shop is not a broken site: the hotspot simply stays a plain region.
+     *
+     * @return array{url:string,name:string}|null
+     */
+    public function product(string $id): ?array
+    {
+        if (!function_exists('wc_get_product')) {
+            return null;
+        }
+
+        $product = wc_get_product((int) $id);
+
+        if (!$product || !$product->is_visible()) {
+            return null;
+        }
+
+        $url = get_permalink($product->get_id());
+
+        return $url === false ? null : ['url' => (string) $url, 'name' => (string) $product->get_name()];
     }
 }

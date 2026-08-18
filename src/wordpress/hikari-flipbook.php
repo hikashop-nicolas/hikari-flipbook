@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('HIKARI_FLIPBOOK_VERSION', '0.1.0');
+define('HIKARI_FLIPBOOK_VERSION', '0.2.0');
 define('HIKARI_FLIPBOOK_FILE', __FILE__);
 
 require_once __DIR__ . '/lib/bootstrap.php';

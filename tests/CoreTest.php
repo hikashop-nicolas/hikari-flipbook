@@ -284,5 +284,47 @@ check('hands the viewer only the hotspots that survived', count($config->toViewe
 check('says nothing about hotspots when a book has none', !isset((new Hikari\Flipbook\Core\Config())->toViewer()['hotspots']));
 check('takes hotspots a host already decoded', count((new Hikari\Flipbook\Core\Config(['hotspots' => [['page' => 1, 'width' => 0.5, 'height' => 0.5, 'goToPage' => 2]]]))->toViewer()['hotspots']) === 1);
 
+// --- a shop behind the host ---------------------------------------------------
+/**
+ * The hotspots as they reach the browser: through the whole renderer, since the
+ * shop is asked on the way out and that is the only place it happens.
+ */
+function renderHotspots(Platform $platform, array $spots): array
+{
+    $html = (new Renderer($platform))->render(
+        Source::fromPath($platform, 'book.pdf'),
+        new Config(['hotspots' => $spots]),
+        'book-shop'
+    );
+
+    preg_match("/data-flipbook='(.*)'><\\/div>/", $html, $found);
+    $payload = json_decode(html_entity_decode($found[1], ENT_QUOTES), true);
+
+    return $payload['options']['hotspots'] ?? [];
+}
+
+final class ShopPlatform extends FakePlatform implements Hikari\Flipbook\Core\Shop
+{
+    public function product(string $id): ?array
+    {
+        return $id === '42' ? ['url' => '/shop/blue-kettle', 'name' => 'Blue kettle'] : null;
+    }
+}
+
+$spots = [
+    ['page' => 0, 'width' => 0.2, 'height' => 0.2, 'data' => ['product' => '42']],
+    ['page' => 0, 'width' => 0.2, 'height' => 0.2, 'data' => ['product' => '99']],
+    ['page' => 0, 'width' => 0.2, 'height' => 0.2, 'data' => ['product' => '42'], 'href' => '/mine', 'label' => 'Mine'],
+];
+
+$shopped = renderHotspots(new ShopPlatform($root), $spots);
+check('turns a product into a link', $shopped[0]['href'] === '/shop/blue-kettle');
+check('names the region after the product', $shopped[0]['label'] === 'Blue kettle');
+check('leaves a product the shop does not know', !isset($shopped[1]['href']));
+check('never overrides a link the site typed', $shopped[2]['href'] === '/mine' && $shopped[2]['label'] === 'Mine');
+
+$plain = renderHotspots(new FakePlatform($root), $spots);
+check('leaves hotspots alone on a host with no shop', !isset($plain[0]['href']));
+
 echo $failures === 0 ? "\nall good\n" : "\n$failures failing\n";
 exit($failures === 0 ? 0 : 1);

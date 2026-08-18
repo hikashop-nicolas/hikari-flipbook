@@ -9,6 +9,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: hikari-flipbook\n"
 
+#: blocks/flipbook/editor.js:56
+msgid "1 to outline every region as soon as the book opens. Leave empty to use the site default."
+msgstr ""
+
 #: includes/Settings.php:134
 msgid "A different one each turn"
 msgstr ""
@@ -73,7 +77,7 @@ msgstr ""
 msgid "First page stands alone as a cover"
 msgstr ""
 
-#: blocks/flipbook/editor.js:62 includes/BookType.php:37
+#: blocks/flipbook/editor.js:64 includes/BookType.php:37
 msgid "Flipbook"
 msgstr ""
 
@@ -177,6 +181,10 @@ msgstr ""
 msgid "Outline every region as soon as the book opens"
 msgstr ""
 
+#: blocks/flipbook/editor.js:55
+msgid "Outline the hotspots"
+msgstr ""
+
 #: src/core/Strings.php
 msgid "Page {page} of {total}"
 msgstr ""
@@ -193,7 +201,7 @@ msgstr ""
 msgid "Pages shown"
 msgstr ""
 
-#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:65 includes/BookType.php:169
+#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:67 includes/BookType.php:169
 msgid "PDF or image folder"
 msgstr ""
 
@@ -213,7 +221,7 @@ msgstr ""
 msgid "Region"
 msgstr ""
 
-#: blocks/flipbook/editor.js:41 blocks/flipbook/editor.js:66
+#: blocks/flipbook/editor.js:41 blocks/flipbook/editor.js:68
 msgid "Relative to the site, for example wp-content/uploads/catalogue.pdf"
 msgstr ""
 

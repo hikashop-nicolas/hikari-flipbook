@@ -51,7 +51,9 @@
 							onChange: function (value) { props.setAttributes({ mode: value }); },
 						}),
 						field(props, 'maxHeight', __('Largest height (px)', 'hikari-flipbook'),
-							__('Leave empty to use the site default.', 'hikari-flipbook'))
+							__('Leave empty to use the site default.', 'hikari-flipbook')),
+						field(props, 'hotspotsShown', __('Outline the hotspots', 'hikari-flipbook'),
+							__('1 to outline every region as soon as the book opens. Leave empty to use the site default.', 'hikari-flipbook'))
 					)
 				),
 				el(
