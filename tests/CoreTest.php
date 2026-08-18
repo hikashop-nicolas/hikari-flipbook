@@ -121,6 +121,7 @@ check('emits a container', strpos($html, 'class="hikari-flipbook"') !== false);
 check('emits the page as a URL, not a path', strpos($html, '/book.pdf') !== false
     && strpos($html, $root) === false);
 check('carries the options', strpos($html, '"rtl":true') !== false);
+check('names the cover button for a screen reader', strpos($html, '"open"') !== false);
 check('asks the host for both assets', count($platform->enqueued) === 2);
 
 $platform = new FakePlatform($root);

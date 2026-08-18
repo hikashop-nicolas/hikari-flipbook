@@ -10,6 +10,7 @@ interface Payload {
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
+  labels?: { open?: string };
 }
 
 /** A fresh source each time: closing a book destroys the document behind it. */
@@ -28,6 +29,8 @@ async function mountCover(el: HTMLElement, payload: Payload): Promise<void> {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "hikari-flipbook-cover";
+  // The picture is decorative: the button is what has to carry the name.
+  button.setAttribute("aria-label", payload.labels?.open || "Open the book");
 
   const source = await open(payload);
   const canvas = document.createElement("canvas");

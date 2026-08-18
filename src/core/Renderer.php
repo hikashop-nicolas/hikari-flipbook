@@ -34,10 +34,15 @@ final class Renderer
         $urls = $this->urls($source);
 
         $payload = [
-            'kind'    => $source->kind(),
-            'pages'   => $urls,
-            'options' => $config->toViewer(),
+            'kind'     => $source->kind(),
+            'pages'    => $urls,
+            'options'  => $config->toViewer(),
             'lightbox' => (bool) $config->get('lightbox'),
+            'labels'   => [
+                // The cover is a button holding a picture of the cover and nothing
+                // else, so without this it announces as an unnamed button.
+                'open' => $this->platform->translate('HIKARI_FLIPBOOK_OPEN'),
+            ],
         ];
 
         if ($config->get('download') && $source->kind() === Source::KIND_PDF) {

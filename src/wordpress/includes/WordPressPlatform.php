@@ -54,7 +54,13 @@ final class WordPressPlatform implements Platform
 
     public function translate(string $key): string
     {
-        return __($key, 'hikari-flipbook');
+        // The core speaks in keys; WordPress has no key catalogue, so the few it
+        // uses are mapped here rather than shipping keys as visible strings.
+        $strings = [
+            'HIKARI_FLIPBOOK_OPEN' => __('Open the book', 'hikari-flipbook'),
+        ];
+
+        return $strings[$key] ?? __($key, 'hikari-flipbook');
     }
 
     public function asset(string $path): string

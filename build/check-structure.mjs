@@ -97,7 +97,10 @@ for (const ext of joomlaExtensions) {
       if (line.trim() === "" || line.startsWith(";")) continue;
       const key = line.split("=")[0];
       if (key !== key.toUpperCase()) fail(ext.name, `${file} key ${key} is not uppercase`);
-      if (!key.startsWith(ext.prefix) && !key.startsWith("MOD_HIKARIFLIPBOOK") && !key.startsWith("J") && !key.startsWith("COM_")) {
+      // HIKARI_FLIPBOOK_ is the shared core's own namespace: strings it asks for
+      // by key, which both extensions have to be able to answer.
+      const allowed = [ext.prefix, "HIKARI_FLIPBOOK_", "MOD_HIKARIFLIPBOOK", "J", "COM_"];
+      if (!allowed.some((prefix) => key.startsWith(prefix))) {
         fail(ext.name, `${file} key ${key} is not prefixed`);
       }
     }
