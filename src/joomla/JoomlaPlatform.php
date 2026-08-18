@@ -21,7 +21,7 @@ final class JoomlaPlatform implements Platform
     /** @var string */
     private $media;
 
-    public function __construct(Registry $params, string $media = 'mod_hikariflipbook')
+    public function __construct(Registry $params, string $media = 'hikariflipbook')
     {
         $this->params = $params;
         $this->media  = $media;

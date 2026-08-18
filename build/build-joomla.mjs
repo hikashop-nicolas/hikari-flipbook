@@ -1,26 +1,64 @@
-import { cp, mkdir, rm } from "node:fs/promises";
+// The Joomla side ships as a package: a module, a content plugin, and one file
+// extension carrying the viewer. The viewer is a couple of megabytes, so it is
+// installed once and shared rather than duplicated into every extension.
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { guardAll, installCore, installMedia, root, version, zip } from "./lib.mjs";
 
 const GUARD = "defined('_JEXEC') or die;";
+const CORE = [[join(root, "src/joomla/JoomlaPlatform.php"), "JoomlaPlatform.php"]];
 
 const v = await version();
-const work = join(root, "dist", "joomla", "mod_hikariflipbook");
-await rm(join(root, "dist", "joomla"), { recursive: true, force: true });
-await mkdir(work, { recursive: true });
+// The extensions are staged outside the package root, so the package carries the
+// installable zips and its manifest and nothing else.
+const work = join(root, "dist", "joomla-work");
+const stage = join(root, "dist", "joomla");
+await rm(work, { recursive: true, force: true });
+await rm(stage, { recursive: true, force: true });
+await mkdir(join(stage, "packages"), { recursive: true });
 
-const from = join(root, "src/joomla/mod_hikariflipbook");
-for (const entry of ["mod_hikariflipbook.php", "mod_hikariflipbook.xml", "tmpl", "language"]) {
-  await cp(join(from, entry), join(work, entry), { recursive: true });
+/** Each extension gets its own copy of the core: they install independently. */
+async function extension(name, from, files) {
+  const dir = join(work, name);
+  await mkdir(dir, { recursive: true });
+
+  for (const entry of files) {
+    await cp(join(from, entry), join(dir, entry), { recursive: true });
+  }
+
+  await installCore(dir, GUARD, CORE);
+  await guardAll(dir, GUARD);
+  await zip(dir, "", join(stage, "packages", `${name}.zip`));
+
+  return dir;
 }
 
-await installCore(work, GUARD, [[join(root, "src/joomla/JoomlaPlatform.php"), "JoomlaPlatform.php"]]);
-await installMedia(work);
+await extension("mod_hikariflipbook", join(root, "src/joomla/mod_hikariflipbook"), [
+  "mod_hikariflipbook.php",
+  "mod_hikariflipbook.xml",
+  "tmpl",
+  "language",
+]);
 
-// Everything else that was copied in verbatim needs the guard too: the module
-// entry, the layouts and the adapter carry none in source.
-await guardAll(work, GUARD);
+await extension("plg_content_hikariflipbook", join(root, "src/joomla/plg_content_hikariflipbook"), [
+  "hikariflipbook.php",
+  "hikariflipbook.xml",
+  "language",
+]);
 
-const out = join(root, "dist", `mod_hikariflipbook-${v}.zip`);
-const bytes = await zip(work, "", out);
+// The file extension carries the media and nothing else, so it needs no core.
+const files = join(work, "files_hikariflipbook");
+await mkdir(files, { recursive: true });
+await cp(
+  join(root, "src/joomla/files_hikariflipbook/files_hikariflipbook.xml"),
+  join(files, "files_hikariflipbook.xml"),
+);
+await installMedia(files);
+await zip(files, "", join(stage, "packages", "files_hikariflipbook.zip"));
+
+const manifest = await readFile(join(root, "src/joomla/pkg_hikariflipbook.xml"), "utf8");
+await writeFile(join(stage, "pkg_hikariflipbook.xml"), manifest, "utf8");
+
+const out = join(root, "dist", `pkg_hikariflipbook-${v}.zip`);
+const bytes = await zip(stage, "", out);
 console.log(`joomla: ${out} (${Math.round(bytes / 1024)} KB)`);

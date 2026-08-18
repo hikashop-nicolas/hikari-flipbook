@@ -44,62 +44,87 @@ for (const dir of ["src/core", "src/platform"]) {
 const v = await version();
 
 // --- the Joomla package -----------------------------------------------------
-const joomla = join(root, "dist/joomla/mod_hikariflipbook");
-if (!(await exists(joomla))) {
-  fail("joomla", "not built; run npm run build first");
-} else {
-  const files = (await walk(joomla)).map((f) => relative(joomla, f));
-  const manifest = await read(join(joomla, "mod_hikariflipbook.xml"));
+const joomlaExtensions = [
+  { name: "mod_hikariflipbook", manifest: "mod_hikariflipbook.xml", prefix: "MOD_HIKARIFLIPBOOK" },
+  { name: "plg_content_hikariflipbook", manifest: "hikariflipbook.xml", prefix: "PLG_CONTENT_HIKARIFLIPBOOK" },
+];
 
-  if (!/<version>([^<]+)<\/version>/.test(manifest)) fail("joomla", "manifest has no version");
+let joomla = null;
+
+for (const ext of joomlaExtensions) {
+  const dir = join(root, "dist/joomla-work", ext.name);
+  if (!(await exists(dir))) {
+    fail(ext.name, "not built; run npm run build first");
+    continue;
+  }
+  if (joomla === null) joomla = dir;
+
+  const files = (await walk(dir)).map((f) => relative(dir, f));
+  const manifest = await read(join(dir, ext.manifest));
+
   const declared = manifest.match(/<version>([^<]+)<\/version>/)?.[1];
-  if (declared !== v) fail("joomla", `manifest version ${declared} does not match package.json ${v}`);
+  if (declared !== v) fail(ext.name, `manifest version ${declared} does not match package.json ${v}`);
 
-  // Every declared file has to exist, and every shipped top-level entry has to be
-  // declared. The <media> block is separate: its folders live under media/.
+  // Every declared file has to exist, and every shipped top-level entry has to be declared.
   const filesBlock = manifest.match(/<files>([\s\S]*?)<\/files>/)?.[1] ?? "";
-  const mediaBlock = manifest.match(/<media[^>]*>([\s\S]*?)<\/media>/)?.[1] ?? "";
   const named = [...filesBlock.matchAll(/<(?:filename|folder)[^>]*>([^<]+)</g)].map((m) => m[1]);
-  const mediaNamed = [...mediaBlock.matchAll(/<(?:filename|folder)[^>]*>([^<]+)</g)].map((m) => m[1]);
 
   for (const entry of named) {
-    if (!(await exists(join(joomla, entry)))) fail("joomla", `manifest declares ${entry}, which is not in the package`);
+    if (!(await exists(join(dir, entry)))) fail(ext.name, `manifest declares ${entry}, which is not in the package`);
   }
-  for (const entry of mediaNamed) {
-    if (!(await exists(join(joomla, "media", entry)))) {
-      fail("joomla", `manifest declares media/${entry}, which is not in the package`);
-    }
+  for (const entry of new Set(files.map((f) => f.split("/")[0]))) {
+    if (entry === ext.manifest) continue;
+    if (!named.includes(entry)) fail(ext.name, `${entry} ships but the manifest does not declare it`);
   }
-  const top = new Set(files.map((f) => f.split("/")[0]));
-  for (const entry of top) {
-    if (entry === "media" || entry === "mod_hikariflipbook.xml") continue;
-    if (!named.includes(entry)) fail("joomla", `${entry} ships but the manifest does not declare it`);
+
+  // The viewer lives in the file extension, so nothing else may carry media.
+  if (files.some((f) => f.startsWith("media/"))) {
+    fail(ext.name, "ships its own media; the package installs one shared copy");
   }
 
   for (const file of files.filter((f) => f.endsWith(".php"))) {
-    const body = await read(join(joomla, file));
+    const body = await read(join(dir, file));
     const guards = (body.match(/defined\s*\(\s*['"]_JEXEC['"]\s*\)/g) || []).length;
-    if (guards === 0) fail("joomla", `${file} has no _JEXEC guard`);
-    if (guards > 1) fail("joomla", `${file} has ${guards} _JEXEC guards`);
+    if (guards === 0) fail(ext.name, `${file} has no _JEXEC guard`);
+    if (guards > 1) fail(ext.name, `${file} has ${guards} _JEXEC guards`);
     for (const rx of WORDPRESS_SYMBOLS) {
-      if (rx.test(body)) fail("joomla", `${file} names a WordPress symbol (${rx.source})`);
+      if (rx.test(body)) fail(ext.name, `${file} names a WordPress symbol (${rx.source})`);
     }
   }
 
   for (const file of files.filter((f) => f.endsWith(".ini"))) {
-    for (const line of (await read(join(joomla, file))).split("\n")) {
+    for (const line of (await read(join(dir, file))).split("\n")) {
       if (line.trim() === "" || line.startsWith(";")) continue;
       const key = line.split("=")[0];
-      if (key !== key.toUpperCase()) fail("joomla", `${file} key ${key} is not uppercase`);
-      if (!key.startsWith("MOD_HIKARIFLIPBOOK") && !key.startsWith("J") && !key.startsWith("COM_")) {
-        fail("joomla", `${file} key ${key} is not prefixed`);
+      if (key !== key.toUpperCase()) fail(ext.name, `${file} key ${key} is not uppercase`);
+      if (!key.startsWith(ext.prefix) && !key.startsWith("MOD_HIKARIFLIPBOOK") && !key.startsWith("J") && !key.startsWith("COM_")) {
+        fail(ext.name, `${file} key ${key} is not prefixed`);
       }
     }
   }
 
-  const locales = await readdir(join(joomla, "language"));
+  const locales = await readdir(join(dir, "language"));
   if (locales.length !== 1 || locales[0] !== "en-GB") {
-    fail("joomla", `ships ${locales.join(", ")}; only en-GB belongs in the package`);
+    fail(ext.name, `ships ${locales.join(", ")}; only en-GB belongs in the package`);
+  }
+}
+
+// The package manifest has to name exactly the zips that were built.
+const packageRoot = join(root, "dist/joomla");
+if (await exists(packageRoot)) {
+  const manifest = await read(join(packageRoot, "pkg_hikariflipbook.xml"));
+  const built = (await readdir(join(packageRoot, "packages"))).sort();
+  // \s after the tag name, so the <files> container does not match itself.
+  const listed = [...manifest.matchAll(/<file\s[^>]*>([^<]+)<\/file>/g)].map((m) => m[1]).sort();
+
+  for (const zipName of listed) {
+    if (!built.includes(zipName)) fail("package", `the manifest names ${zipName}, which was not built`);
+  }
+  for (const zipName of built) {
+    if (!listed.includes(zipName)) fail("package", `${zipName} was built but the manifest does not name it`);
+  }
+  if (manifest.match(/<version>([^<]+)<\/version>/)?.[1] !== v) {
+    fail("package", `manifest version does not match package.json ${v}`);
   }
 }
 

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="content" method="upgrade">
+	<name>PLG_CONTENT_HIKARIFLIPBOOK</name>
+	<author>Hikari Software</author>
+	<creationDate>2026-08</creationDate>
+	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later</license>
+	<version>0.1.0</version>
+	<description>PLG_CONTENT_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
+	<files>
+		<filename plugin="hikariflipbook">hikariflipbook.php</filename>
+		<folder>lib</folder>
+		<folder>language</folder>
+	</files>
+	<config>
+		<fields name="params">
+			<fieldset name="basic" label="PLG_CONTENT_HIKARIFLIPBOOK_FIELDSET_DEFAULTS"
+				description="PLG_CONTENT_HIKARIFLIPBOOK_FIELDSET_DEFAULTS_DESC">
+				<field name="mode" type="list" label="MOD_HIKARIFLIPBOOK_MODE_LABEL" default="auto">
+					<option value="auto">MOD_HIKARIFLIPBOOK_MODE_AUTO</option>
+					<option value="single">MOD_HIKARIFLIPBOOK_MODE_SINGLE</option>
+					<option value="double">MOD_HIKARIFLIPBOOK_MODE_DOUBLE</option>
+				</field>
+				<field name="showCover" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_SHOWCOVER_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="zoom" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_ZOOM_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="sound" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_SOUND_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="lightbox" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_LIGHTBOX_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="maxHeight" type="number" label="MOD_HIKARIFLIPBOOK_MAXHEIGHT_LABEL"
+					description="MOD_HIKARIFLIPBOOK_MAXHEIGHT_DESC" default="0" filter="integer" min="0" />
+			</fieldset>
+		</fields>
+	</config>
+</extension>
