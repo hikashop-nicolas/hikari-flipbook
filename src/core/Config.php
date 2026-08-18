@@ -17,15 +17,29 @@ namespace Hikari\Flipbook\Core;
 final class Config
 {
     private const DEFAULTS = [
+        // The book itself
         'mode'         => 'auto',
         'breakpoint'   => 700,
         'flippingTime' => 700,
         'showCover'    => true,
+        'hardCovers'   => false,
         'rtl'          => false,
+        'maxHeight'    => 0,
+        // What the reader can do
         'zoom'         => true,
-        'deepLink'     => false,
         'sound'        => false,
+        'deepLink'     => false,
         'download'     => false,
+        'share'        => false,
+        'lightbox'     => false,
+        // Which buttons the toolbar shows
+        'toolbar'      => true,
+        'buttonNav'    => true,
+        'buttonEnds'   => true,
+        'buttonPage'   => true,
+        // Appearance
+        'barColour'    => '',
+        'pageColour'   => '',
     ];
 
     private const MODES = ['auto', 'single', 'double'];
@@ -51,6 +65,9 @@ final class Config
 
         $values['breakpoint']   = max(240, min(2000, (int) $values['breakpoint']));
         $values['flippingTime'] = max(100, min(5000, (int) $values['flippingTime']));
+        $values['maxHeight']    = max(0, min(4000, (int) $values['maxHeight']));
+        $values['barColour']    = self::colour($values['barColour']);
+        $values['pageColour']   = self::colour($values['pageColour']);
 
         $this->values = $values;
     }
@@ -63,15 +80,58 @@ final class Config
     /** The option set handed to the viewer, ready for json_encode. */
     public function toViewer(): array
     {
-        return [
+        $options = [
             'mode'         => $this->values['mode'],
             'breakpoint'   => $this->values['breakpoint'],
             'flippingTime' => $this->values['flippingTime'],
             'showCover'    => (bool) $this->values['showCover'],
+            'hardCovers'   => (bool) $this->values['hardCovers'],
             'rtl'          => (bool) $this->values['rtl'],
             'zoom'         => (bool) $this->values['zoom'],
+            'sound'        => (bool) $this->values['sound'],
             'deepLink'     => (bool) $this->values['deepLink'],
+            'share'        => (bool) $this->values['share'],
         ];
+
+        if ($this->values['maxHeight'] > 0) {
+            $options['maxHeight'] = $this->values['maxHeight'];
+        }
+
+        // The viewer takes false for no toolbar, or an object of button switches.
+        if (!$this->values['toolbar']) {
+            $options['toolbar'] = false;
+        } else {
+            $options['toolbar'] = [
+                'nav'       => (bool) $this->values['buttonNav'],
+                'ends'      => (bool) $this->values['buttonEnds'],
+                'pageInput' => (bool) $this->values['buttonPage'],
+            ];
+        }
+
+        return $options;
+    }
+
+    /** The custom properties the container carries, so a site can restyle it. */
+    public function toStyle(): array
+    {
+        $style = [];
+
+        if ($this->values['barColour'] !== '') {
+            $style['--fv-bar-bg'] = $this->values['barColour'];
+        }
+        if ($this->values['pageColour'] !== '') {
+            $style['--fv-page-bg'] = $this->values['pageColour'];
+        }
+
+        return $style;
+    }
+
+    /** Only a hex colour is accepted: it ends up in a style attribute. */
+    private static function colour($value): string
+    {
+        $value = trim((string) $value);
+
+        return preg_match('/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $value) === 1 ? $value : '';
     }
 
     /** Keep the declared type of the default: hosts send everything as strings. */

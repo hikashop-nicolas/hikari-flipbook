@@ -1,19 +1,55 @@
 // The one front-end entry point both builds ship. It finds every container the
 // PHP side emitted and mounts a viewer on it. Nothing here knows which host it
 // is running on: the container's data attribute says everything.
-import { createFlipview, createPdfSource, createImageSource } from "flipview";
-import type { PageSource } from "flipview";
+import { createFlipview, createImageSource, createPdfSource, openLightbox } from "flipview";
+import type { FlipviewOptions, PageSource } from "flipview";
 import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 
 interface Payload {
   kind: "pdf" | "images";
   pages: string[];
-  options: Record<string, unknown>;
+  options: FlipviewOptions & { downloadUrl?: string };
+  lightbox?: boolean;
+}
+
+/** A fresh source each time: closing a book destroys the document behind it. */
+function open(payload: Payload): Promise<PageSource> {
+  return payload.kind === "pdf"
+    ? createPdfSource({ url: payload.pages[0], workerSrc })
+    : createImageSource(payload.pages);
+}
+
+/**
+ * In lightbox mode the page shows the cover and nothing else until it is asked
+ * for: a book that opens over the page should not cost the page its layout, and
+ * a reader who never clicks should not pay for the whole document.
+ */
+async function mountCover(el: HTMLElement, payload: Payload): Promise<void> {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "hikari-flipbook-cover";
+
+  const source = await open(payload);
+  const canvas = document.createElement("canvas");
+  await source.render(0, canvas, 320);
+  const img = new Image();
+  img.src = canvas.toDataURL("image/webp", 0.9);
+  img.alt = "";
+  img.decoding = "async";
+  button.appendChild(img);
+  source.destroy();
+
+  button.addEventListener("click", () => {
+    openLightbox(open(payload), payload.options);
+  });
+
+  el.appendChild(button);
 }
 
 async function mount(el: HTMLElement): Promise<void> {
   const raw = el.dataset.flipbook;
   if (!raw) return;
+  el.removeAttribute("data-flipbook");
 
   let payload: Payload;
   try {
@@ -22,13 +58,12 @@ async function mount(el: HTMLElement): Promise<void> {
     return;
   }
 
-  const source: PageSource =
-    payload.kind === "pdf"
-      ? await createPdfSource({ url: payload.pages[0], workerSrc })
-      : await createImageSource(payload.pages);
+  if (payload.lightbox) {
+    await mountCover(el, payload);
+    return;
+  }
 
-  createFlipview(el, source, payload.options);
-  el.removeAttribute("data-flipbook");
+  createFlipview(el, await open(payload), payload.options);
 }
 
 function start(): void {

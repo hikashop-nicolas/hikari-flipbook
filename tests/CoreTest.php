@@ -114,6 +114,30 @@ check('emits the page as a URL, not a path', strpos($html, '/book.pdf') !== fals
 check('carries the options', strpos($html, '"rtl":true') !== false);
 check('asks the host for both assets', count($platform->enqueued) === 2);
 
+$platform = new FakePlatform($root);
+$html = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['download' => '1', 'barColour' => '#1976d2', 'pageColour' => 'javascript:alert(1)']),
+    'book-3'
+);
+check('offers the document for download', strpos($html, '"downloadUrl"') !== false);
+check('carries a valid colour as a custom property', strpos($html, '--fv-bar-bg:#1976d2') !== false);
+check('drops anything that is not a colour', strpos($html, 'javascript') === false);
+
+$html = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'images'),
+    new Config(['download' => '1']),
+    'book-4'
+);
+check('does not offer a folder of images for download', strpos($html, '"downloadUrl"') === false);
+
+$html = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['toolbar' => '0']),
+    'book-5'
+);
+check('can turn the toolbar off', strpos($html, '"toolbar":false') !== false);
+
 // A site in a subdirectory serves its files from under it: stripping the
 // filesystem root alone produced a URL that missed the site entirely.
 $sub = new FakePlatform($root, '/joomla6');

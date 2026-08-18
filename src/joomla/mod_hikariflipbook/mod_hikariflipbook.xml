@@ -7,7 +7,6 @@
 	<license>GNU General Public License version 3 or later</license>
 	<version>0.1.0</version>
 	<description>MOD_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
-	<namespace path="src">Hikari\Module\Hikariflipbook</namespace>
 	<files>
 		<filename module="mod_hikariflipbook">mod_hikariflipbook.php</filename>
 		<folder>lib</folder>
@@ -33,8 +32,18 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				<field name="hardCovers" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_HARDCOVERS_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 				<field name="rtl" type="radio" layout="joomla.form.field.radio.switcher"
 					label="MOD_HIKARIFLIPBOOK_RTL_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="lightbox" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_LIGHTBOX_LABEL" default="0">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
@@ -43,10 +52,55 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				<field name="sound" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_SOUND_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="download" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_DOWNLOAD_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="deepLink" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_DEEPLINK_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+			</fieldset>
+			<fieldset name="appearance" label="MOD_HIKARIFLIPBOOK_FIELDSET_APPEARANCE">
+				<field name="barColour" type="color" label="MOD_HIKARIFLIPBOOK_BARCOLOUR_LABEL"
+					description="MOD_HIKARIFLIPBOOK_COLOUR_DESC" format="hex" keywords="none" />
+				<field name="pageColour" type="color" label="MOD_HIKARIFLIPBOOK_PAGECOLOUR_LABEL"
+					description="MOD_HIKARIFLIPBOOK_COLOUR_DESC" format="hex" keywords="none" />
+				<field name="maxHeight" type="number" label="MOD_HIKARIFLIPBOOK_MAXHEIGHT_LABEL"
+					description="MOD_HIKARIFLIPBOOK_MAXHEIGHT_DESC" default="0" filter="integer" min="0" />
 				<field name="breakpoint" type="number" label="MOD_HIKARIFLIPBOOK_BREAKPOINT_LABEL"
-					default="700" filter="integer" />
+					description="MOD_HIKARIFLIPBOOK_BREAKPOINT_DESC" default="700" filter="integer" />
 				<field name="flippingTime" type="number" label="MOD_HIKARIFLIPBOOK_FLIPPINGTIME_LABEL"
 					default="700" filter="integer" />
+			</fieldset>
+			<fieldset name="buttons" label="MOD_HIKARIFLIPBOOK_FIELDSET_BUTTONS">
+				<field name="toolbar" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_TOOLBAR_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="buttonNav" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_BUTTONNAV_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="buttonEnds" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_BUTTONENDS_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="buttonPage" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_BUTTONPAGE_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 			</fieldset>
 			<fieldset name="advanced">
 				<field name="layout" type="modulelayout" label="JFIELD_ALT_LAYOUT_LABEL" />

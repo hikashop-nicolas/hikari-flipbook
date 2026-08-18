@@ -31,19 +31,39 @@ final class Renderer
         $this->platform->enqueue('hikari-flipbook', 'js/flipbook.js', 'script');
         $this->platform->enqueue('hikari-flipbook', 'css/flipbook.css', 'style');
 
+        $urls = $this->urls($source);
+
         $payload = [
             'kind'    => $source->kind(),
-            'pages'   => $this->urls($source),
+            'pages'   => $urls,
             'options' => $config->toViewer(),
+            'lightbox' => (bool) $config->get('lightbox'),
         ];
+
+        if ($config->get('download') && $source->kind() === Source::KIND_PDF) {
+            $payload['options']['downloadUrl'] = $urls[0];
+        }
 
         $json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP);
 
         return sprintf(
-            '<div class="hikari-flipbook" id="%s" data-flipbook=\'%s\'></div>',
+            '<div class="hikari-flipbook" id="%s" style="%s" data-flipbook=\'%s\'></div>',
             $this->platform->escape($id),
+            $this->platform->escape($this->style($config)),
             $json === false ? '{}' : $json
         );
+    }
+
+    /** Colour choices ride on the container as custom properties, not as rules. */
+    private function style(Config $config): string
+    {
+        $out = '';
+
+        foreach ($config->toStyle() as $property => $value) {
+            $out .= $property . ':' . $value . ';';
+        }
+
+        return $out;
     }
 
     /** Absolute paths become public URLs; the viewer never sees a filesystem path. */
