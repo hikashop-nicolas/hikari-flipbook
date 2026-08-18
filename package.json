@@ -1,0 +1,25 @@
+{
+  "name": "hikari-flipbook",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Free flipbook extension for Joomla and WordPress, built on flipview.",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:assets && npm run build:joomla && npm run build:wordpress",
+    "build:joomla": "node build/build-joomla.mjs",
+    "build:wordpress": "node build/build-wordpress.mjs",
+    "check": "node build/check-structure.mjs",
+    "assets": "sh build/render-assets.sh",
+    "build:assets": "node build/build-assets.mjs",
+    "test": "php tests/CoreTest.php"
+  },
+  "dependencies": {
+    "flipview": "github:hikashop-nicolas/flipview#v0.1.1",
+    "pdfjs-dist": "^5.4.149"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "esbuild": "^0.25.0"
+  }
+}

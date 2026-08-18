@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+	<name>MOD_HIKARIFLIPBOOK</name>
+	<author>Hikari Software</author>
+	<creationDate>2026-08</creationDate>
+	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later</license>
+	<version>0.1.0</version>
+	<description>MOD_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
+	<namespace path="src">Hikari\Module\Hikariflipbook</namespace>
+	<files>
+		<filename module="mod_hikariflipbook">mod_hikariflipbook.php</filename>
+		<folder>lib</folder>
+		<folder>tmpl</folder>
+		<folder>language</folder>
+	</files>
+	<media destination="mod_hikariflipbook" folder="media">
+		<folder>js</folder>
+		<folder>css</folder>
+	</media>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="path" type="text" label="MOD_HIKARIFLIPBOOK_PATH_LABEL"
+					description="MOD_HIKARIFLIPBOOK_PATH_DESC" />
+				<field name="mode" type="list" label="MOD_HIKARIFLIPBOOK_MODE_LABEL" default="auto">
+					<option value="auto">MOD_HIKARIFLIPBOOK_MODE_AUTO</option>
+					<option value="single">MOD_HIKARIFLIPBOOK_MODE_SINGLE</option>
+					<option value="double">MOD_HIKARIFLIPBOOK_MODE_DOUBLE</option>
+				</field>
+				<field name="showCover" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_SHOWCOVER_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="rtl" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_RTL_LABEL" default="0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="zoom" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_ZOOM_LABEL" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="breakpoint" type="number" label="MOD_HIKARIFLIPBOOK_BREAKPOINT_LABEL"
+					default="700" filter="integer" />
+				<field name="flippingTime" type="number" label="MOD_HIKARIFLIPBOOK_FLIPPINGTIME_LABEL"
+					default="700" filter="integer" />
+			</fieldset>
+			<fieldset name="advanced">
+				<field name="layout" type="modulelayout" label="JFIELD_ALT_LAYOUT_LABEL" />
+				<field name="moduleclass_sfx" type="textarea" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					rows="3" validate="CssIdentifier" />
+			</fieldset>
+		</fields>
+	</config>
+</extension>

@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+      - run: npm ci
+      - name: Lint the PHP
+        run: find src tests -name "*.php" -print0 | xargs -0 -n1 php -l > /dev/null
+      - name: Core tests
+        run: npm test
+      - name: Build both packages
+        run: npm run build
+      - name: Structure rules
+        run: npm run check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: dist/*.zip

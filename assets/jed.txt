@@ -1,0 +1,28 @@
+**Features**
+Turns a PDF, a folder of images, or a mix of both into a real page-flip book on your Joomla site.
+Renders the PDF in the browser with Mozilla PDF.js, so nothing is uploaded to a third-party service and the pages stay crisp at any zoom level.
+Single page, double page, and automatic switching to single page on phones and narrow screens.
+Zoom with the mouse wheel, pinch, or double tap, then pan around the page.
+Navigation with previous, next, first, last, a page number box, and the keyboard arrows.
+Inline display in a module position or an article, lightbox display, and native fullscreen.
+Direct links to a page, so you can point a visitor straight at page 12.
+Optional page-turn sound, configurable flip speed, colours, container height, and right-to-left reading.
+Every toolbar button can be shown or hidden individually, including the download button.
+Fully keyboard accessible with screen-reader page semantics, and it honours the reduced-motion setting of the visitor.
+Search inside the document, with an outline panel and a thumbnail strip.
+Include a book from a module position, from an article with a shortcode, or from a custom field on any article, contact or product.
+No jQuery, no external requests, no account, no watermark, no page limit.
+
+**Installation**
+1) Download the package from our website
+2) Install it via the Joomla Extension Manager
+3) Publish the module in a position, or insert the shortcode in an article
+
+**Use**
+Compatible with Joomla 4, 5 and 6
+PHP 8.1 or newer required
+GPL v3
+Free
+No time limit
+Unlimited usage
+Unlimited books and pages

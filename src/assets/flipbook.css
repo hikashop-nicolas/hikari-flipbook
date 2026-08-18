@@ -1,0 +1,14 @@
+/* Host-side styling for the container the PHP emits. The viewer brings its own
+   stylesheet; this only gives the block somewhere to live on the page. */
+.hikari-flipbook {
+  width: 100%;
+  margin: 0 0 1rem;
+}
+
+.hikari-flipbook-error {
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: #fdecec;
+  color: #8a1c1c;
+  font-size: 0.95em;
+}

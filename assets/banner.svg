@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="525" viewBox="0 0 1200 525">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+<stop offset="0" stop-color="#1977D3"/><stop offset="1" stop-color="#1F8EEB"/></linearGradient></defs>
+<rect width="1200" height="525" fill="url(#bg)"/>
+<circle cx="90" cy="70" r="120" fill="#FFFFFF" opacity="0.06"/><circle cx="1120" cy="60" r="150" fill="#FFFFFF" opacity="0.06"/><circle cx="1060" cy="470" r="180" fill="#FFFFFF" opacity="0.06"/><circle cx="120" cy="470" r="90" fill="#FFFFFF" opacity="0.06"/><circle cx="640" cy="30" r="60" fill="#FFFFFF" opacity="0.06"/>
+<g transform="translate(190,131) scale(2.6)">
+<rect x="8" y="6" width="84" height="90" rx="10" ry="10" fill="#FFFFFF"/>
+<path d="M 18,36 C 29,29 41,30 50,36 L 50,80 C 41,74 29,73 18,80 Z" fill="#1976D2"/>
+<path d="M 82,36 C 71,29 59,30 50,36 L 50,80 C 59,74 71,73 82,80 Z" fill="#1976D2"/>
+<rect x="26" y="45" width="18" height="3" rx="1.5" fill="#FFFFFF" opacity="0.75"/>
+<rect x="26" y="53" width="18" height="3" rx="1.5" fill="#FFFFFF" opacity="0.75"/>
+<rect x="26" y="61" width="12" height="3" rx="1.5" fill="#FFFFFF" opacity="0.75"/>
+<path d="M 50,36 C 63,24 78,25 86,32 C 80,48 66,58 50,60 Z" fill="#0D5AA7"/>
+<path d="M 50,36 C 60,29 72,28 80,31 C 74,44 63,52 50,55 Z" fill="#64B5F6"/>
+<path d="M 50,36 L 50,80" fill="none" stroke="#FFFFFF" stroke-width="2.4" opacity="0.45"/>
+</g>
+<text x="490" y="228" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="76" font-weight="700" fill="#FFFFFF" letter-spacing="-1">FLIPBOOK</text>
+<text x="494" y="282" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#FFFFFF" opacity="0.92">by Hikari</text>
+<text x="494" y="344" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" opacity="0.88">Turn any PDF into a real page-flip book</text>
+<text x="494" y="386" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="26" fill="#FFFFFF" opacity="0.8">Joomla and WordPress. Free, GPL, no limits.</text>
+</svg>
