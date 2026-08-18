@@ -15,7 +15,7 @@
     "test": "php tests/CoreTest.php"
   },
   "dependencies": {
-    "flipview": "github:hikashop-nicolas/flipview#v0.5.1",
+    "flipview": "github:hikashop-nicolas/flipview#v0.5.2",
     "pdfjs-dist": "^5.4.149"
   },
   "devDependencies": {
