@@ -14,10 +14,12 @@ require __DIR__ . '/../src/core/Config.php';
 require __DIR__ . '/../src/core/Paths.php';
 require __DIR__ . '/../src/core/SourceException.php';
 require __DIR__ . '/../src/core/Source.php';
+require __DIR__ . '/../src/core/Sounds.php';
 require __DIR__ . '/../src/core/Renderer.php';
 
 use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
+use Hikari\Flipbook\Core\Sounds;
 use Hikari\Flipbook\Core\Source;
 use Hikari\Flipbook\Core\SourceException;
 use Hikari\Flipbook\Platform\Platform;
@@ -40,6 +42,7 @@ final class FakePlatform implements Platform
     public function asset(string $path): string { return '/media/' . $path; }
     public function cachePath(): string { return $this->root . '/cache'; }
     public function rootPath(): string { return $this->root; }
+    public function mediaPath(): string { return $this->root . '/media'; }
     public function baseUrl(): string { return $this->base; }
     public function escape(string $value): string { return htmlspecialchars($value, ENT_QUOTES); }
     public function enqueue(string $handle, string $path, string $type = 'script'): void
@@ -82,6 +85,12 @@ foreach (['b2.png', 'a10.png', 'a2.png'] as $name) {
 }
 file_put_contents($root . '/images/notes.txt', 'x');
 file_put_contents($root . '/book.pdf', '%PDF-1.4');
+
+// A site's sounds folder, including one it added itself and one that is not audio.
+@mkdir($root . '/media/sounds', 0777, true);
+foreach (['page-turn-1.mp3', 'page-turn-2.mp3', 'page-turn-10.mp3', 'readme.txt'] as $name) {
+    file_put_contents($root . '/media/sounds/' . $name, 'x');
+}
 
 $source = Source::fromPath(new FakePlatform($root), 'book.pdf');
 check('finds a PDF', $source->kind() === Source::KIND_PDF && count($source->files()) === 1);
@@ -143,7 +152,33 @@ $html = (new Renderer($platform))->render(
     new Config(['sound' => '1']),
     'book-6'
 );
-check('hands the viewer both recordings', substr_count($html, 'sounds/page-turn-') === 2);
+check('hands the viewer every recording it found', substr_count($html, 'sounds/') === 3);
+
+$html = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['sound' => '1', 'soundFile' => 'page-turn-2.mp3']),
+    'book-7'
+);
+check('uses only the chosen recording', substr_count($html, 'sounds/') === 1
+    && strpos($html, 'page-turn-2.mp3') !== false);
+
+$html = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['sound' => '1', 'soundFile' => '../../secret.mp3']),
+    'book-8'
+);
+check('refuses a path as a choice and falls back to all', substr_count($html, 'sounds/') === 3
+    && strpos($html, 'secret') === false);
+
+$html = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['sound' => '1', 'soundFile' => 'deleted.mp3']),
+    'book-9'
+);
+check('falls back to all when the choice is gone', substr_count($html, 'sounds/') === 3);
+
+check('lists what the folder holds, in order',
+    Sounds::available($platform) === ['page-turn-1.mp3', 'page-turn-2.mp3', 'page-turn-10.mp3']);
 
 // A site in a subdirectory serves its files from under it: stripping the
 // filesystem root alone produced a URL that missed the site entirely.

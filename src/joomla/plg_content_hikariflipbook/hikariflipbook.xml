@@ -36,6 +36,13 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				<field name="soundFile" type="filelist" label="MOD_HIKARIFLIPBOOK_SOUNDFILE_LABEL"
+					description="MOD_HIKARIFLIPBOOK_SOUNDFILE_DESC"
+					directory="media/hikariflipbook/sounds"
+					filter="\.(mp3|ogg|wav|m4a|aac|opus)$"
+					hide_none="true" hide_default="true" exclude="index.html">
+					<option value="">MOD_HIKARIFLIPBOOK_SOUNDFILE_RANDOM</option>
+				</field>
 				<field name="lightbox" type="radio" layout="joomla.form.field.radio.switcher"
 					label="MOD_HIKARIFLIPBOOK_LIGHTBOX_LABEL" default="0">
 					<option value="0">JNO</option>

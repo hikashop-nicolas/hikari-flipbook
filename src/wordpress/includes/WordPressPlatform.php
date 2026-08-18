@@ -50,6 +50,11 @@ final class WordPressPlatform implements Platform
         return $this->media . 'media/' . ltrim($path, '/');
     }
 
+    public function mediaPath(): string
+    {
+        return untrailingslashit(plugin_dir_path(dirname(__DIR__) . '/hikari-flipbook.php')) . '/media';
+    }
+
     public function cachePath(): string
     {
         $uploads = wp_upload_dir();

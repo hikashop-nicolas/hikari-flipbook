@@ -28,6 +28,7 @@ final class Config
         // What the reader can do
         'zoom'         => true,
         'sound'        => false,
+        'soundFile'    => '',
         'deepLink'     => false,
         'download'     => false,
         'share'        => false,

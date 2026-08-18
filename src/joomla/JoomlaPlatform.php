@@ -49,6 +49,11 @@ final class JoomlaPlatform implements Platform
         return Uri::root(true) . '/media/' . $this->media . '/' . ltrim($path, '/');
     }
 
+    public function mediaPath(): string
+    {
+        return JPATH_ROOT . '/media/' . $this->media;
+    }
+
     public function cachePath(): string
     {
         return JPATH_CACHE . '/hikari-flipbook';

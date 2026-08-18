@@ -27,6 +27,12 @@ interface Platform
     /** Public URL of a file shipped with the extension, e.g. "js/flipview.js". */
     public function asset(string $path): string;
 
+    /**
+     * Filesystem path of that same media folder, without a trailing slash.
+     * Needed to see what a site has put there, rather than only what we shipped.
+     */
+    public function mediaPath(): string;
+
     /** Absolute path of a writable cache directory for rendered pages. */
     public function cachePath(): string;
 

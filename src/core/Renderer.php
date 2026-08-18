@@ -45,12 +45,13 @@ final class Renderer
         }
 
         if ($config->get('sound')) {
-            // Two recordings the viewer picks between, so a turn does not sound
-            // identical every time. Without them it synthesises the sound instead.
-            $payload['options']['soundUrl'] = [
-                $this->platform->asset('sounds/page-turn-1.mp3'),
-                $this->platform->asset('sounds/page-turn-2.mp3'),
-            ];
+            // Whatever the site has in its sounds folder: one chosen recording, or
+            // all of them for the viewer to pick between.
+            $sounds = Sounds::urls($this->platform, (string) $config->get('soundFile'));
+
+            if ($sounds !== []) {
+                $payload['options']['soundUrl'] = $sounds;
+            }
         }
 
         $json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP);
