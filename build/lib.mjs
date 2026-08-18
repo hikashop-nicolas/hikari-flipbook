@@ -21,7 +21,7 @@ export async function version() {
  * guard goes in after the namespace, since PHP will not accept a statement
  * before one.
  */
-export async function installCore(target, guard) {
+export async function installCore(target, guard, extras = []) {
   const lib = join(target, "lib");
   await mkdir(join(lib, "core"), { recursive: true });
   await mkdir(join(lib, "platform"), { recursive: true });
@@ -39,6 +39,14 @@ export async function installCore(target, guard) {
     }
   }
 
+  // The host's own adapter goes in with the core, not after it: it has to appear
+  // in the require list, and a file copied in later would not.
+  for (const [from, name] of extras) {
+    const source = await readFile(from, "utf8");
+    await writeFile(join(lib, "platform", name), addGuard(source, guard), "utf8");
+    order.push("platform/" + name);
+  }
+
   // Explicit requires rather than an autoloader: the two hosts register class
   // loaders differently, and this file has to work identically under both.
   const requires = sortForRequire(order)
@@ -52,10 +60,18 @@ export async function installCore(target, guard) {
   );
 }
 
-/** Interfaces and exceptions before the classes that use them. */
+/**
+ * Load order without an autoloader: the interface first, then exceptions, then the
+ * core, then the host adapter that implements the interface. A class whose
+ * interface has not been loaded yet is a fatal error, not a deferred lookup.
+ */
 function sortForRequire(files) {
-  const weight = (f) =>
-    f.endsWith("Platform.php") && f.startsWith("platform/") ? 0 : f.includes("Exception") ? 1 : 2;
+  const weight = (f) => {
+    if (f === "platform/Platform.php") return 0;
+    if (f.includes("Exception")) return 1;
+    if (f.startsWith("core/")) return 2;
+    return 3;
+  };
   return [...files].sort((a, b) => weight(a) - weight(b) || a.localeCompare(b));
 }
 

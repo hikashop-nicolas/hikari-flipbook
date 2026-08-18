@@ -36,7 +36,7 @@ await build({
   bundle: true,
   format: "esm",
   target: ["es2022"],
-  minify: true,
+  minify: process.env.FLIPBOOK_DEBUG ? false : true,
   sourcemap: false,
   plugins: [workerUrlPlugin],
   logLevel: "warning",

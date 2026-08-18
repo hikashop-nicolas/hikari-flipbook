@@ -28,7 +28,6 @@ if (!defined('ABSPATH')) {
 define('HIKARI_FLIPBOOK_VERSION', '0.1.0');
 
 require_once __DIR__ . '/lib/bootstrap.php';
-require_once __DIR__ . '/includes/WordPressPlatform.php';
 
 /**
  * [hikari_flipbook path="uploads/catalogue.pdf" mode="auto"]

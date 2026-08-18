@@ -59,6 +59,11 @@ final class JoomlaPlatform implements Platform
         return JPATH_ROOT;
     }
 
+    public function baseUrl(): string
+    {
+        return Uri::root(true);
+    }
+
     public function escape(string $value): string
     {
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');

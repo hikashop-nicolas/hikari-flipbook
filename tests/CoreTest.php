@@ -25,11 +25,13 @@ use Hikari\Flipbook\Platform\Platform;
 final class FakePlatform implements Platform
 {
     public $root;
+    public $base;
     public $enqueued = [];
 
-    public function __construct(string $root)
+    public function __construct(string $root, string $base = '')
     {
         $this->root = $root;
+        $this->base = $base;
     }
 
     public function config(string $key, $default = null) { return $default; }
@@ -38,6 +40,7 @@ final class FakePlatform implements Platform
     public function asset(string $path): string { return '/media/' . $path; }
     public function cachePath(): string { return $this->root . '/cache'; }
     public function rootPath(): string { return $this->root; }
+    public function baseUrl(): string { return $this->base; }
     public function escape(string $value): string { return htmlspecialchars($value, ENT_QUOTES); }
     public function enqueue(string $handle, string $path, string $type = 'script'): void
     {
@@ -110,6 +113,12 @@ check('emits the page as a URL, not a path', strpos($html, '/book.pdf') !== fals
     && strpos($html, $root) === false);
 check('carries the options', strpos($html, '"rtl":true') !== false);
 check('asks the host for both assets', count($platform->enqueued) === 2);
+
+// A site in a subdirectory serves its files from under it: stripping the
+// filesystem root alone produced a URL that missed the site entirely.
+$sub = new FakePlatform($root, '/joomla6');
+$html = (new Renderer($sub))->render(Source::fromPath($sub, 'book.pdf'), new Config([]), 'book-2');
+check('prefixes the site base path', strpos($html, '/joomla6/book.pdf') !== false);
 
 echo $failures === 0 ? "\nall good\n" : "\n$failures failing\n";
 exit($failures === 0 ? 0 : 1);

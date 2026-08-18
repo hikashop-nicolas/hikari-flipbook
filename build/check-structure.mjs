@@ -138,6 +138,27 @@ if (!(await exists(wp))) {
   }
 }
 
+// --- everything shipped in lib/ is actually loaded ---------------------------
+for (const [label, dir] of [["joomla", joomla], ["wordpress", wp]]) {
+  if (!(await exists(join(dir, "lib")))) continue;
+  const bootstrap = await read(join(dir, "lib/bootstrap.php"));
+  for (const file of (await walk(join(dir, "lib"))).map((f) => relative(join(dir, "lib"), f))) {
+    if (!file.endsWith(".php") || file === "bootstrap.php") continue;
+    if (!bootstrap.includes(`/${file}'`)) {
+      fail(label, `lib/${file} ships but bootstrap.php never requires it`);
+    }
+  }
+
+  // Without an autoloader, order is load order: the interface has to come first.
+  const lines = bootstrap.split("\n").filter((l) => l.includes("require_once"));
+  const iface = lines.findIndex((l) => l.includes("platform/Platform.php"));
+  const adapter = lines.findIndex((l) => /platform\/(?!Platform\.php)/.test(l));
+  if (iface === -1) fail(label, "bootstrap.php never requires the Platform interface");
+  if (adapter !== -1 && adapter < iface) {
+    fail(label, "bootstrap.php requires the host adapter before the interface it implements");
+  }
+}
+
 // --- neither package ships the repository ------------------------------------
 for (const [label, dir] of [["joomla", joomla], ["wordpress", wp]]) {
   if (!(await exists(dir))) continue;

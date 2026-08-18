@@ -14,8 +14,7 @@ for (const entry of ["mod_hikariflipbook.php", "mod_hikariflipbook.xml", "tmpl",
   await cp(join(from, entry), join(work, entry), { recursive: true });
 }
 
-await installCore(work, GUARD);
-await cp(join(root, "src/joomla/JoomlaPlatform.php"), join(work, "lib/platform/JoomlaPlatform.php"));
+await installCore(work, GUARD, [[join(root, "src/joomla/JoomlaPlatform.php"), "JoomlaPlatform.php"]]);
 await installMedia(work);
 
 // Everything else that was copied in verbatim needs the guard too: the module

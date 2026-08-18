@@ -50,11 +50,12 @@ final class Renderer
     private function urls(Source $source): array
     {
         $root = Paths::root($this->platform);
+        $base = rtrim($this->platform->baseUrl(), '/');
         $urls = [];
 
         foreach ($source->files() as $file) {
             $file = Paths::normalise($file);
-            $urls[] = Paths::isInside($file, $root) ? substr($file, strlen($root)) : $file;
+            $urls[] = Paths::isInside($file, $root) ? $base . substr($file, strlen($root)) : $file;
         }
 
         return $urls;

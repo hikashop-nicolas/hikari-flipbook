@@ -11,12 +11,9 @@ await mkdir(join(work, "includes"), { recursive: true });
 await mkdir(join(work, "languages"), { recursive: true });
 
 await cp(join(root, "src/wordpress/hikari-flipbook.php"), join(work, "hikari-flipbook.php"));
-await cp(
-  join(root, "src/wordpress/includes/WordPressPlatform.php"),
-  join(work, "includes/WordPressPlatform.php"),
-);
-
-await installCore(work, GUARD);
+await installCore(work, GUARD, [
+  [join(root, "src/wordpress/includes/WordPressPlatform.php"), "WordPressPlatform.php"],
+]);
 await installMedia(work);
 
 await guardAll(work, GUARD);

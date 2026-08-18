@@ -33,6 +33,13 @@ interface Platform
     /** Absolute filesystem path of the host's public root. */
     public function rootPath(): string;
 
+    /**
+     * The site's base path, without a trailing slash, empty at a domain root.
+     * A site installed in a subdirectory serves its files from under it, so a
+     * URL built by stripping the filesystem root alone would miss the site.
+     */
+    public function baseUrl(): string;
+
     /** Escape a string for HTML output. */
     public function escape(string $value): string;
 

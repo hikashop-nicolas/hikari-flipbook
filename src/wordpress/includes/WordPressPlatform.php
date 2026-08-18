@@ -62,6 +62,11 @@ final class WordPressPlatform implements Platform
         return untrailingslashit(ABSPATH);
     }
 
+    public function baseUrl(): string
+    {
+        return rtrim((string) wp_parse_url(home_url(), PHP_URL_PATH), '/');
+    }
+
     public function escape(string $value): string
     {
         return esc_html($value);
