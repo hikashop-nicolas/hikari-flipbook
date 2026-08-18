@@ -38,11 +38,9 @@ final class Renderer
             'pages'    => $urls,
             'options'  => $config->toViewer(),
             'lightbox' => (bool) $config->get('lightbox'),
-            'labels'   => [
-                // The cover is a button holding a picture of the cover and nothing
-                // else, so without this it announces as an unnamed button.
-                'open' => $this->platform->translate('HIKARI_FLIPBOOK_OPEN'),
-            ],
+            // Every word the viewer says, in the site's language. Without this a
+            // French site has English tooltips and a screen reader hears English.
+            'strings'  => Strings::viewer($this->platform),
         ];
 
         if ($config->get('download') && $source->kind() === Source::KIND_PDF) {

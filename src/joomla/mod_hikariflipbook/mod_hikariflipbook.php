@@ -13,6 +13,7 @@ use Hikari\Flipbook\Core\Book;
 use Hikari\Flipbook\Platform\JoomlaBookStore;
 use Hikari\Flipbook\Platform\JoomlaPlatform;
 use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/lib/bootstrap.php';
 
@@ -22,10 +23,17 @@ $html     = '';
 
 // A saved book brings its own settings; anything set on the module wins over them,
 // so one book can be shown twice and look different each time.
-$book     = (new JoomlaBookStore())->find($params->get('book'));
+$wanted   = (int) $params->get('book');
+$book     = (new JoomlaBookStore())->find($wanted);
 $settings = $book instanceof Book ? $book->merged($params->toArray()) : $params->toArray();
 
 try {
+    // A book that is unpublished, or not for this language or this visitor, is
+    // simply not found. Saying so beats a module that renders nothing.
+    if ($wanted > 0 && !$book instanceof Book) {
+        throw new SourceException(Text::_('MOD_HIKARIFLIPBOOK_BOOK_UNAVAILABLE'));
+    }
+
     $source = Source::fromPath($platform, (string) ($settings['path'] ?? ''));
     $config = new Config($settings);
     $html   = (new Renderer($platform))->render($source, $config, 'hikari-flipbook-' . $module->id);

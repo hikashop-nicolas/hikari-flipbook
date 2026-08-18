@@ -1,7 +1,7 @@
 // The one front-end entry point both builds ship. It finds every container the
 // PHP side emitted and mounts a viewer on it. Nothing here knows which host it
 // is running on: the container's data attribute says everything.
-import { createFlipview, createImageSource, createPdfSource, openLightbox } from "flipview";
+import { createFlipview, createImageSource, createPdfSource, openLightbox, setStrings } from "flipview";
 import type { FlipviewOptions, PageSource } from "flipview";
 import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 
@@ -10,7 +10,7 @@ interface Payload {
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
-  labels?: { open?: string };
+  strings?: Record<string, string>;
 }
 
 /** A fresh source each time: closing a book destroys the document behind it. */
@@ -30,7 +30,7 @@ async function mountCover(el: HTMLElement, payload: Payload): Promise<void> {
   button.type = "button";
   button.className = "hikari-flipbook-cover";
   // The picture is decorative: the button is what has to carry the name.
-  button.setAttribute("aria-label", payload.labels?.open || "Open the book");
+  button.setAttribute("aria-label", payload.strings?.open || "Open the book");
 
   const source = await open(payload);
   const canvas = document.createElement("canvas");
@@ -60,6 +60,9 @@ async function mount(el: HTMLElement): Promise<void> {
   } catch {
     return;
   }
+
+  // The host's words, before anything is built with them.
+  if (payload.strings) setStrings(payload.strings);
 
   if (payload.lightbox) {
     await mountCover(el, payload);

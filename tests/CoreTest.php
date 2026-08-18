@@ -9,15 +9,20 @@
  * Run with: php tests/CoreTest.php
  */
 
+// Everything the build puts in a package, in the order the build puts it: the
+// interface first, then exceptions, then the rest. Listing files by hand is how a
+// new one gets forgotten here and found by a fatal error somewhere else.
 require __DIR__ . '/../src/platform/Platform.php';
-require __DIR__ . '/../src/core/Config.php';
-require __DIR__ . '/../src/core/Paths.php';
-require __DIR__ . '/../src/core/SourceException.php';
-require __DIR__ . '/../src/core/Source.php';
-require __DIR__ . '/../src/core/Sounds.php';
-require __DIR__ . '/../src/core/Book.php';
-require __DIR__ . '/../src/core/BookStore.php';
-require __DIR__ . '/../src/core/Renderer.php';
+
+$core = glob(__DIR__ . '/../src/core/*.php');
+usort($core, static function (string $a, string $b): int {
+    $weight = static fn (string $f): int => strpos($f, 'Exception') !== false ? 0 : 1;
+
+    return $weight($a) <=> $weight($b) ?: strcmp($a, $b);
+});
+foreach ($core as $file) {
+    require_once $file;
+}
 
 use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
@@ -26,7 +31,7 @@ use Hikari\Flipbook\Core\Source;
 use Hikari\Flipbook\Core\SourceException;
 use Hikari\Flipbook\Platform\Platform;
 
-final class FakePlatform implements Platform
+class FakePlatform implements Platform
 {
     public $root;
     public $base;
@@ -204,6 +209,28 @@ check('ignores an empty override', $book->merged(['mode' => ''])['mode'] === 'si
 
 $book = Hikari\Flipbook\Core\Book::fromRow(['title' => 'Broken', 'params' => 'not json']);
 check('survives unreadable settings', $book->options() === []);
+
+// --- Strings ------------------------------------------------------------------
+final class TalkativePlatform extends FakePlatform
+{
+    public $said = [];
+
+    public function translate(string $key): string
+    {
+        $this->said[] = $key;
+
+        // A host that knows one string and not the others, which is the normal
+        // state of a half-translated site.
+        return $key === 'HIKARI_FLIPBOOK_NEXT' ? 'Page suivante' : $key;
+    }
+}
+
+$talkative = new TalkativePlatform($root);
+$words = Hikari\Flipbook\Core\Strings::viewer($talkative);
+check('uses what the host says', $words['next'] === 'Page suivante');
+check('falls back to English for the rest', $words['first'] === 'First page');
+check('asks for every string the viewer says', count($talkative->said) === count($words));
+check('names the cover button too', isset($words['open']));
 
 echo $failures === 0 ? "\nall good\n" : "\n$failures failing\n";
 exit($failures === 0 ? 0 : 1);

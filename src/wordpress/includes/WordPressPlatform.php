@@ -54,13 +54,33 @@ final class WordPressPlatform implements Platform
 
     public function translate(string $key): string
     {
-        // The core speaks in keys; WordPress has no key catalogue, so the few it
-        // uses are mapped here rather than shipping keys as visible strings.
-        $strings = [
-            'HIKARI_FLIPBOOK_OPEN' => __('Open the book', 'hikari-flipbook'),
-        ];
+        // The core speaks in keys and WordPress has no key catalogue, so each is
+        // mapped to its English here: gettext translates the English, which is
+        // what a translator expects to be given.
+        $strings = self::catalogue();
 
         return $strings[$key] ?? __($key, 'hikari-flipbook');
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    private static function catalogue(): array
+    {
+        static $strings = null;
+
+        if ($strings !== null) {
+            return $strings;
+        }
+
+        $strings = [];
+        foreach (\Hikari\Flipbook\Core\Strings::catalogue() as $key => $english) {
+            // The English is the msgid, so the .pot the build writes and the call
+            // made here are the same string.
+            $strings[$key] = __($english, 'hikari-flipbook');
+        }
+
+        return $strings;
     }
 
     public function asset(string $path): string

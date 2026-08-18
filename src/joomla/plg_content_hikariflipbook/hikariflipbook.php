@@ -58,9 +58,15 @@ class PlgContentHikariflipbook extends CMSPlugin
 
         // {flipbook book="3"} places a saved book; the attributes still win, so an
         // article can borrow a book and show it its own way.
-        $book = (new JoomlaBookStore())->find($settings['book'] ?? 0);
+        $wanted = (int) ($settings['book'] ?? 0);
+        $book   = (new JoomlaBookStore())->find($wanted);
+
         if ($book instanceof Book) {
             $settings = $book->merged($settings);
+        } elseif ($wanted > 0) {
+            // Unpublished, or not for this language or this visitor. An article
+            // that silently loses its book helps nobody.
+            return $this->complain(Text::_('PLG_CONTENT_HIKARIFLIPBOOK_BOOK_UNAVAILABLE'));
         }
 
         $params   = new Registry($settings);

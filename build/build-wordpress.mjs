@@ -9,6 +9,10 @@ const work = join(root, "dist", "wordpress", "hikari-flipbook");
 await rm(join(root, "dist", "wordpress"), { recursive: true, force: true });
 await mkdir(join(work, "includes"), { recursive: true });
 await mkdir(join(work, "languages"), { recursive: true });
+await cp(
+  join(root, "src/wordpress/languages/hikari-flipbook.pot"),
+  join(work, "languages/hikari-flipbook.pot"),
+);
 
 await cp(join(root, "src/wordpress/hikari-flipbook.php"), join(work, "hikari-flipbook.php"));
 await installCore(work, GUARD, [

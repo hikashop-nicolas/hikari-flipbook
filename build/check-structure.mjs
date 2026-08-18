@@ -186,6 +186,22 @@ if (!(await exists(wp))) {
     }
   }
 
+  // The translator's catalogue has to be there, and to still match the code.
+  const potFile = join(wp, "languages/hikari-flipbook.pot");
+  if (!(await exists(potFile))) {
+    fail("wordpress", "languages/hikari-flipbook.pot is missing; translators have nothing to work from");
+  } else {
+    const pot = await read(potFile);
+    if (!pot.includes(`Hikari Flipbook ${v}`)) {
+      fail("wordpress", `the catalogue was written for another version; run npm run pot`);
+    }
+    for (const needed of ["Open the book", "Next page"]) {
+      if (!pot.includes(`msgid "${needed}"`)) {
+        fail("wordpress", `the catalogue is missing "${needed}"; run npm run pot`);
+      }
+    }
+  }
+
   // The block
   const blockFile = join(wp, "blocks/flipbook/block.json");
   if (!(await exists(blockFile))) {
