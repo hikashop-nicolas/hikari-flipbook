@@ -49,11 +49,13 @@ await extension("plg_content_hikariflipbook", join(root, "src/joomla/plg_content
   "language",
 ]);
 
-// The component manages the books and reads none of the shared core: it is plain
-// Joomla MVC over one table, so it ships without lib/.
+// The component is plain Joomla MVC over one table, but the screen that draws
+// hotspots has to read a book's pages exactly as the front end does, so it gets
+// the core as well.
 const component = join(work, "com_hikariflipbook");
 await mkdir(component, { recursive: true });
 await cp(join(root, "src/joomla/com_hikariflipbook"), component, { recursive: true });
+await installCore(join(component, "admin"), GUARD, CORE);
 await guardAll(component, GUARD);
 await zip(component, "", join(stage, "packages", "com_hikariflipbook.zip"));
 

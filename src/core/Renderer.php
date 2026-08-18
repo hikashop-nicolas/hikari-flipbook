@@ -31,13 +31,16 @@ final class Renderer
         $this->platform->enqueue('hikari-flipbook', 'js/flipbook.js', 'script');
         $this->platform->enqueue('hikari-flipbook', 'css/flipbook.css', 'style');
 
-        $urls = $this->urls($source);
+        $urls = Paths::urls($this->platform, $source);
 
         $payload = [
             'kind'     => $source->kind(),
             'pages'    => $urls,
             'options'  => $config->toViewer(),
             'lightbox' => (bool) $config->get('lightbox'),
+            // Hotspots are invisible until a reader hovers one, which is right for
+            // a magazine and wrong for a catalogue that is meant to be shoppable.
+            'showHotspots' => (bool) $config->get('hotspotsShown'),
             // Every word the viewer says, in the site's language. Without this a
             // French site has English tooltips and a screen reader hears English.
             'strings'  => Strings::viewer($this->platform),
@@ -77,20 +80,5 @@ final class Renderer
         }
 
         return $out;
-    }
-
-    /** Absolute paths become public URLs; the viewer never sees a filesystem path. */
-    private function urls(Source $source): array
-    {
-        $root = Paths::root($this->platform);
-        $base = rtrim($this->platform->baseUrl(), '/');
-        $urls = [];
-
-        foreach ($source->files() as $file) {
-            $file = Paths::normalise($file);
-            $urls[] = Paths::isInside($file, $root) ? $base . substr($file, strlen($root)) : $file;
-        }
-
-        return $urls;
     }
 }

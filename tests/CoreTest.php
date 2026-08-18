@@ -232,5 +232,57 @@ check('falls back to English for the rest', $words['first'] === 'First page');
 check('asks for every string the viewer says', count($talkative->said) === count($words));
 check('names the cover button too', isset($words['open']));
 
+
+// --- Hotspots -----------------------------------------------------------------
+use Hikari\Flipbook\Core\Hotspots;
+
+$spots = Hotspots::decode('[{"page":"2","x":"0.1","y":0.2,"width":0.3,"height":0.4,"href":"/shop/kettle","label":"Blue kettle"}]');
+check('reads a stored hotspot', count($spots) === 1);
+check('keeps page numbers as numbers', $spots[0]['page'] === 2);
+check('keeps coordinates as fractions', $spots[0]['x'] === 0.1);
+check('keeps a relative link', $spots[0]['href'] === '/shop/kettle');
+
+$spots = Hotspots::decode([['page' => 0, 'x' => -3, 'y' => 5, 'width' => 9, 'height' => 0.2, 'goToPage' => 4]]);
+check('clamps a region to the page', $spots[0]['x'] === 0.0 && $spots[0]['y'] === 1.0 && $spots[0]['width'] === 1.0);
+check('keeps a page jump', $spots[0]['goToPage'] === 4);
+
+check('drops a region with no area', Hotspots::decode([['page' => 0, 'width' => 0, 'height' => 0.5, 'href' => '/a']]) === []);
+check('drops one bound to nothing', Hotspots::decode([['page' => 0, 'width' => 0.5, 'height' => 0.5]]) === []);
+check('survives unreadable hotspots', Hotspots::decode('not json') === []);
+check('survives a stored object rather than a list', Hotspots::decode('{"x":1}') === []);
+
+$dangerous = [
+    'javascript:alert(1)',
+    "java\nscript:alert(1)",
+    'JaVaScRiPt:alert(1)',
+    'data:text/html;base64,PHNjcmlwdD4=',
+    'vbscript:msgbox',
+    '//evil.example.com/',
+];
+$blocked = true;
+
+foreach ($dangerous as $href) {
+    $spot = Hotspots::decode([['page' => 0, 'width' => 0.5, 'height' => 0.5, 'href' => $href, 'label' => 'x', 'data' => ['a' => 'b']]]);
+    $blocked = $blocked && !isset($spot[0]['href']);
+}
+
+check('refuses a link a browser would run', $blocked);
+check('keeps an ordinary link', Hotspots::decode([['page' => 0, 'width' => 0.5, 'height' => 0.5, 'href' => 'https://example.com/a?b=1#c']])[0]['href'] === 'https://example.com/a?b=1#c');
+check('opens in a tab only when asked', !isset(Hotspots::decode([['page' => 0, 'width' => 0.5, 'height' => 0.5, 'href' => '/a', 'target' => 'top']])[0]['target']));
+
+$spots = Hotspots::decode([['page' => 0, 'width' => 0.5, 'height' => 0.5, 'data' => ['product' => 42, 'bad key!' => 'x', 'nested' => ['no']]]]);
+check('keeps the host its own data', $spots[0]['data']['product'] === '42');
+check('drops data a name could not survive', !isset($spots[0]['data']['bad key!']) && !isset($spots[0]['data']['nested']));
+
+check('writes back what it read', Hotspots::decode(Hotspots::encode($spots)) == $spots);
+check('writes an empty list rather than an object', Hotspots::encode([]) === '[]');
+
+$config = new Hikari\Flipbook\Core\Config([
+    'hotspots' => '[{"page":0,"x":0.1,"y":0.1,"width":0.2,"height":0.2,"href":"/a"},{"page":0,"width":0,"height":0,"href":"/b"}]',
+]);
+check('hands the viewer only the hotspots that survived', count($config->toViewer()['hotspots']) === 1);
+check('says nothing about hotspots when a book has none', !isset((new Hikari\Flipbook\Core\Config())->toViewer()['hotspots']));
+check('takes hotspots a host already decoded', count((new Hikari\Flipbook\Core\Config(['hotspots' => [['page' => 1, 'width' => 0.5, 'height' => 0.5, 'goToPage' => 2]]]))->toViewer()['hotspots']) === 1);
+
 echo $failures === 0 ? "\nall good\n" : "\n$failures failing\n";
 exit($failures === 0 ? 0 : 1);

@@ -10,6 +10,7 @@ interface Payload {
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
+  showHotspots?: boolean;
   strings?: Record<string, string>;
 }
 
@@ -44,6 +45,10 @@ async function mountCover(el: HTMLElement, payload: Payload): Promise<void> {
 
   button.addEventListener("click", () => {
     openLightbox(open(payload), payload.options);
+    if (payload.showHotspots) {
+      // The lightbox builds its own root, on the body rather than in here.
+      requestAnimationFrame(() => document.querySelector(".fv-lightbox .fv-root")?.classList.add("fv-hotspots-shown"));
+    }
   });
 
   el.appendChild(button);
@@ -70,6 +75,8 @@ async function mount(el: HTMLElement): Promise<void> {
   }
 
   createFlipview(el, await open(payload), payload.options);
+
+  if (payload.showHotspots) el.querySelector(".fv-root")?.classList.add("fv-hotspots-shown");
 }
 
 function start(): void {

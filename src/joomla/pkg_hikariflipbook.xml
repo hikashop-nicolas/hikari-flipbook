@@ -6,7 +6,7 @@
 	<creationDate>2026-08</creationDate>
 	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later</license>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<description>PKG_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
 	<files folder="packages">
 		<file type="file" id="hikariflipbook">files_hikariflipbook.zip</file>

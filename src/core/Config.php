@@ -33,6 +33,10 @@ final class Config
         'download'     => false,
         'share'        => false,
         'lightbox'     => false,
+        // Regions drawn on the pages, as the host stored them, and whether a
+        // reader is shown where they are instead of having to find them.
+        'hotspots'      => [],
+        'hotspotsShown' => false,
         // Which buttons the toolbar shows
         'toolbar'      => true,
         'buttonNav'    => true,
@@ -57,7 +61,9 @@ final class Config
             if (!array_key_exists($key, $values)) {
                 continue;
             }
-            $values[$key] = self::coerce($values[$key], $value);
+            // Hotspots arrive as JSON from one host and as an array from the
+            // other, and are checked rather than coerced.
+            $values[$key] = $key === 'hotspots' ? Hotspots::decode($value) : self::coerce($values[$key], $value);
         }
 
         if (!in_array($values['mode'], self::MODES, true)) {
@@ -92,6 +98,10 @@ final class Config
             'deepLink'     => (bool) $this->values['deepLink'],
             'share'        => (bool) $this->values['share'],
         ];
+
+        if ($this->values['hotspots'] !== []) {
+            $options['hotspots'] = $this->values['hotspots'];
+        }
 
         if ($this->values['maxHeight'] > 0) {
             $options['maxHeight'] = $this->values['maxHeight'];

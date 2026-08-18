@@ -36,8 +36,10 @@ const workerUrlPlugin = {
 };
 
 await build({
-  entryPoints: [join(root, "src/assets/flipbook.ts")],
-  outfile: join(out, "js", "flipbook.js"),
+  // The reader's viewer and the admin's editor are separate bundles: a page that
+  // shows a book should not carry the screen that draws on one.
+  entryPoints: [join(root, "src/assets/flipbook.ts"), join(root, "src/assets/hotspot-editor.ts")],
+  outdir: join(out, "js"),
   bundle: true,
   format: "esm",
   target: ["es2022"],
@@ -50,5 +52,6 @@ await build({
 const viewer = await readFile(join(root, "node_modules/flipview/dist/flipview.css"), "utf8");
 const ours = await readFile(join(root, "src/assets/flipbook.css"), "utf8");
 await writeFile(join(out, "css", "flipbook.css"), viewer + "\n" + ours);
+await copyFile(join(root, "src/assets/hotspot-editor.css"), join(out, "css", "hotspot-editor.css"));
 
 console.log("assets built into dist/media");

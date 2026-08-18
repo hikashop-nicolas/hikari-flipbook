@@ -3,6 +3,7 @@
 // nobody reads is how the two builds start drifting apart.
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
+import { spawnSync } from "node:child_process";
 import { root, version } from "./lib.mjs";
 
 const problems = [];
@@ -59,6 +60,9 @@ const joomlaExtensions = [
 ];
 
 let joomla = null;
+// The component keeps its copy of the core under admin/, where a component's
+// PHP lives, so it is checked as well but from its own root.
+let com = null;
 
 for (const ext of joomlaExtensions) {
   const dir = join(root, "dist/joomla-work", ext.name);
@@ -67,6 +71,7 @@ for (const ext of joomlaExtensions) {
     continue;
   }
   if (joomla === null) joomla = dir;
+  if (ext.name === "com_hikariflipbook") com = join(dir, "admin");
 
   const files = (await walk(dir)).map((f) => relative(dir, f));
   const manifest = await read(join(dir, ext.manifest));
@@ -238,14 +243,47 @@ if (!(await exists(wp))) {
   }
 }
 
+// --- both hosts ship the same media ------------------------------------------
+// One bundle, two packages: an asset that reaches one host and not the other is
+// a feature that silently exists on Joomla and not on WordPress.
+const built = join(root, "dist/media");
+if (await exists(built)) {
+  const wanted = (await walk(built)).map((f) => relative(built, f)).sort();
+
+  for (const [label, dir] of [
+    ["joomla", join(root, "dist/joomla-work/files_hikariflipbook/media")],
+    ["wordpress", join(wp, "media")],
+  ]) {
+    if (!(await exists(dir))) {
+      fail(label, "ships no media at all");
+      continue;
+    }
+    const shipped = new Set((await walk(dir)).map((f) => relative(dir, f)));
+    for (const file of wanted) {
+      if (!shipped.has(file)) fail(label, `media/${file} was built but does not ship`);
+    }
+  }
+}
+
 // --- everything shipped in lib/ is actually loaded ---------------------------
-for (const [label, dir] of [["joomla", joomla], ["wordpress", wp]]) {
-  if (!(await exists(join(dir, "lib")))) continue;
+for (const [label, dir] of [["joomla", joomla], ["wordpress", wp], ["com_hikariflipbook", com]]) {
+  if (dir === null || !(await exists(join(dir, "lib")))) continue;
   const bootstrap = await read(join(dir, "lib/bootstrap.php"));
   for (const file of (await walk(join(dir, "lib"))).map((f) => relative(join(dir, "lib"), f))) {
     if (!file.endsWith(".php") || file === "bootstrap.php") continue;
     if (!bootstrap.includes(`/${file}'`)) {
       fail(label, `lib/${file} ships but bootstrap.php never requires it`);
+    }
+  }
+
+  // Every require has to be guarded by what the file declares. Two extensions
+  // ship two copies of the core and can both be loaded by one request, from
+  // different paths, which require_once cannot see: the guard is the only thing
+  // between that and a fatal redeclare.
+  for (const line of bootstrap.split("\n")) {
+    if (!line.includes("require_once __DIR__")) continue;
+    if (!/^\s+require_once/.test(line)) {
+      fail(label, `bootstrap.php requires ${line.trim()} without a class_exists guard`);
     }
   }
 
@@ -256,6 +294,29 @@ for (const [label, dir] of [["joomla", joomla], ["wordpress", wp]]) {
   if (iface === -1) fail(label, "bootstrap.php never requires the Platform interface");
   if (adapter !== -1 && adapter < iface) {
     fail(label, "bootstrap.php requires the host adapter before the interface it implements");
+  }
+}
+
+// --- two copies of the core can be loaded by one request ---------------------
+// The static rule above says the guards are there; this proves they work, by
+// loading the module's copy and the plugin's copy the way a page with both on it
+// does. It is the bug this whole arrangement exists to prevent.
+{
+  const copies = [
+    join(root, "dist/joomla-work/mod_hikariflipbook/lib/bootstrap.php"),
+    join(root, "dist/joomla-work/plg_content_hikariflipbook/lib/bootstrap.php"),
+    join(root, "dist/joomla-work/com_hikariflipbook/admin/lib/bootstrap.php"),
+  ];
+
+  if ((await Promise.all(copies.map(exists))).every(Boolean)) {
+    const script = "define('_JEXEC', 1); " + copies.map((f) => `require '${f}';`).join(" ");
+    const php = spawnSync("php", ["-d", "error_reporting=E_ALL", "-r", script], { encoding: "utf8" });
+
+    if (php.error) {
+      console.error("  (php is not available; the double-load check was skipped)");
+    } else if (php.status !== 0) {
+      fail("joomla", `two extensions cannot load the core in one request: ${(php.stderr || php.stdout).trim().split("\n")[0]}`);
+    }
   }
 }
 

@@ -31,6 +31,7 @@ final class Settings
         'download'   => 0,
         'share'      => 0,
         'lightbox'   => 0,
+        'hotspotsShown' => 0,
         'maxHeight'  => 0,
         'barColour'  => '',
         'pageColour' => '',
@@ -138,6 +139,11 @@ final class Settings
         self::toggle(__('Offer the PDF for download', 'hikari-flipbook'), 'download', $values['download']);
         self::toggle(__('Show a share button', 'hikari-flipbook'), 'share', $values['share']);
         self::toggle(__('Show the cover, open the book over the page', 'hikari-flipbook'), 'lightbox', $values['lightbox']);
+        self::toggle(
+            __('Outline every hotspot as soon as a book opens', 'hikari-flipbook'),
+            'hotspotsShown',
+            $values['hotspotsShown']
+        );
         self::number(__('Largest height (px)', 'hikari-flipbook'), 'maxHeight', $values['maxHeight'],
             __('Zero lets the book use the height of the screen.', 'hikari-flipbook'));
         self::colour(__('Toolbar colour', 'hikari-flipbook'), 'barColour', $values['barColour']);

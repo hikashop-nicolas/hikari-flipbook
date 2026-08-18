@@ -5,7 +5,7 @@
 	<creationDate>2026-08</creationDate>
 	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later</license>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<description>COM_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
 	<namespace path="src">Hikari\Component\Hikariflipbook</namespace>
 
@@ -30,6 +30,7 @@
 		<files folder="admin">
 			<folder>forms</folder>
 			<folder>language</folder>
+			<folder>lib</folder>
 			<folder>services</folder>
 			<folder>sql</folder>
 			<folder>src</folder>

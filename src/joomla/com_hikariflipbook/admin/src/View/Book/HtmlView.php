@@ -21,6 +21,13 @@ class HtmlView extends BaseHtmlView
         $this->form = $this->get('Form');
         $this->item = $this->get('Item');
 
+        // The toolbar's Save asks the validator whether the form is valid, and a
+        // validator that was never loaded is not a quiet no: it throws, and the
+        // button does nothing at all.
+        $this->getDocument()->getWebAssetManager()
+            ->useScript('keepalive')
+            ->useScript('form.validate');
+
         ToolbarHelper::title(
             Text::_($this->item && $this->item->id ? 'COM_HIKARIFLIPBOOK_EDIT_BOOK' : 'COM_HIKARIFLIPBOOK_NEW_BOOK'),
             'book'

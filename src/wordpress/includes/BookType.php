@@ -7,6 +7,12 @@
 
 namespace Hikari\Flipbook\WordPress;
 
+use Hikari\Flipbook\Core\Hotspots;
+use Hikari\Flipbook\Core\Paths;
+use Hikari\Flipbook\Core\Source;
+use Hikari\Flipbook\Core\SourceException;
+use Hikari\Flipbook\Platform\WordPressPlatform;
+
 /**
  * Books as a post type: WordPress already knows how to list, edit, restrict and
  * trash a post, so a book is one rather than a table of its own.
@@ -55,6 +61,100 @@ final class BookType
             self::TYPE,
             'normal',
             'high'
+        );
+
+        add_meta_box(
+            'hikari-flipbook-hotspots',
+            __('Hotspots', 'hikari-flipbook'),
+            [self::class, 'hotspots'],
+            self::TYPE,
+            'normal',
+            'default'
+        );
+    }
+
+    /**
+     * The regions drawn on the pages. The editor is the same script Joomla's book
+     * screen uses: this only has to hand it the pages and the site's own words.
+     */
+    public static function hotspots(\WP_Post $post): void
+    {
+        $saved  = get_post_meta($post->ID, self::META, true);
+        $saved  = is_array($saved) ? $saved : [];
+        $path   = (string) ($saved['path'] ?? '');
+        $stored = Hotspots::encode(Hotspots::decode($saved['hotspots'] ?? []));
+
+        self::toggleRow(
+            __('Outline every region as soon as the book opens', 'hikari-flipbook'),
+            'hotspotsShown',
+            $saved['hotspotsShown'] ?? 0
+        );
+
+        if ($path === '') {
+            echo '<p>' . esc_html__(
+                'Save the book with a document first, then come back to draw on its pages.',
+                'hikari-flipbook'
+            ) . '</p>';
+            return;
+        }
+
+        $platform = new WordPressPlatform([]);
+
+        try {
+            $source = Source::fromPath($platform, $path);
+        } catch (SourceException $e) {
+            echo '<p>' . esc_html($e->getMessage()) . '</p>';
+            return;
+        }
+
+        $platform->enqueue('hikari-flipbook-editor', 'js/hotspot-editor.js', 'script');
+        $platform->enqueue('hikari-flipbook-editor', 'css/hotspot-editor.css', 'style');
+
+        $payload = wp_json_encode([
+            'kind'    => $source->kind(),
+            'pages'   => Paths::urls($platform, $source),
+            'strings' => self::editorStrings(),
+        ]);
+
+        printf(
+            '<div class="hikari-hotspots" data-hotspot-editor="%s">'
+            . '<input type="hidden" name="hikari_flipbook_hotspots" value="%s"></div>',
+            esc_attr((string) $payload),
+            esc_attr($stored)
+        );
+    }
+
+    /** @return array<string,string> */
+    private static function editorStrings(): array
+    {
+        return [
+            'add'        => __('Add a region', 'hikari-flipbook'),
+            'help'       => __('Drag on the page to draw a region. Drag a region to move it, or its corner to resize it.', 'hikari-flipbook'),
+            'none'       => __('No region selected.', 'hikari-flipbook'),
+            'region'     => __('Region', 'hikari-flipbook'),
+            'remove'     => __('Delete this region', 'hikari-flipbook'),
+            'label'      => __('Name', 'hikari-flipbook'),
+            'href'       => __('Link', 'hikari-flipbook'),
+            'tab'        => __('Open in a new tab', 'hikari-flipbook'),
+            'jump'       => __('Go to page', 'hikari-flipbook'),
+            'product'    => __('Product id', 'hikari-flipbook'),
+            'prev'       => __('Previous page', 'hikari-flipbook'),
+            'next'       => __('Next page', 'hikari-flipbook'),
+            'x'          => __('Left %', 'hikari-flipbook'),
+            'y'          => __('Top %', 'hikari-flipbook'),
+            'width'      => __('Width %', 'hikari-flipbook'),
+            'height'     => __('Height %', 'hikari-flipbook'),
+            'unreadable' => __('This book could not be opened.', 'hikari-flipbook'),
+        ];
+    }
+
+    private static function toggleRow(string $label, string $key, $value): void
+    {
+        printf(
+            '<p><label><input type="checkbox" name="hikari_flipbook[%s]" value="1" %s> %s</label></p>',
+            esc_attr($key),
+            checked((int) $value, 1, false),
+            esc_html($label)
         );
     }
 
@@ -126,6 +226,12 @@ final class BookType
         // book cannot hold a value the site itself could not.
         $clean         = Settings::sanitise($input);
         $clean['path'] = sanitize_text_field((string) ($input['path'] ?? ''));
+
+        // Hotspots travel in their own field: they are JSON, and the settings
+        // sanitiser would flatten them into a text line.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Hotspots::decode is the sanitiser
+        $raw                = isset($_POST['hikari_flipbook_hotspots']) ? wp_unslash($_POST['hikari_flipbook_hotspots']) : '';
+        $clean['hotspots']  = Hotspots::encode(Hotspots::decode(is_string($raw) ? $raw : ''));
 
         update_post_meta($id, self::META, $clean);
     }

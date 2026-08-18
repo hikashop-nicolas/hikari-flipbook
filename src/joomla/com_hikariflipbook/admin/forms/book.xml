@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form>
+<form addfieldprefix="Hikari\Component\Hikariflipbook\Administrator\Field">
 	<field name="id" type="number" label="JGLOBAL_FIELD_ID_LABEL" default="0" class="readonly" readonly="true" />
 	<field name="title" type="text" label="JGLOBAL_TITLE" required="true" size="60" />
 	<field name="path" type="text" label="COM_HIKARIFLIPBOOK_FIELD_PATH"
@@ -81,5 +81,13 @@
 			description="MOD_HIKARIFLIPBOOK_BREAKPOINT_DESC" default="700" filter="integer" />
 		<field name="flippingTime" type="number" label="MOD_HIKARIFLIPBOOK_FLIPPINGTIME_LABEL"
 			default="700" filter="integer" />
+		<field name="hotspotsShown" type="radio" layout="joomla.form.field.radio.switcher"
+			label="COM_HIKARIFLIPBOOK_HOTSPOTSSHOWN_LABEL"
+			description="COM_HIKARIFLIPBOOK_HOTSPOTSSHOWN_DESC" default="0">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field name="hotspots" type="hotspots" label="COM_HIKARIFLIPBOOK_HOTSPOTS_LABEL"
+			hiddenLabel="true" filter="raw" />
 	</fields>
 </form>

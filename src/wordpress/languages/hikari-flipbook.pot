@@ -2,22 +2,26 @@
 # This file is distributed under the GPL-3.0-or-later licence.
 msgid ""
 msgstr ""
-"Project-Id-Version: Hikari Flipbook 0.1.0\n"
+"Project-Id-Version: Hikari Flipbook 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/hikashop-nicolas/hikari-flipbook/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: hikari-flipbook\n"
 
-#: includes/Settings.php:133
+#: includes/Settings.php:134
 msgid "A different one each turn"
 msgstr ""
 
-#: includes/BookType.php:32
+#: includes/BookType.php:38
 msgid "Add a book"
 msgstr ""
 
-#: includes/BookType.php:90 includes/Settings.php:126
+#: includes/BookType.php:131
+msgid "Add a region"
+msgstr ""
+
+#: includes/BookType.php:190 includes/Settings.php:127
 msgid "Allow zooming"
 msgstr ""
 
@@ -37,15 +41,23 @@ msgstr ""
 msgid "Copy this link"
 msgstr ""
 
+#: includes/BookType.php:135
+msgid "Delete this region"
+msgstr ""
+
 #: src/core/Strings.php
 msgid "Download"
 msgstr ""
 
-#: includes/BookType.php:33
+#: includes/BookType.php:132
+msgid "Drag on the page to draw a region. Drag a region to move it, or its corner to resize it."
+msgstr ""
+
+#: includes/BookType.php:39
 msgid "Edit book"
 msgstr ""
 
-#: includes/Settings.php:134
+#: includes/Settings.php:135
 msgid "Every audio file in the plugin's media/sounds folder is offered here."
 msgstr ""
 
@@ -57,11 +69,11 @@ msgstr ""
 msgid "First page"
 msgstr ""
 
-#: includes/BookType.php:89 includes/Settings.php:125
+#: includes/BookType.php:189 includes/Settings.php:126
 msgid "First page stands alone as a cover"
 msgstr ""
 
-#: blocks/flipbook/editor.js:62 includes/BookType.php:31
+#: blocks/flipbook/editor.js:62 includes/BookType.php:37
 msgid "Flipbook"
 msgstr ""
 
@@ -69,7 +81,7 @@ msgstr ""
 msgid "Flipbook: %s"
 msgstr ""
 
-#: includes/BookType.php:30
+#: includes/BookType.php:36
 msgid "Flipbooks"
 msgstr ""
 
@@ -77,19 +89,27 @@ msgstr ""
 msgid "Fullscreen"
 msgstr ""
 
-#: src/core/Strings.php
+#: includes/BookType.php:139 src/core/Strings.php
 msgid "Go to page"
 msgstr ""
 
-#: includes/Settings.php:56 includes/Settings.php:57 includes/Settings.php:111
+#: includes/BookType.php:146
+msgid "Height %"
+msgstr ""
+
+#: includes/Settings.php:57 includes/Settings.php:58 includes/Settings.php:112
 msgid "Hikari Flipbook"
 msgstr ""
 
-#: includes/BookType.php:92 includes/Settings.php:137
+#: includes/BookType.php:68
+msgid "Hotspots"
+msgstr ""
+
+#: includes/BookType.php:192 includes/Settings.php:138
 msgid "Keep the page number in the address bar"
 msgstr ""
 
-#: blocks/flipbook/editor.js:53 includes/BookType.php:99 includes/Settings.php:141
+#: blocks/flipbook/editor.js:53 includes/BookType.php:199 includes/Settings.php:147
 msgid "Largest height (px)"
 msgstr ""
 
@@ -101,60 +121,96 @@ msgstr ""
 msgid "Leave empty to use the site default."
 msgstr ""
 
+#: includes/BookType.php:143
+msgid "Left %"
+msgstr ""
+
+#: includes/BookType.php:137
+msgid "Link"
+msgstr ""
+
 #: src/core/Strings.php
 msgid "Link copied"
 msgstr ""
 
-#: src/core/Strings.php
+#: includes/BookType.php:136
+msgid "Name"
+msgstr ""
+
+#: includes/BookType.php:142 src/core/Strings.php
 msgid "Next page"
 msgstr ""
 
-#: includes/BookType.php:35
+#: includes/BookType.php:41
 msgid "No books yet."
 msgstr ""
 
-#: includes/BookType.php:93 includes/Settings.php:138
+#: includes/BookType.php:133
+msgid "No region selected."
+msgstr ""
+
+#: includes/BookType.php:193 includes/Settings.php:139
 msgid "Offer the PDF for download"
 msgstr ""
 
-#: blocks/flipbook/editor.js:47 includes/BookType.php:84 includes/Settings.php:121
+#: blocks/flipbook/editor.js:47 includes/BookType.php:184 includes/Settings.php:122
 msgid "One or two, depending on the screen"
 msgstr ""
 
-#: blocks/flipbook/editor.js:48 includes/BookType.php:85 includes/Settings.php:122
+#: blocks/flipbook/editor.js:48 includes/BookType.php:185 includes/Settings.php:123
 msgid "One page"
+msgstr ""
+
+#: includes/BookType.php:138
+msgid "Open in a new tab"
 msgstr ""
 
 #: src/core/Strings.php
 msgid "Open the book"
 msgstr ""
 
+#: includes/Settings.php:143
+msgid "Outline every hotspot as soon as a book opens"
+msgstr ""
+
+#: includes/BookType.php:88
+msgid "Outline every region as soon as the book opens"
+msgstr ""
+
 #: src/core/Strings.php
 msgid "Page {page} of {total}"
 msgstr ""
 
-#: includes/BookType.php:101 includes/Settings.php:144
+#: includes/BookType.php:201 includes/Settings.php:150
 msgid "Page colour"
 msgstr ""
 
-#: includes/BookType.php:91 includes/Settings.php:127
+#: includes/BookType.php:191 includes/Settings.php:128
 msgid "Page turn sound"
 msgstr ""
 
-#: blocks/flipbook/editor.js:43 includes/BookType.php:83 includes/Settings.php:120
+#: blocks/flipbook/editor.js:43 includes/BookType.php:183 includes/Settings.php:121
 msgid "Pages shown"
 msgstr ""
 
-#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:65 includes/BookType.php:69
+#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:65 includes/BookType.php:169
 msgid "PDF or image folder"
 msgstr ""
 
-#: includes/BookType.php:104
+#: includes/BookType.php:204
 msgid "Place it with:"
 msgstr ""
 
-#: src/core/Strings.php
+#: includes/BookType.php:141 src/core/Strings.php
 msgid "Previous page"
+msgstr ""
+
+#: includes/BookType.php:140
+msgid "Product id"
+msgstr ""
+
+#: includes/BookType.php:134
+msgid "Region"
 msgstr ""
 
 #: blocks/flipbook/editor.js:41 blocks/flipbook/editor.js:66
@@ -169,15 +225,15 @@ msgstr ""
 msgid "Saved book"
 msgstr ""
 
-#: includes/BookType.php:34
+#: includes/BookType.php:40
 msgid "Search books"
 msgstr ""
 
-#: includes/BookType.php:94 includes/Settings.php:139
+#: includes/BookType.php:194 includes/Settings.php:140
 msgid "Show a share button"
 msgstr ""
 
-#: includes/BookType.php:95 includes/Settings.php:140
+#: includes/BookType.php:195 includes/Settings.php:141
 msgid "Show the cover, open the book over the page"
 msgstr ""
 
@@ -185,7 +241,7 @@ msgstr ""
 msgid "Site default"
 msgstr ""
 
-#: includes/BookType.php:53
+#: includes/BookType.php:59
 msgid "The book"
 msgstr ""
 
@@ -193,23 +249,35 @@ msgstr ""
 msgid "The id of a book from the Flipbooks screen. Leave empty to use a path."
 msgstr ""
 
-#: includes/BookType.php:100 includes/Settings.php:143
+#: includes/BookType.php:147
+msgid "This book could not be opened."
+msgstr ""
+
+#: includes/BookType.php:200 includes/Settings.php:149
 msgid "Toolbar colour"
 msgstr ""
 
-#: blocks/flipbook/editor.js:49 includes/BookType.php:86 includes/Settings.php:123
+#: includes/BookType.php:144
+msgid "Top %"
+msgstr ""
+
+#: blocks/flipbook/editor.js:49 includes/BookType.php:186 includes/Settings.php:124
 msgid "Two pages"
 msgstr ""
 
-#: includes/Settings.php:130
+#: includes/Settings.php:131
 msgid "Which page turn sound"
 msgstr ""
 
-#: includes/BookType.php:144 includes/Settings.php:171
+#: includes/BookType.php:145
+msgid "Width %"
+msgstr ""
+
+#: includes/BookType.php:250 includes/Settings.php:177
 msgid "Yes"
 msgstr ""
 
-#: includes/Settings.php:142
+#: includes/Settings.php:148
 msgid "Zero lets the book use the height of the screen."
 msgstr ""
 

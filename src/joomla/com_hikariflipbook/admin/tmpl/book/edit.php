@@ -55,6 +55,15 @@ use Joomla\CMS\Router\Route;
 		</div>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
+	<?php echo HTMLHelper::_('uitab.addTab', 'bookTab', 'hotspots', Text::_('COM_HIKARIFLIPBOOK_TAB_HOTSPOTS')); ?>
+		<div class="row">
+			<div class="col-lg-12">
+				<?php echo $this->form->renderField('hotspotsShown', 'params'); ?>
+				<?php echo $this->form->renderField('hotspots', 'params'); ?>
+			</div>
+		</div>
+	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+
 	<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
 	<input type="hidden" name="task" value="">

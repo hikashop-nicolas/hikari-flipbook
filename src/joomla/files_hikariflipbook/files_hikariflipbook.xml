@@ -5,7 +5,7 @@
 	<creationDate>2026-08</creationDate>
 	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later</license>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<description>FILES_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
 	<!-- The viewer itself, shared by every extension in the package rather than
 	     shipped once per extension: the PDF engine alone is a couple of megabytes.

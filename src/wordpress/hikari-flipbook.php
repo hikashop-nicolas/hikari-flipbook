@@ -3,7 +3,7 @@
  * Plugin Name:       Hikari Flipbook
  * Plugin URI:        https://github.com/hikashop-nicolas/hikari-flipbook
  * Description:       Shows a PDF or a folder of images as a book with turning pages.
- * Version:           0.1.0
+ * Version:           0.2.0
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Author:            Hikari Software

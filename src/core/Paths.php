@@ -36,4 +36,24 @@ final class Paths
     {
         return $path === $root || strpos($path, $root . '/') === 0;
     }
+
+    /**
+     * Public URLs for a source's files. Whoever shows a book needs these, and the
+     * admin screen that draws on one needs exactly the same list.
+     *
+     * @return array<int,string>
+     */
+    public static function urls(Platform $platform, Source $source): array
+    {
+        $root = self::root($platform);
+        $base = rtrim($platform->baseUrl(), '/');
+        $urls = [];
+
+        foreach ($source->files() as $file) {
+            $file   = self::normalise($file);
+            $urls[] = self::isInside($file, $root) ? $base . substr($file, strlen($root)) : $file;
+        }
+
+        return $urls;
+    }
 }

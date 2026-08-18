@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `#__hikariflipbook_books` (
 	`id` int NOT NULL AUTO_INCREMENT,
 	`title` varchar(255) NOT NULL DEFAULT '',
 	`path` varchar(1024) NOT NULL DEFAULT '',
-	`params` text,
+	`params` mediumtext,
 	`published` tinyint NOT NULL DEFAULT 1,
 	`access` int unsigned NOT NULL DEFAULT 1,
 	`ordering` int NOT NULL DEFAULT 0,

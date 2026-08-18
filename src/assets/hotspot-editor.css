@@ -1,0 +1,147 @@
+/* The hotspot editor. It sits inside a host's own admin form, so it takes no
+   opinion about typography and only styles what it draws itself. */
+.hikari-hotspots {
+  display: block;
+  max-width: 900px;
+}
+
+.hikari-hs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hikari-hs-btn {
+  border: 1px solid rgb(0 0 0 / 0.2);
+  background: #fff;
+  /* Both admins have a dark theme, and both hand a button their own text colour:
+     white on white is what that looks like here. */
+  color: #1f2328;
+  border-radius: 5px;
+  padding: 5px 11px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.hikari-hs-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.hikari-hs-add {
+  margin-left: auto;
+}
+
+.hikari-hs-remove {
+  border-color: #b42318;
+  color: #b42318;
+}
+
+.hikari-hs-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.hikari-hs-stage {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  border: 1px solid rgb(0 0 0 / 0.15);
+  background: #fff;
+}
+
+.hikari-hs-canvas {
+  display: block;
+  /* Tall enough to draw on accurately, short enough to see the whole page: a
+     page that runs off the bottom cannot be drawn on at all without scrolling. */
+  max-width: 100%;
+  max-height: 62vh;
+  width: auto;
+  height: auto;
+}
+
+.hikari-hs-layer {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.hikari-hs-spot {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid #2b6cb0;
+  background: rgb(43 108 176 / 0.18);
+  cursor: move;
+}
+
+.hikari-hs-spot.is-selected {
+  border-color: #b45309;
+  background: rgb(180 83 9 / 0.2);
+}
+
+.hikari-hs-spot:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+
+.hikari-hs-tag {
+  position: absolute;
+  top: -1.6em;
+  left: -2px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #2b6cb0;
+  color: #fff;
+  font: 600 11px/1.5 system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+.hikari-hs-grip {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border: 2px solid #2b6cb0;
+  border-radius: 2px;
+  cursor: nwse-resize;
+}
+
+.hikari-hs-help,
+.hikari-hs-none,
+.hikari-hs-error {
+  margin: 8px 0;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.hikari-hs-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: flex-end;
+  margin-top: 4px;
+}
+
+.hikari-hs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+}
+
+.hikari-hs-input {
+  background: #fff;
+  color: #1f2328;
+  padding: 5px 7px;
+  border: 1px solid rgb(0 0 0 / 0.25);
+  border-radius: 4px;
+  font: inherit;
+  min-width: 180px;
+}
+
+.hikari-hs-num {
+  min-width: 84px;
+}
