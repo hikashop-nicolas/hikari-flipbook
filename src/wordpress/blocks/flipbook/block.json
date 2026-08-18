@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "hikari-flipbook/book",
+  "title": "Flipbook",
+  "category": "media",
+  "icon": "book-alt",
+  "description": "Shows a PDF or a folder of images as a book with turning pages.",
+  "textdomain": "hikari-flipbook",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "attributes": {
+    "path": {
+      "type": "string",
+      "default": ""
+    },
+    "mode": {
+      "type": "string",
+      "default": ""
+    },
+    "showCover": {
+      "type": "string",
+      "default": ""
+    },
+    "sound": {
+      "type": "string",
+      "default": ""
+    },
+    "lightbox": {
+      "type": "string",
+      "default": ""
+    },
+    "maxHeight": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./editor.js"
+}

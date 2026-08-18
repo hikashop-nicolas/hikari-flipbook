@@ -14,6 +14,12 @@ await cp(join(root, "src/wordpress/hikari-flipbook.php"), join(work, "hikari-fli
 await installCore(work, GUARD, [
   [join(root, "src/wordpress/includes/WordPressPlatform.php"), "WordPressPlatform.php"],
 ]);
+
+for (const name of ["Settings.php", "Books.php"]) {
+  await cp(join(root, "src/wordpress/includes", name), join(work, "includes", name));
+}
+
+await cp(join(root, "src/wordpress/blocks"), join(work, "blocks"), { recursive: true });
 await installMedia(work);
 
 await guardAll(work, GUARD);

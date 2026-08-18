@@ -15,72 +15,57 @@
  * @package Hikari.Flipbook
  */
 
-use Hikari\Flipbook\Core\Config;
-use Hikari\Flipbook\Core\Renderer;
-use Hikari\Flipbook\Core\Source;
-use Hikari\Flipbook\Core\SourceException;
-use Hikari\Flipbook\Platform\WordPressPlatform;
+use Hikari\Flipbook\WordPress\Books;
+use Hikari\Flipbook\WordPress\Settings;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
 define('HIKARI_FLIPBOOK_VERSION', '0.1.0');
+define('HIKARI_FLIPBOOK_FILE', __FILE__);
 
 require_once __DIR__ . '/lib/bootstrap.php';
+require_once __DIR__ . '/includes/Settings.php';
+require_once __DIR__ . '/includes/Books.php';
 
 /**
- * [hikari_flipbook path="uploads/catalogue.pdf" mode="auto"]
+ * [hikari_flipbook path="uploads/catalogue.pdf" mode="single"]
+ *
+ * Any setting from the options screen works as an attribute; what is not given
+ * falls back to the site default.
+ *
+ * @param  mixed $atts
+ * @return string
  */
 function hikari_flipbook_shortcode($atts): string
 {
-    static $count = 0;
+    return Books::render(is_array($atts) ? $atts : []);
+}
 
-    $atts = shortcode_atts(
-        [
-            'path'         => '',
-            'mode'         => 'auto',
-            'showcover'    => '1',
-            'rtl'          => '0',
-            'zoom'         => '1',
-            'breakpoint'   => '700',
-            'flippingtime' => '700',
-        ],
-        $atts,
-        'hikari_flipbook'
-    );
-
-    // Shortcode attribute names arrive lowercased, the core speaks camelCase.
-    $params = [
-        'mode'         => $atts['mode'],
-        'showCover'    => $atts['showcover'],
-        'rtl'          => $atts['rtl'],
-        'zoom'         => $atts['zoom'],
-        'breakpoint'   => $atts['breakpoint'],
-        'flippingTime' => $atts['flippingtime'],
-    ];
-
-    $platform = new WordPressPlatform($params);
-
-    try {
-        $source = Source::fromPath($platform, (string) $atts['path']);
-    } catch (SourceException $e) {
-        if (!current_user_can('manage_options')) {
-            return '';
-        }
-
-        return '<div class="hikari-flipbook-error">'
-            . esc_html(sprintf(__('Flipbook: %s', 'hikari-flipbook'), $e->getMessage()))
-            . '</div>';
-    }
-
-    $count++;
-
-    return (new Renderer($platform))->render($source, new Config($params), 'hikari-flipbook-' . $count);
+/**
+ * The block renders through the same path as the shortcode, so the two cannot
+ * disagree about what a setting means.
+ *
+ * @param  array<string,mixed> $attributes
+ * @return string
+ */
+function hikari_flipbook_render_block(array $attributes): string
+{
+    // A block leaves unset settings empty; the site default fills them in.
+    return Books::render(array_filter($attributes, static function ($value): bool {
+        return $value !== '' && $value !== null;
+    }));
 }
 
 add_shortcode('hikari_flipbook', 'hikari_flipbook_shortcode');
 
 add_action('init', static function (): void {
-    load_plugin_textdomain('hikari-flipbook', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    load_plugin_textdomain('hikari-flipbook', false, dirname(plugin_basename(HIKARI_FLIPBOOK_FILE)) . '/languages');
+
+    register_block_type(__DIR__ . '/blocks/flipbook', [
+        'render_callback' => 'hikari_flipbook_render_block',
+    ]);
 });
+
+Settings::register();

@@ -158,8 +158,38 @@ if (!(await exists(wp))) {
     }
   }
 
-  for (const name of ["hikari_flipbook_shortcode"]) {
-    if (!main.includes(name)) fail("wordpress", `${name} is missing; global functions carry the plugin prefix`);
+  // Every global the plugin defines carries the prefix, since a plugin shares one
+  // namespace with every other plugin on the site.
+  for (const match of main.matchAll(/^function\s+(\w+)/gm)) {
+    if (!match[1].startsWith("hikari_flipbook_")) {
+      fail("wordpress", `${match[1]}() is a global without the plugin prefix`);
+    }
+  }
+  for (const match of main.matchAll(/^(?:define|const)\s*\(?\s*['"]?(\w+)/gm)) {
+    if (!match[1].startsWith("HIKARI_FLIPBOOK_")) {
+      fail("wordpress", `${match[1]} is a global constant without the plugin prefix`);
+    }
+  }
+
+  // The block
+  const blockFile = join(wp, "blocks/flipbook/block.json");
+  if (!(await exists(blockFile))) {
+    fail("wordpress", "blocks/flipbook/block.json is missing");
+  } else {
+    const block = JSON.parse(await read(blockFile));
+    if (!String(block.name).startsWith("hikari-flipbook/")) {
+      fail("wordpress", `the block is named ${block.name}, which is not under the plugin's namespace`);
+    }
+    if (block.textdomain !== "hikari-flipbook") {
+      fail("wordpress", `the block declares text domain ${block.textdomain}`);
+    }
+    for (const key of ["editorScript", "script", "style", "viewScript"]) {
+      const ref = block[key];
+      if (typeof ref !== "string" || !ref.startsWith("file:./")) continue;
+      if (!(await exists(join(wp, "blocks/flipbook", ref.slice("file:./".length))))) {
+        fail("wordpress", `block.json points ${key} at ${ref}, which is not in the package`);
+      }
+    }
   }
 }
 

@@ -23,7 +23,19 @@ final class WordPressPlatform implements Platform
     public function __construct(array $params, string $media = '')
     {
         $this->params = $params;
-        $this->media  = $media !== '' ? $media : plugin_dir_url(dirname(__DIR__) . '/hikari-flipbook.php');
+        $this->media  = $media !== '' ? $media : plugin_dir_url(self::pluginFile());
+    }
+
+    /**
+     * The plugin's own entry file.
+     *
+     * Deliberately not derived from where this class sits: the build copies the
+     * shared core into lib/, so a path worked out from __DIR__ points one folder
+     * too deep and every asset URL comes out with lib/ in it.
+     */
+    private static function pluginFile(): string
+    {
+        return defined('HIKARI_FLIPBOOK_FILE') ? HIKARI_FLIPBOOK_FILE : dirname(__DIR__, 2) . '/hikari-flipbook.php';
     }
 
     public function config(string $key, $default = null)
@@ -52,7 +64,7 @@ final class WordPressPlatform implements Platform
 
     public function mediaPath(): string
     {
-        return untrailingslashit(plugin_dir_path(dirname(__DIR__) . '/hikari-flipbook.php')) . '/media';
+        return untrailingslashit(plugin_dir_path(self::pluginFile())) . '/media';
     }
 
     public function cachePath(): string
@@ -87,6 +99,41 @@ final class WordPressPlatform implements Platform
         }
 
         wp_enqueue_script($name, $this->asset($path), [], HIKARI_FLIPBOOK_VERSION, true);
-        wp_script_add_data($name, 'type', 'module');
+        self::asModule($name);
+    }
+
+    /**
+     * Marks a script as an ES module.
+     *
+     * wp_script_add_data($handle, 'type', 'module') does not reach the tag, and the
+     * bundle is a module: without type="module" the browser stops at the first
+     * import and the book never appears. wp_enqueue_script_module() would do this
+     * properly but it arrived in 6.5, and this plugin supports 6.4.
+     */
+    private static function asModule(string $handle): void
+    {
+        static $filtered = false;
+
+        wp_script_add_data($handle, 'hikari_flipbook_module', true);
+
+        if ($filtered) {
+            return;
+        }
+        $filtered = true;
+
+        add_filter(
+            'script_loader_tag',
+            static function (string $tag, string $handle): string {
+                if (!wp_scripts()->get_data($handle, 'hikari_flipbook_module')) {
+                    return $tag;
+                }
+
+                return str_contains($tag, ' type=')
+                    ? preg_replace('/ type=(["\'])[^"\']*\1/', ' type="module"', $tag, 1)
+                    : preg_replace('/^<script /', '<script type="module" ', $tag, 1);
+            },
+            10,
+            2
+        );
     }
 }
