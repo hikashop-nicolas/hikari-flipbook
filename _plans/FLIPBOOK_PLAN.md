@@ -461,3 +461,15 @@ embedding page, which is why the module's colour reaches the toolbar. 0.4.0 host
 recordings. 0.5.0 synthesis removed.
 
 Next: phase 4, the WordPress plugin's block, shortcode, settings and book post type.
+
+
+## 16. Fixes after the first real use (2026-08-18)
+
+- **Fullscreen showed a small book in a large dark screen.** The module's height cap was still
+  applying. The cap exists to fit a book into the space a page gave it, which is the one thing
+  fullscreen is not, so flipview 0.5.1 ignores maxHeight in fullscreen and inside a lightbox.
+- **The page-turn sound is choosable, and extensible.** The sounds folder is read rather than
+  hard-coded: dropping a recording into media/hikariflipbook/sounds offers it in the module and the
+  plugin, with "a different one each turn" as the default. A choice is a filename and never a path,
+  and a choice that no longer exists falls back to all of them rather than to silence. Platform
+  gained mediaPath() for it, since nothing could previously see what a site had added.
