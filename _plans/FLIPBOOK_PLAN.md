@@ -213,7 +213,7 @@ current WP, PHP 8.1+, no jQuery.
 |---|---|---|---|
 | 0 | flipview | **Done 2026-08-18.** Spike: pdf.js plus StPageFlip, on-demand rendering, portrait mode. See section 10. | 1-2 days |
 | 1 | flipview | **Done 2026-08-18**, tagged v0.1.0 and public at github.com/hikashop-nicolas/flipview | 1 week |
-| 2 | hikari-flipbook | Repo skeleton, core plus Platform interface, both adapters as stubs, both builds producing installable empty-ish packages, **CI rules in place from day one** | 3-4 days |
+| 2 | hikari-flipbook | **Done 2026-08-18.** Skeleton, core plus Platform, both adapters, both builds installable, CI rules in place. Joomla package verified rendering on the local Joomla 6 site. | 3-4 days |
 | 3 | hikari-flipbook | Joomla module with the full v1.0 set, content plugin, custom field | 1 week |
 | 4 | hikari-flipbook | WordPress plugin: block, shortcode, settings, book CPT | 4-5 days |
 | 5 | both | Book manager: Joomla component and WP CPT admin, ACL, hotspot editor | 1-2 weeks |
@@ -391,3 +391,34 @@ stay in phase 6 as planned.
 
 Next: phase 2, the hikari-flipbook repo skeleton with the platform-free core and the CI directory
 rules, which land before there is any code to violate them.
+
+
+## 14. Phase 2 result (2026-08-18)
+
+The extension repo exists at ~/dev/hikari-flipbook, GPL-3.0-or-later, committed locally and not
+pushed. Both packages build from one shared core and the Joomla one has been installed on the local
+Joomla 6 site and watched rendering a real PDF on the front end.
+
+- `src/core` is platform-free PHP: config normalising, source resolution, rendering. `src/platform`
+  is the interface, and each host ships one implementation of it.
+- The host's own guard, `_JEXEC` or `ABSPATH`, is injected at build time rather than written in
+  source. The core is the one body of code both hosts share and each spells that guard differently.
+- `build/check-structure.mjs` enforces the rules from section 4 and is wired into CI. It was tested
+  by breaking things on purpose: a Joomla symbol in the core and a wrong text domain both fail the
+  build as they should.
+
+Four bugs were caught by testing rather than by reading, which is the argument for having done
+phase 2 this way:
+
+1. and 2. Two places compared paths against an unresolved site root. On a symlinked root, one
+   refused the site's own files and the other leaked a filesystem path into the page. Both were
+   caught by the core tests as they were written, and the fix is one shared Paths helper.
+3. The host adapter was copied into the package after the require list was generated, so the class
+   was never loaded. A running site found it; a new rule now checks that everything in lib/ is
+   required, and that the interface is required before the adapter that implements it.
+4. Page URLs were built by stripping the filesystem root, which is correct only at a domain root.
+   In a subdirectory install the viewer asked for a path that missed the site. Platform now has
+   baseUrl(). This one is worth remembering: it looks correct on any machine that serves from a
+   domain root, and most developer machines do.
+
+Next: phase 3, the Joomla module's full v1.0 option set, the content plugin and the custom field.
