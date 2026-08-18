@@ -16,6 +16,7 @@
 	<media destination="mod_hikariflipbook" folder="media">
 		<folder>js</folder>
 		<folder>css</folder>
+		<folder>sounds</folder>
 	</media>
 	<config>
 		<fields name="params">

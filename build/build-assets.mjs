@@ -10,6 +10,11 @@ const out = join(root, "dist", "media");
 
 await mkdir(join(out, "js"), { recursive: true });
 await mkdir(join(out, "css"), { recursive: true });
+await mkdir(join(out, "sounds"), { recursive: true });
+
+for (const name of ["page-turn-1.mp3", "page-turn-2.mp3"]) {
+  await copyFile(join(root, "src/assets/sounds", name), join(out, "sounds", name));
+}
 
 // pdf.js wants its worker as a separate file, and the ?url import has to resolve
 // to the copy we ship rather than to node_modules.

@@ -88,7 +88,6 @@ final class Config
             'hardCovers'   => (bool) $this->values['hardCovers'],
             'rtl'          => (bool) $this->values['rtl'],
             'zoom'         => (bool) $this->values['zoom'],
-            'sound'        => (bool) $this->values['sound'],
             'deepLink'     => (bool) $this->values['deepLink'],
             'share'        => (bool) $this->values['share'],
         ];

@@ -138,6 +138,13 @@ $html = (new Renderer($platform))->render(
 );
 check('can turn the toolbar off', strpos($html, '"toolbar":false') !== false);
 
+$html = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['sound' => '1']),
+    'book-6'
+);
+check('hands the viewer both recordings', substr_count($html, 'sounds/page-turn-') === 2);
+
 // A site in a subdirectory serves its files from under it: stripping the
 // filesystem root alone produced a URL that missed the site entirely.
 $sub = new FakePlatform($root, '/joomla6');
