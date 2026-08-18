@@ -529,3 +529,36 @@ Seven states, all clean, so any violation at all is now a regression. Three thin
 What it does not cover: axe finds around half of WCAG. Whether the reading order makes sense,
 whether a page turn is announced usefully, and whether the book can be read at all with a screen
 reader are still open questions for a person with a keyboard and one. Phase 6 owns that.
+
+
+## 19. Phase 5 result (2026-08-18)
+
+A book is defined once and placed anywhere. Verified on both local sites.
+
+- **Joomla**: `com_hikariflipbook`, a component with a books list and an edit form over its own
+  table, shipped inside the package. The module and the content plugin both take a saved book.
+- **WordPress**: a `hikari_book` post type with a meta box, because WordPress already knows how to
+  list, edit, restrict and trash a post. The shortcode and the block both take one.
+- **The core owns what a book is**: the two hosts store it differently and have to describe it
+  identically. Settings on the placement win over the book's own, so one book placed twice can look
+  different each time.
+- **Access is enforced where the book is read**, not after. Joomla filters by view level inside the
+  query; WordPress refuses anything not published unless the reader may read it. Both were checked
+  by restricting a book and confirming a visitor gets nothing at all.
+
+Three things the install taught me, all worth remembering for the next component:
+
+1. A component whose schema updates folder is empty fails to install, and **the failed attempt
+   leaves a registration behind** that makes every later attempt fail too. That second failure looks
+   like the first and sends you chasing the wrong thing.
+2. `services/provider.php` must ask the container for the **interfaces**, not for the service
+   providers that registered them. Get it wrong and the component installs happily and then cannot
+   boot at all.
+3. Joomla's CLI installer reports none of this: `[ERROR] Unable to install extension` and nothing
+   else. The web installer named the problem in one line. Use it when a component will not install.
+
+### Hotspots
+
+Still not started, and deliberately so: the hotspot editor is the second half of a feature whose
+first half does not exist. flipview has no hotspot layer yet, so there is nothing for an editor to
+edit. It stays on the list as its own piece of work, viewer first.
