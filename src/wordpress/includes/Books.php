@@ -7,10 +7,12 @@
 
 namespace Hikari\Flipbook\WordPress;
 
+use Hikari\Flipbook\Core\Book;
 use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
 use Hikari\Flipbook\Core\Source;
 use Hikari\Flipbook\Core\SourceException;
+use Hikari\Flipbook\Platform\WordPressBookStore;
 use Hikari\Flipbook\Platform\WordPressPlatform;
 
 /**
@@ -35,8 +37,15 @@ final class Books
             $lower[strtolower((string) $key)] = $value;
         }
 
+        // A saved book brings its own settings, over the site defaults; whatever
+        // the shortcode or block said wins over both.
+        $book = (new WordPressBookStore())->find($lower['book'] ?? 0);
+        $base = $book instanceof Book
+            ? array_merge(Settings::all(), $book->merged())
+            : Settings::all();
+
         $params = [];
-        foreach (array_merge(Settings::all(), ['path' => '']) as $key => $default) {
+        foreach (array_merge($base, ['path' => $base['path'] ?? '']) as $key => $default) {
             $params[$key] = $lower[strtolower($key)] ?? $default;
         }
 

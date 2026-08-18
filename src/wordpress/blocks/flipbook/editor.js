@@ -35,6 +35,8 @@
 					el(
 						components.PanelBody,
 						{ title: __('Book', 'hikari-flipbook') },
+						field(props, 'book', __('Saved book', 'hikari-flipbook'),
+							__('The id of a book from the Flipbooks screen. Leave empty to use a path.', 'hikari-flipbook')),
 						field(props, 'path', __('PDF or image folder', 'hikari-flipbook'),
 							__('Relative to the site, for example wp-content/uploads/catalogue.pdf', 'hikari-flipbook')),
 						el(components.SelectControl, {

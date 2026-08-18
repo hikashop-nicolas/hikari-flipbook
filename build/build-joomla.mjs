@@ -6,7 +6,10 @@ import { join } from "node:path";
 import { guardAll, installCore, installMedia, root, version, zip } from "./lib.mjs";
 
 const GUARD = "defined('_JEXEC') or die;";
-const CORE = [[join(root, "src/joomla/JoomlaPlatform.php"), "JoomlaPlatform.php"]];
+const CORE = [
+  [join(root, "src/joomla/JoomlaPlatform.php"), "JoomlaPlatform.php"],
+  [join(root, "src/joomla/JoomlaBookStore.php"), "JoomlaBookStore.php"],
+];
 
 const v = await version();
 // The extensions are staged outside the package root, so the package carries the
@@ -45,6 +48,14 @@ await extension("plg_content_hikariflipbook", join(root, "src/joomla/plg_content
   "hikariflipbook.xml",
   "language",
 ]);
+
+// The component manages the books and reads none of the shared core: it is plain
+// Joomla MVC over one table, so it ships without lib/.
+const component = join(work, "com_hikariflipbook");
+await mkdir(component, { recursive: true });
+await cp(join(root, "src/joomla/com_hikariflipbook"), component, { recursive: true });
+await guardAll(component, GUARD);
+await zip(component, "", join(stage, "packages", "com_hikariflipbook.zip"));
 
 // The file extension carries the media and nothing else, so it needs no core.
 const files = join(work, "files_hikariflipbook");

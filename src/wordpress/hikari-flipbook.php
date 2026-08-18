@@ -16,6 +16,7 @@
  */
 
 use Hikari\Flipbook\WordPress\Books;
+use Hikari\Flipbook\WordPress\BookType;
 use Hikari\Flipbook\WordPress\Settings;
 
 if (!defined('ABSPATH')) {
@@ -28,6 +29,7 @@ define('HIKARI_FLIPBOOK_FILE', __FILE__);
 require_once __DIR__ . '/lib/bootstrap.php';
 require_once __DIR__ . '/includes/Settings.php';
 require_once __DIR__ . '/includes/Books.php';
+require_once __DIR__ . '/includes/BookType.php';
 
 /**
  * [hikari_flipbook path="uploads/catalogue.pdf" mode="single"]
@@ -69,3 +71,4 @@ add_action('init', static function (): void {
 });
 
 Settings::register();
+BookType::register();

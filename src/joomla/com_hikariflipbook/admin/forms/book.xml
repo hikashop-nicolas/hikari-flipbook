@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<field name="id" type="number" label="JGLOBAL_FIELD_ID_LABEL" default="0" class="readonly" readonly="true" />
+	<field name="title" type="text" label="JGLOBAL_TITLE" required="true" size="60" />
+	<field name="path" type="text" label="COM_HIKARIFLIPBOOK_FIELD_PATH"
+		description="COM_HIKARIFLIPBOOK_FIELD_PATH_DESC" required="true" size="60" />
+	<field name="published" type="list" label="JSTATUS" default="1" validate="options">
+		<option value="1">JPUBLISHED</option>
+		<option value="0">JUNPUBLISHED</option>
+	</field>
+	<field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL" />
+	<field name="language" type="contentlanguage" label="JFIELD_LANGUAGE_LABEL">
+		<option value="*">JALL</option>
+	</field>
+
+	<fields name="params">
+		<field name="mode" type="list" label="MOD_HIKARIFLIPBOOK_MODE_LABEL" default="auto">
+			<option value="auto">MOD_HIKARIFLIPBOOK_MODE_AUTO</option>
+			<option value="single">MOD_HIKARIFLIPBOOK_MODE_SINGLE</option>
+			<option value="double">MOD_HIKARIFLIPBOOK_MODE_DOUBLE</option>
+		</field>
+			<field name="showCover" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_SHOWCOVER_LABEL" default="1">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="hardCovers" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_HARDCOVERS_LABEL" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="rtl" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_RTL_LABEL" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="lightbox" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_LIGHTBOX_LABEL" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="zoom" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_ZOOM_LABEL" default="1">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="sound" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_SOUND_LABEL" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+		<field name="soundFile" type="filelist" label="MOD_HIKARIFLIPBOOK_SOUNDFILE_LABEL"
+			description="MOD_HIKARIFLIPBOOK_SOUNDFILE_DESC"
+			directory="media/hikariflipbook/sounds"
+			filter="\.(mp3|ogg|wav|m4a|aac|opus)$"
+			hide_none="true" hide_default="true" exclude="index.html">
+			<option value="">MOD_HIKARIFLIPBOOK_SOUNDFILE_RANDOM</option>
+		</field>
+			<field name="download" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_DOWNLOAD_LABEL" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="share" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_SHARE_LABEL" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="deepLink" type="radio" layout="joomla.form.field.radio.switcher"
+				label="MOD_HIKARIFLIPBOOK_DEEPLINK_LABEL" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+		<field name="barColour" type="color" label="MOD_HIKARIFLIPBOOK_BARCOLOUR_LABEL"
+			description="MOD_HIKARIFLIPBOOK_COLOUR_DESC" format="hex" keywords="none" />
+		<field name="pageColour" type="color" label="MOD_HIKARIFLIPBOOK_PAGECOLOUR_LABEL"
+			description="MOD_HIKARIFLIPBOOK_COLOUR_DESC" format="hex" keywords="none" />
+		<field name="maxHeight" type="number" label="MOD_HIKARIFLIPBOOK_MAXHEIGHT_LABEL"
+			description="MOD_HIKARIFLIPBOOK_MAXHEIGHT_DESC" default="0" filter="integer" min="0" />
+		<field name="breakpoint" type="number" label="MOD_HIKARIFLIPBOOK_BREAKPOINT_LABEL"
+			description="MOD_HIKARIFLIPBOOK_BREAKPOINT_DESC" default="700" filter="integer" />
+		<field name="flippingTime" type="number" label="MOD_HIKARIFLIPBOOK_FLIPPINGTIME_LABEL"
+			default="700" filter="integer" />
+	</fields>
+</form>

@@ -15,6 +15,8 @@ require __DIR__ . '/../src/core/Paths.php';
 require __DIR__ . '/../src/core/SourceException.php';
 require __DIR__ . '/../src/core/Source.php';
 require __DIR__ . '/../src/core/Sounds.php';
+require __DIR__ . '/../src/core/Book.php';
+require __DIR__ . '/../src/core/BookStore.php';
 require __DIR__ . '/../src/core/Renderer.php';
 
 use Hikari\Flipbook\Core\Config;
@@ -186,6 +188,22 @@ check('lists what the folder holds, in order',
 $sub = new FakePlatform($root, '/joomla6');
 $html = (new Renderer($sub))->render(Source::fromPath($sub, 'book.pdf'), new Config([]), 'book-2');
 check('prefixes the site base path', strpos($html, '/joomla6/book.pdf') !== false);
+
+// --- Book ---------------------------------------------------------------------
+$book = Hikari\Flipbook\Core\Book::fromRow([
+    'title'  => 'Spring catalogue',
+    'path'   => 'images/book.pdf',
+    'params' => '{"mode":"single","sound":"1"}',
+    'access' => '2',
+]);
+check('reads settings stored as JSON', $book->options()['mode'] === 'single');
+check('keeps the access the host recorded', $book->access() === '2');
+check('offers its own path', $book->merged()['path'] === 'images/book.pdf');
+check('lets a caller override a setting', $book->merged(['mode' => 'double'])['mode'] === 'double');
+check('ignores an empty override', $book->merged(['mode' => ''])['mode'] === 'single');
+
+$book = Hikari\Flipbook\Core\Book::fromRow(['title' => 'Broken', 'params' => 'not json']);
+check('survives unreadable settings', $book->options() === []);
 
 echo $failures === 0 ? "\nall good\n" : "\n$failures failing\n";
 exit($failures === 0 ? 0 : 1);

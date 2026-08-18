@@ -9,6 +9,8 @@ use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
 use Hikari\Flipbook\Core\Source;
 use Hikari\Flipbook\Core\SourceException;
+use Hikari\Flipbook\Core\Book;
+use Hikari\Flipbook\Platform\JoomlaBookStore;
 use Hikari\Flipbook\Platform\JoomlaPlatform;
 use Joomla\CMS\Helper\ModuleHelper;
 
@@ -18,9 +20,14 @@ $platform = new JoomlaPlatform($params);
 $error    = '';
 $html     = '';
 
+// A saved book brings its own settings; anything set on the module wins over them,
+// so one book can be shown twice and look different each time.
+$book     = (new JoomlaBookStore())->find($params->get('book'));
+$settings = $book instanceof Book ? $book->merged($params->toArray()) : $params->toArray();
+
 try {
-    $source = Source::fromPath($platform, (string) $params->get('path', ''));
-    $config = new Config($params->toArray());
+    $source = Source::fromPath($platform, (string) ($settings['path'] ?? ''));
+    $config = new Config($settings);
     $html   = (new Renderer($platform))->render($source, $config, 'hikari-flipbook-' . $module->id);
 } catch (SourceException $e) {
     $error = $e->getMessage();

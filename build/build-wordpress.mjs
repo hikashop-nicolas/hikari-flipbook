@@ -13,9 +13,10 @@ await mkdir(join(work, "languages"), { recursive: true });
 await cp(join(root, "src/wordpress/hikari-flipbook.php"), join(work, "hikari-flipbook.php"));
 await installCore(work, GUARD, [
   [join(root, "src/wordpress/includes/WordPressPlatform.php"), "WordPressPlatform.php"],
+  [join(root, "src/wordpress/includes/WordPressBookStore.php"), "WordPressBookStore.php"],
 ]);
 
-for (const name of ["Settings.php", "Books.php"]) {
+for (const name of ["Settings.php", "Books.php", "BookType.php"]) {
   await cp(join(root, "src/wordpress/includes", name), join(work, "includes", name));
 }
 

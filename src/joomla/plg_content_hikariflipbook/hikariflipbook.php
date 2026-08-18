@@ -9,6 +9,8 @@ use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
 use Hikari\Flipbook\Core\Source;
 use Hikari\Flipbook\Core\SourceException;
+use Hikari\Flipbook\Core\Book;
+use Hikari\Flipbook\Platform\JoomlaBookStore;
 use Hikari\Flipbook\Platform\JoomlaPlatform;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -52,11 +54,20 @@ class PlgContentHikariflipbook extends CMSPlugin
     /** @param array<string,string> $atts */
     private function book(array $atts): string
     {
-        $params   = new Registry(array_merge($this->params->toArray(), $atts));
+        $settings = array_merge($this->params->toArray(), $atts);
+
+        // {flipbook book="3"} places a saved book; the attributes still win, so an
+        // article can borrow a book and show it its own way.
+        $book = (new JoomlaBookStore())->find($settings['book'] ?? 0);
+        if ($book instanceof Book) {
+            $settings = $book->merged($settings);
+        }
+
+        $params   = new Registry($settings);
         $platform = new JoomlaPlatform($params, 'hikariflipbook');
 
         try {
-            $source = Source::fromPath($platform, (string) $params->get('path', ''));
+            $source = Source::fromPath($platform, (string) ($settings['path'] ?? ''));
         } catch (SourceException $e) {
             return $this->complain($e->getMessage());
         }
@@ -65,7 +76,7 @@ class PlgContentHikariflipbook extends CMSPlugin
 
         return (new Renderer($platform))->render(
             $source,
-            new Config($params->toArray()),
+            new Config($settings),
             'hikari-flipbook-content-' . $this->count
         );
     }

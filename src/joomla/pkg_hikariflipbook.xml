@@ -10,6 +10,7 @@
 	<description>PKG_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
 	<files folder="packages">
 		<file type="file" id="hikariflipbook">files_hikariflipbook.zip</file>
+		<file type="component" id="com_hikariflipbook">com_hikariflipbook.zip</file>
 		<file type="module" client="site" id="mod_hikariflipbook">mod_hikariflipbook.zip</file>
 		<file type="plugin" group="content" id="hikariflipbook">plg_content_hikariflipbook.zip</file>
 		

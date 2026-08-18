@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+	<name>COM_HIKARIFLIPBOOK</name>
+	<author>Hikari Software</author>
+	<creationDate>2026-08</creationDate>
+	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later</license>
+	<version>0.1.0</version>
+	<description>COM_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
+	<namespace path="src">Hikari\Component\Hikariflipbook</namespace>
+
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+	</update>
+
+	<administration>
+		<menu img="class:generic">COM_HIKARIFLIPBOOK</menu>
+		<files folder="admin">
+			<folder>forms</folder>
+			<folder>language</folder>
+			<folder>services</folder>
+			<folder>sql</folder>
+			<folder>src</folder>
+			<folder>tmpl</folder>
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+		</files>
+	</administration>
+</extension>

@@ -1,0 +1,2 @@
+-- The first schema version. Joomla records it in #__schemas so later updates
+-- know where a site is starting from; the tables themselves come from install.

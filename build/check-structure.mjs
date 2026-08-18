@@ -47,6 +47,15 @@ const v = await version();
 const joomlaExtensions = [
   { name: "mod_hikariflipbook", manifest: "mod_hikariflipbook.xml", prefix: "MOD_HIKARIFLIPBOOK" },
   { name: "plg_content_hikariflipbook", manifest: "hikariflipbook.xml", prefix: "PLG_CONTENT_HIKARIFLIPBOOK" },
+  {
+    name: "com_hikariflipbook",
+    manifest: "com_hikariflipbook.xml",
+    prefix: "COM_HIKARIFLIPBOOK",
+    // A component declares its files inside <administration>, and its language
+    // sits under admin/ rather than at the root.
+    filesIn: "administration",
+    language: "admin/language",
+  },
 ];
 
 let joomla = null;
@@ -66,14 +75,17 @@ for (const ext of joomlaExtensions) {
   if (declared !== v) fail(ext.name, `manifest version ${declared} does not match package.json ${v}`);
 
   // Every declared file has to exist, and every shipped top-level entry has to be declared.
-  const filesBlock = manifest.match(/<files>([\s\S]*?)<\/files>/)?.[1] ?? "";
+  const filesBlock = ext.filesIn
+    ? manifest.match(/<files folder="admin">([\s\S]*?)<\/files>/)?.[1] ?? ""
+    : manifest.match(/<files>([\s\S]*?)<\/files>/)?.[1] ?? "";
   const named = [...filesBlock.matchAll(/<(?:filename|folder)[^>]*>([^<]+)</g)].map((m) => m[1]);
+  const base = ext.filesIn ? join(dir, "admin") : dir;
 
   for (const entry of named) {
-    if (!(await exists(join(dir, entry)))) fail(ext.name, `manifest declares ${entry}, which is not in the package`);
+    if (!(await exists(join(base, entry)))) fail(ext.name, `manifest declares ${entry}, which is not in the package`);
   }
-  for (const entry of new Set(files.map((f) => f.split("/")[0]))) {
-    if (entry === ext.manifest) continue;
+  for (const entry of await readdir(base)) {
+    if (entry === ext.manifest || entry === "admin" || entry === "site") continue;
     if (!named.includes(entry)) fail(ext.name, `${entry} ships but the manifest does not declare it`);
   }
 
@@ -106,7 +118,7 @@ for (const ext of joomlaExtensions) {
     }
   }
 
-  const locales = await readdir(join(dir, "language"));
+  const locales = await readdir(join(dir, ext.language || "language"));
   if (locales.length !== 1 || locales[0] !== "en-GB") {
     fail(ext.name, `ships ${locales.join(", ")}; only en-GB belongs in the package`);
   }
