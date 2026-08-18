@@ -219,7 +219,7 @@ current WP, PHP 8.1+, no jQuery.
 | 4 | hikari-flipbook | WordPress plugin: block, shortcode, settings, book CPT | 4-5 days |
 | 5 | both | Book manager: Joomla component and WP CPT admin, ACL, hotspot editor | 1-2 weeks |
 | 6 | flipview | Differentiators: accessibility pass, search, outline, thumbnails | 1 week |
-| 7 | hikari-flipbook | SEO layer, server-side cache, analytics, HikaShop product hotspots | 1 week |
+| 7 | hikari-flipbook | Hotspots **done 2026-08-19, section 23**. Left: SEO layer, server-side cache, analytics | 1 week |
 | 8 | both | Release: JED submission, wordpress.org submission, update server XML, docs, demo site | few days |
 
 CI rules land in phase 2, before there is any real code to violate them. Retrofitting a
@@ -599,7 +599,7 @@ What the language field did need was a voice: a book that is unpublished, or not
 language or this visitor, used to render nothing at all. Someone who can fix that is now told why,
 while a visitor still sees nothing.
 
-## 21. Hotspots, still to do
+## 21. Hotspots, the plan (done, see section 23)
 
 A hotspot is a region drawn on a page and bound to an action: open a URL, jump to another page, or
 add a HikaShop product to the cart. It is what turns a PDF catalogue into a shoppable one, and it
@@ -651,3 +651,48 @@ axe passes on ten states, which is the floor rather than the ceiling. Whether th
 makes sense, whether a page turn is announced usefully, and whether the book is genuinely usable
 with a screen reader are still open questions for a person with one. The text layer is what makes
 that question answerable at all; before it, the answer was simply no.
+
+
+## 23. Hotspots (2026-08-19)
+
+Done, on both hosts, and shoppable on a real HikaShop site. The three pieces:
+
+- **The viewer** (flipview 0.10.0): regions in fractions of a page, so one holds its place through
+  zoom, a resize and the single-page layout. Each is a real link or a real button, which is what
+  makes it reachable by keyboard, openable in a new tab and announceable by name. It also happens
+  to be why a click on one does not start a page turn: the engine's click forwarding already
+  leaves links and buttons alone.
+- **The editor**: one script both admin sides mount, a form field on Joomla and a meta box on
+  WordPress. Draw with the pointer, or type the numbers, which is what makes it usable from a
+  keyboard at all.
+- **The shop**: a region that names a product becomes a link to that product, resolved on the
+  server. `Shop` is its own interface rather than another Platform method, because a site without a
+  shop is not a broken site. Joomla asks HikaShop, WordPress asks WooCommerce.
+
+Verified end to end: a region drawn on the cover in the Joomla book screen, saved, and clicked on
+the front end, landing on the HikaShop product page. On WordPress, a region drawn in the meta box
+jumping the reader to page 4.
+
+### Two bugs the browser found, and reading would not have
+
+- **Two extensions, two copies of the core, one fatal.** The module, the content plugin and now the
+  component each ship their own copy; `require_once` cannot see that a different path declares the
+  same class, so the second one killed the page. Every require is now guarded by what the file
+  declares, one rule checks the guards exist and another loads three copies in one request to prove
+  they work. This was always latent: a page with the module and the plugin on it would have done
+  the same.
+- **The component's Save had never worked.** Joomla's toolbar asks the form validator whether the
+  form is valid, and a validator that was never loaded does not answer no: it throws, and the button
+  does nothing whatsoever. No error, no message, nothing saved.
+
+A third, smaller: WordPress stamps every asset URL with a version constant that had drifted from
+the plugin header, so an updated plugin would have served browsers the old bundle. There is a rule
+for that now too.
+
+### Still open
+
+- Nothing adds to the cart yet. A hotspot links to the product page, which is the honest version:
+  a cart button that ignores required options, stock or variants would be worse than a link. Add
+  to cart is worth doing once the product actually has no options.
+- The editor draws on one page at a time and has no way to copy a region to another page, which a
+  catalogue with a repeated layout will want.
