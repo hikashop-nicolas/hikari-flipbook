@@ -562,3 +562,53 @@ Three things the install taught me, all worth remembering for the next component
 Still not started, and deliberately so: the hotspot editor is the second half of a feature whose
 first half does not exist. flipview has no hotspot layer yet, so there is nothing for an editor to
 edit. It stays on the list as its own piece of work, viewer first.
+
+
+## 20. Translations (2026-08-18)
+
+Handled, and it was not before. The viewer shipped English tooltips and English aria-labels
+whatever the site's language, which is a translation gap and an accessibility one at the same time:
+a screen reader was reading English to a French visitor.
+
+`Core\Strings` maps each string the viewer says to the key a host looks up and the English it falls
+back to. One table, so a host cannot answer for a string the viewer does not use, or miss one that
+it does. Joomla answers from its ini files (verified with a language override: the button said
+"Tourner la page"), WordPress through gettext with the English as the msgid, which is what a
+translator expects to be handed.
+
+The WordPress plugin also shipped an empty `languages` folder, so a translator had nothing to work
+from. `npm run pot` writes the catalogue, 53 strings read out of the source, and a structure rule
+fails the build when it has fallen behind the code or the version.
+
+Joomla ships en-GB only, as HikaShop does; other locales come from translators.
+
+### Language associations for books
+
+The book table carries a language and the store filters on it, so a site can keep an English
+catalogue and a French one and place each from a language-assigned module or article. That covers
+the normal case.
+
+Associations, the com_associations mechanism that lets a language switcher jump from an article to
+its French twin, are **not implemented and are not proposed for v1.0**. A book is not a page a
+visitor navigates to: it is embedded in something that already has a language of its own, and that
+something is what a switcher moves between. The association would only earn its place if one module
+had to serve every language and swap books by itself, which is a real but narrow case, and one a
+site can already answer by assigning a module per language.
+
+What the language field did need was a voice: a book that is unpublished, or not meant for this
+language or this visitor, used to render nothing at all. Someone who can fix that is now told why,
+while a visitor still sees nothing.
+
+## 21. Hotspots, still to do
+
+A hotspot is a region drawn on a page and bound to an action: open a URL, jump to another page, or
+add a HikaShop product to the cart. It is what turns a PDF catalogue into a shoppable one, and it
+is the strategic reason this extension exists at all.
+
+It is two pieces of work in order:
+
+1. **The viewer**: a layer over each page holding regions in page-relative coordinates, so they
+   survive zoom, resize and the single-page layout, plus the events for a click on one. flipview
+   has none of this today.
+2. **The editor**: a screen that draws rectangles on a preview of a page and records what each one
+   points at. That is the piece the plan filed under phase 5, and it cannot start before the first.
