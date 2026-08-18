@@ -214,6 +214,20 @@ if (!(await exists(wp))) {
     if (block.textdomain !== "hikari-flipbook") {
       fail("wordpress", `the block declares text domain ${block.textdomain}`);
     }
+    // Every attribute the editor edits has to be declared, or the block drops
+    // it on the floor: an unregistered attribute simply does not survive.
+    const editor = await read(join(wp, "blocks/flipbook/editor.js"));
+    const edited = new Set([
+      ...[...editor.matchAll(/field\(props,\s*'(\w+)'/g)].map((m) => m[1]),
+      ...[...editor.matchAll(/props\.attributes\.(\w+)/g)].map((m) => m[1]),
+      ...[...editor.matchAll(/setAttributes\(\{\s*(\w+):/g)].map((m) => m[1]),
+    ]);
+    for (const name of edited) {
+      if (!Object.prototype.hasOwnProperty.call(block.attributes ?? {}, name)) {
+        fail("wordpress", `the editor edits "${name}", which block.json does not declare`);
+      }
+    }
+
     for (const key of ["editorScript", "script", "style", "viewScript"]) {
       const ref = block[key];
       if (typeof ref !== "string" || !ref.startsWith("file:./")) continue;
