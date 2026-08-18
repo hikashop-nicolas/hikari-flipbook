@@ -502,3 +502,30 @@ Three bugs, all found by installing rather than by reading, and the third is the
 Worth remembering from the same session: WordPress versions its asset URLs by the plugin version, so
 a rebuilt bundle at an unchanged version is served from cache. Hard reload when testing, and do not
 trust a screenshot after a rebuild without checking the file hash on disk.
+
+
+## 18. Accessibility tooling (2026-08-18)
+
+Modelled on HikaShop's `tools/a11y`, and living in flipview, because that is where the reader's
+surface is: the extension's own output is a container and a cover button, and its admin forms are
+the host's markup.
+
+`flipview/tools/a11y` runs axe-core over **states rather than pages**. A flipbook is one page whose
+accessibility changes as it is used, and the states worth auditing exist only after someone has
+clicked: the book over the page, the book filling the screen, the moment the share button reports
+back. The scanner clicks for real, which is the only way to audit fullscreen at all, and serves the
+built demo itself so a run needs nothing else up. `expected.json` holds a per-rule baseline exactly
+as HikaShop's does, and it is wired into CI.
+
+Seven states, all clean, so any violation at all is now a regression. Three things it found:
+
+- The page number field was white on a translucent tint, 3.19 against WCAG's 4.5 for text. It is a
+  solid field with dark text now, themeable through two new tokens.
+- The page count was dimmed to 3.76. Full strength now.
+- The lightbox cover button held a picture and nothing else, so it announced as an unnamed button.
+  It carries a label supplied by the host, since only the host can translate it. That gave the
+  shared core its own string namespace, HIKARI_FLIPBOOK_, which the structure rules now know about.
+
+What it does not cover: axe finds around half of WCAG. Whether the reading order makes sense,
+whether a page turn is announced usefully, and whether the book can be read at all with a screen
+reader are still open questions for a person with a keyboard and one. Phase 6 owns that.
