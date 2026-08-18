@@ -473,3 +473,32 @@ Next: phase 4, the WordPress plugin's block, shortcode, settings and book post t
   plugin, with "a different one each turn" as the default. A choice is a filename and never a path,
   and a choice that no longer exists falls back to all of them rather than to silence. Platform
   gained mediaPath() for it, since nothing could previously see what a site had added.
+
+
+## 17. Phase 4 result (2026-08-18)
+
+The WordPress plugin installs, activates and renders on the local WordPress 7 site. A settings
+screen holds the site defaults, a shortcode and a Gutenberg block both place books, and both go
+through one `Books::render` so they cannot disagree about what a setting means. The block renders
+on the server; its editor script is written against the globals WordPress already loads, so there
+is no build step for it.
+
+The book post type is deferred to phase 5, where the Joomla component and it are the same feature.
+
+Three bugs, all found by installing rather than by reading, and the third is the one that matters:
+
+1. **Asset URLs came out with `lib/` in them.** The platform worked its paths out from its own
+   file, and the build copies the shared core into `lib/`. It reads the plugin's entry constant now.
+2. **`wp_script_add_data($handle, 'type', 'module')` does not reach the tag.** The bundle is an ES
+   module, so the browser stopped at the first import and nothing mounted. There is a
+   `script_loader_tag` filter for it; `wp_enqueue_script_module()` would be the clean answer but it
+   arrived in 6.5 and the plugin supports 6.4.
+3. **A book in a narrow container blew up to a million pixels wide.** flipview was forcing the
+   engine's orientation by driving `minWidth` to an extreme, and the engine writes that value onto
+   the element as a `min-width`. Every container tested until now happened to be wide enough to take
+   the other branch. Fixed in flipview 0.5.4 by setting `minWidth` to one page width, which decides
+   the same thing honestly and does no harm on the element.
+
+Worth remembering from the same session: WordPress versions its asset URLs by the plugin version, so
+a rebuilt bundle at an unchanged version is served from cache. Hard reload when testing, and do not
+trust a screenshot after a rebuild without checking the file hash on disk.
