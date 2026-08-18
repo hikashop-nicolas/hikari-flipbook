@@ -612,3 +612,42 @@ It is two pieces of work in order:
    has none of this today.
 2. **The editor**: a screen that draws rectangles on a preview of a page and records what each one
    points at. That is the piece the plan filed under phase 5, and it cannot start before the first.
+
+
+## 22. Phase 6 result (2026-08-18)
+
+The differentiators, all in flipview and inherited by both packages. Released as 0.7.0, 0.8.0 and
+0.9.0 and pinned into the extension.
+
+- **The page's own text**, laid over the picture of it. This was the honest gap: a book was a stack
+  of images, so there was nothing to select, nothing to find and nothing for a screen reader to
+  read. Pages also announce themselves with their number and the total.
+- **Search** over the document, marking hits on the page. Pages are read on demand and kept, so the
+  first search of a long document costs one pass and later ones cost nothing, and a book of images
+  never offers the box at all.
+- **Contents and pages panel**: the document's own table of contents where it has one, its pages as
+  thumbnails where it does not, in one panel. Thumbnails are painted when it is first opened.
+- **prefers-reduced-motion** is honoured: the turn still happens, it stops being an animation.
+
+The accessibility scan grew to ten states and stays clean, so the toolbar, the panel, the search and
+the marks are all covered. It earned its keep twice this phase, once on a dimmed line I had just
+added to the demo and once on the search state.
+
+Bugs worth remembering:
+
+- The text layer has to be scaled to the width a page is **shown** at, not the width it was
+  rasterised at, and rescaled on every relayout. Its CSS is pdf.js's own, renamed: pdf.js writes
+  positions as percentages and sizes into custom properties and leaves the arithmetic to the
+  stylesheet, so hand-rolled CSS gives default-size text in roughly the right place.
+- The panel set `hidden` while its own `display` rule overrode it, so it was never hidden, and it
+  was built after a promise resolved, so it could not be opened before then.
+- The demo needed a PDF with bookmarks and nothing on the machine could make one, so there is a
+  hand-written four page sample. Its first draft drew text above the MediaBox: valid, invisible and
+  baffling.
+
+### What is still not covered
+
+axe passes on ten states, which is the floor rather than the ceiling. Whether the reading order
+makes sense, whether a page turn is announced usefully, and whether the book is genuinely usable
+with a screen reader are still open questions for a person with one. The text layer is what makes
+that question answerable at all; before it, the answer was simply no.
