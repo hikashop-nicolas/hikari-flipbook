@@ -112,8 +112,9 @@ pkg_hikariflipbook.zip containing:
 - mod_hikariflipbook, the renderer module (J4/J5/J6 style: services/provider.php, src/Dispatcher,
   src/Helper, tmpl/)
 - plg_content_hikariflipbook, shortcode for articles
-- plg_fields_hikariflipbook, custom field type, so a book attaches to an article, a contact, or a
-  HikaShop product
+- ~~plg_fields_hikariflipbook, custom field type~~ **skipped by decision, 2026-08-18**. The
+  content plugin already places a book anywhere article text goes, which covers most of what the
+  field would have added
 - com_hikariflipbook (phase 3), the book manager: define a book once with its settings, access
   level, and hotspots, instead of reconfiguring every module instance
 - media/mod_hikariflipbook/ with joomla.asset.json, registered through the Web Asset Manager
@@ -422,3 +423,41 @@ phase 2 this way:
    domain root, and most developer machines do.
 
 Next: phase 3, the Joomla module's full v1.0 option set, the content plugin and the custom field.
+
+
+## 15. Phase 3 result (2026-08-18)
+
+The Joomla side is complete for v1.0 and installs as a package,
+`pkg_hikariflipbook-0.1.0.zip`, 616 KB.
+
+- **mod_hikariflipbook** carries the full option set: cover and rigid covers, right to left, sound,
+  zoom, deep links, download, share, lightbox, per-button toolbar switches, toolbar and page
+  colours, a height cap, the breakpoint and the turn duration.
+- **plg_content_hikariflipbook** turns `{flipbook path="..."}` in article text into a book, with
+  every module setting available as an attribute over the plugin's own defaults.
+- **files_hikariflipbook** carries the viewer once into `media/hikariflipbook`, shared by both.
+  Duplicating it would have shipped the PDF engine twice.
+- The custom field plugin is **skipped by decision**: the content plugin already places a book
+  anywhere article text goes.
+
+All verified on the local Joomla 6 site: package installs, module renders, shortcode replaces in
+place with the surrounding text intact.
+
+### The sound
+
+Synthesis was tried and rejected: it was a passable rustle and an unconvincing page turn. The
+viewer now plays recordings only, two of them, picked between at random with a little rate
+variation so a repeat does not sound like one. They ship in the package at about 5 KB each,
+trimmed, mono, and levelled to match each other within half a decibel.
+
+They are Pixabay-licensed, which is redistributable but not the GPL. See THIRD-PARTY.md: if the JED
+or wordpress.org objects, swapping in CC0 recordings is a file change, since the viewer takes any
+URL and ships no audio itself.
+
+### flipview releases this phase
+
+0.2.0 sound, download and share buttons. 0.2.1 maxHeight. 0.2.2 theme tokens settable from an
+embedding page, which is why the module's colour reaches the toolbar. 0.4.0 host-supplied
+recordings. 0.5.0 synthesis removed.
+
+Next: phase 4, the WordPress plugin's block, shortcode, settings and book post type.
