@@ -191,6 +191,74 @@ blockquote {
 
 /* --- documentation pages --- */
 .doc { padding: 40px 0 70px; }
+
+/* Wider than the presentation page: the side navigation takes its width out of
+   the same wrap, and the prose keeps a readable measure of its own. */
+.doc .wrap { max-width: 1120px; }
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  gap: 46px;
+  align-items: start;
+}
+
+.doc-grid > article { max-width: 74ch; }
+
+/* Below the bar, which is sticky itself, and never taller than what is left of
+   the window, so a long list scrolls inside the column rather than pushing it. */
+.side {
+  position: sticky;
+  top: 86px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+}
+
+.side h2 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.side ul { margin: 0; padding: 0; list-style: none; }
+
+.side a {
+  display: block;
+  padding: 7px 12px;
+  border-left: 2px solid var(--line);
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.side a:hover { color: var(--ink); background: var(--wash); }
+
+.side a[aria-current] {
+  border-left-color: var(--brand);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* One column when there is no room for two: the list becomes a short header
+   above the page instead of a rail beside it. */
+@media (max-width: 900px) {
+  .doc-grid { grid-template-columns: 1fr; gap: 22px; }
+
+  .side {
+    position: static;
+    max-height: none;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .side ul { display: flex; flex-wrap: wrap; gap: 4px; }
+  .side a { border-left: 0; padding: 6px 10px; border-radius: 7px; background: var(--wash); }
+}
+
 .doc h1 { font-size: 32px; margin: 0 0 22px; letter-spacing: -0.02em; }
 .doc h2 { margin-top: 38px; }
 .doc h3 { margin-top: 26px; font-size: 18px; }

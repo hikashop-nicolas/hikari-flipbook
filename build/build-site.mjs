@@ -101,7 +101,7 @@ await cp(join(root, "site/style.css"), join(out, "style.css"));
 await cp(join(root, "site/img"), join(out, "img"), { recursive: true });
 
 /** The shell every documentation page shares with the presentation page. */
-function page(title, body, depth) {
+function page(title, body, depth, aside) {
   const up = "../".repeat(depth);
 
   return `<!doctype html>
@@ -131,9 +131,18 @@ function page(title, body, depth) {
 </header>
 
 <main class="doc">
-  <div class="wrap">
+  <div class="wrap doc-grid">
+    <aside class="side">
+      <nav aria-label="Documentation">
+        <h2>Documentation</h2>
+        <ul>
+${aside}
+        </ul>
+      </nav>
+    </aside>
+    <article>
 ${body}
-    <p class="crumb"><a href="${up}docs/">← All the documentation</a></p>
+    </article>
   </div>
 </main>
 
@@ -149,15 +158,51 @@ ${body}
 }
 
 const files = (await readdir(join(root, "docs"))).filter((f) => f.endsWith(".md"));
+const written = new Map();
 
 for (const file of files) {
   const markdown = await readFile(join(root, "docs", file), "utf8");
   // Links between the pages are written for GitHub, where they are .md files.
   const html = marked.parse(markdown.replace(/\((?!https?:)([\w-]+)\.md(#[\w-]+)?\)/g, "($1.html$2)"));
-  const title = markdown.match(/^#\s+(.+)$/m)?.[1] ?? basename(file, ".md");
-  const name = file === "README.md" ? "index.html" : file.replace(/\.md$/, ".html");
 
-  await writeFile(join(out, "docs", name), page(title, html, 1), "utf8");
+  written.set(file, {
+    html,
+    title: markdown.match(/^#\s+(.+)$/m)?.[1] ?? basename(file, ".md"),
+    name: file === "README.md" ? "index.html" : file.replace(/\.md$/, ".html"),
+    markdown,
+  });
+}
+
+// The order of the side navigation, and the words in it, are the list the front
+// page of the documentation already carries. A second list would be a second
+// thing to keep right. Anything not on that list still gets a place, at the end.
+const listed = [...(written.get("README.md")?.markdown ?? "").matchAll(
+  /\[([^\]]+)\]\((?!https?:)([\w-]+)\.md\)/g,
+)].map((match) => ({ label: match[1], file: `${match[2]}.md` }));
+
+const order = [
+  { label: "Overview", file: "README.md" },
+  ...listed.filter((entry) => written.has(entry.file)),
+  ...files
+    .filter((file) => file !== "README.md" && !listed.some((entry) => entry.file === file))
+    .sort()
+    .map((file) => ({ label: written.get(file).title, file })),
+];
+
+/** The same list on every page, with the page being read marked as such. */
+function aside(here) {
+  return order
+    .map(({ label, file }) => {
+      const at = written.get(file).name;
+      const mark = file === here ? ' aria-current="page"' : "";
+
+      return `          <li><a href="${at}"${mark}>${label}</a></li>`;
+    })
+    .join("\n");
+}
+
+for (const [file, doc] of written) {
+  await writeFile(join(out, "docs", doc.name), page(doc.title, doc.html, 1, aside(file)), "utf8");
 }
 
 // GitHub Pages runs Jekyll by default, which ignores anything starting with an
