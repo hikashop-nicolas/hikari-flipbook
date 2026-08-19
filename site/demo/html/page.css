@@ -1,0 +1,71 @@
+/* One stylesheet for every page of the HTML book. The pages are ordinary web
+   pages: this is what a site already knows how to edit. */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 64px 72px;
+  width: 800px;
+  height: 1131px;
+  background: #fffdf8;
+  color: #1e2733;
+  font: 17px/1.6 Georgia, "Iowan Old Style", serif;
+}
+
+h1 {
+  margin: 0 0 6px;
+  font-size: 44px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #14532d;
+}
+
+h2 {
+  margin: 40px 0 10px;
+  font-size: 24px;
+  color: #14532d;
+}
+
+.kicker {
+  margin: 0 0 34px;
+  font: 600 13px/1 -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7a8b7f;
+}
+
+p { margin: 0 0 16px; }
+
+a { color: #14532d; }
+
+.rule { height: 3px; background: #14532d; margin: 0 0 34px; width: 96px; }
+
+.item {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid #e6e2d8;
+}
+
+.item b { flex: 1; font-weight: 600; }
+.item .price { font: 600 16px/1 -apple-system, "Segoe UI", sans-serif; color: #7a8b7f; }
+
+.note {
+  margin-top: 36px;
+  padding: 18px 20px;
+  background: #eef4ee;
+  border-left: 4px solid #14532d;
+  font-size: 15px;
+}
+
+.foot {
+  position: absolute;
+  bottom: 48px;
+  left: 72px;
+  right: 72px;
+  font: 12px/1 -apple-system, "Segoe UI", sans-serif;
+  color: #9aa79d;
+  display: flex;
+  justify-content: space-between;
+}

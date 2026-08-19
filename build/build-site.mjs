@@ -39,7 +39,8 @@ await cp(join(root, "site/demo"), join(out, "demo"), { recursive: true });
 // showing it. Everything here is served from one folder with no hashing.
 const stamp = (html) =>
   html
-    .replace(/(demo\/catalogue\.pdf)/g, `$1?v=${v}`)
+    // Anything the demo names out of demo/, and the bundle and stylesheet with it.
+    .replace(/(demo\/[\w./-]+\.(?:pdf|epub|jpg|png|html))/g, `$1?v=${v}`)
     .replace(/(media\/(?:js|css)\/[\w.-]+)"/g, `$1?v=${v}"`);
 
 await writeFile(join(out, "demo.html"), stamp(await readFile(join(root, "site/demo.html"), "utf8")), "utf8");

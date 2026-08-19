@@ -4,16 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demo — Hikari Flipbook</title>
-<meta name="description" content="A real Hikari Flipbook book, running the same front-end both the Joomla package and the WordPress plugin ship.">
+<meta name="description" content="Four books, four kinds of document, one viewer: a PDF, an EPUB, a folder of images and a folder of HTML pages.">
 <link rel="icon" href="img/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="media/css/flipbook.css">
 <style>
+  .kinds { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 0; padding: 0; list-style: none; }
+  .kinds a {
+    display: block;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--wash);
+  }
+  .kinds a:hover { border-color: var(--brand); }
+  .kinds a[aria-current] { background: var(--button); border-color: var(--button); color: #fff; }
+  .kinds b { display: block; font-size: 15px; }
+  .kinds span { display: block; font-size: 13px; opacity: 0.75; }
+  .kinds a[aria-current] span { opacity: 0.9; }
   .stage { padding: 26px 0 10px; }
-  .stage .hikari-flipbook { --fv-page-bg: #fff; }
-  .hint { color: var(--dim); font-size: 15px; margin: 6px 0 0; }
-  .legend { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 18px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--dim); }
-  .legend b { color: var(--ink); font-weight: 600; }
+  .about { color: var(--dim); font-size: 15px; margin: 18px 0 0; }
+  .about b { color: var(--ink); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -35,77 +48,126 @@
 
 <main>
 
-<section style="padding-bottom: 18px;">
+<section style="padding-bottom: 0;">
   <div class="wrap">
-    <h2>A book, not a picture of one</h2>
+    <h2>Four books, one viewer</h2>
     <p class="sub">
-      A seed catalogue from 1900, in the front-end both packages ship, loaded exactly the
-      way the Joomla module and the WordPress shortcode load it. The document is a PDF
-      sitting next to this page; nothing is uploaded and no server does any work.
+      A document can be a PDF, an EPUB, a folder of images or a folder of HTML pages.
+      This is the front-end both packages ship, loaded the way the Joomla module and the
+      WordPress shortcode load it. Everything happens in your browser.
     </p>
+    <ul class="kinds" id="kinds"></ul>
+    <p class="about" id="about"></p>
   </div>
 </section>
 
 <div class="stage">
   <div class="wrap">
-    <!-- The same container and the same payload the PHP side writes. -->
-    <div class="hikari-flipbook" id="hikari-flipbook-demo" data-flipbook='{
-      "kind": "pdf",
-      "pages": ["demo/catalogue.pdf"],
-      "lightbox": false,
-      "showHotspots": true,
-      "options": {
-        "mode": "auto",
-        "breakpoint": 700,
-        "flippingTime": 700,
-        "showCover": true,
-        "zoom": true,
-        "share": true,
-        "deepLink": true,
-        "maxHeight": 620,
-        "downloadUrl": "demo/catalogue.pdf",
-        "soundUrl": ["media/sounds/page-turn-1.mp3", "media/sounds/page-turn-2.mp3"],
-        "hotspots": [
-          { "page": 2, "x": 0.12, "y": 0.13, "width": 0.22, "height": 0.23,
-            "href": "docs/hotspots.html", "label": "Aster, Ball or Jewel, 6d a packet" },
-          { "page": 2, "x": 0.28, "y": 0.44, "width": 0.21, "height": 0.20,
-            "goToPage": 6, "label": "Daisy, Snowball, 6d a packet: turn to the vegetables" }
-        ]
-      }
-    }'></div>
+    <div class="hikari-flipbook" id="hikari-flipbook-demo"></div>
   </div>
 </div>
 
-<section style="border-top: 0; padding-top: 18px;">
+<section style="border-top: 0; padding-top: 8px;">
   <div class="wrap">
-    <p class="hint">
+    <p class="hint" style="color: var(--dim); font-size: 15px;">
       Drag a corner to turn a page, or use the toolbar. Arrow keys, Home and End work once
-      the book has focus.
+      the book has focus. Search, contents and thumbnails are in the toolbar.
     </p>
-    <ul class="legend">
-      <li><b>Search</b> the document from the toolbar</li>
-      <li><b>Contents and pages</b> from the button beside it</li>
-      <li><b>Two hotspots</b> are outlined on page 3, over what they sell</li>
-      <li><b>Sound</b> plays from the first turn a visitor makes</li>
-    </ul>
-    <p style="margin-top: 26px;">
-      <a href="docs/placing-a-book.html">How a book is placed on a page →</a>
-    </p>
+    <p><a href="docs/placing-a-book.html">How a book is placed on a page →</a></p>
   </div>
 </section>
 
 </main>
 
 <footer>
-  <div class="wrap">
-    Hikari Flipbook, by <a href="https://www.hikashop.com">Hikari Software</a>. GPL-3.0-or-later.
-    The document is twelve pages of
-    <a href="https://archive.org/details/Shepherd56406">P.L.C. Shepherd &amp; Son's catalogue of
-    seeds &amp; plants, Sydney, 1900</a>, in the public domain, from the Internet Archive. Its text
-    comes from OCR of a scan, so search finds what the machine could read of it.
-  </div>
+  <div class="wrap" id="credit"></div>
 </footer>
 
+<script>
+// The page writes the same container and payload the PHP side writes, choosing the
+// document from the URL. Nothing here is part of the extension: it stands in for the
+// module or the shortcode, so that what runs below is exactly what a site runs.
+(function () {
+  var pages = [];
+  for (var i = 2; i <= 7; i++) pages.push("demo/pages/pg-0" + i + ".jpg");
+
+  var books = {
+    pdf: {
+      name: "PDF",
+      what: "A scanned catalogue",
+      about: "<b>A PDF.</b> Twelve pages of a Sydney seed catalogue from 1900, scanned. Its pages are pictures, so the words come from the scan's own OCR; two hotspots are outlined on page 3, over what they sell.",
+      credit: 'The document is twelve pages of <a href="https://archive.org/details/Shepherd56406">P.L.C. Shepherd &amp; Son\'s catalogue of seeds &amp; plants, Sydney, 1900</a>, in the public domain, from the Internet Archive.',
+      payload: {
+        kind: "pdf",
+        pages: ["demo/catalogue.pdf"],
+        showHotspots: true,
+        options: {
+          downloadUrl: "demo/catalogue.pdf",
+          hotspots: [
+            { page: 2, x: 0.12, y: 0.13, width: 0.22, height: 0.23,
+              href: "docs/hotspots.html", label: "Aster, Ball or Jewel, 6d a packet" },
+            { page: 2, x: 0.28, y: 0.44, width: 0.21, height: 0.2,
+              goToPage: 6, label: "Daisy, Snowball, 6d a packet: turn to the vegetables" }
+          ]
+        }
+      }
+    },
+    epub: {
+      name: "EPUB",
+      what: "A fixed-layout comic",
+      about: "<b>An EPUB.</b> A fixed-layout book: its pages were drawn at a size and are shown as they were designed. Reflowable EPUBs work too, and are laid out into pages for the screen they are read on.",
+      credit: '<a href="https://github.com/IDPF/epub3-samples">La Page Blanche</a> by Boulet and Pénélope Bagieu, éditions Delcourt, from the IDPF EPUB 3 samples, under CC BY-SA 3.0.',
+      payload: { kind: "epub", pages: ["demo/comic.epub"], options: {} }
+    },
+    images: {
+      name: "Images",
+      what: "A folder of pictures",
+      about: "<b>A folder of images.</b> One picture per page, in natural order. Nothing is decoded and no worker runs: the browser already knows how to show these.",
+      credit: 'The pictures are pages of the same 1900 catalogue, from <a href="https://archive.org/details/Shepherd56406">the Internet Archive</a>, in the public domain.',
+      payload: { kind: "images", pages: pages, options: {} }
+    },
+    html: {
+      name: "HTML pages",
+      what: "A folder of web pages",
+      about: "<b>A folder of HTML pages.</b> Each page is an ordinary file the site already serves, so the text is real text, the links work, and a page is edited the way any other page is edited.",
+      credit: "The pages of the HTML book were written for this demo.",
+      payload: { kind: "html", pages: ["demo/html/01.html", "demo/html/02.html", "demo/html/03.html", "demo/html/04.html"], options: {} }
+    }
+  };
+
+  var order = ["pdf", "epub", "images", "html"];
+  var wanted = new URLSearchParams(location.search).get("book");
+  if (!books[wanted]) wanted = "pdf";
+
+  var list = document.getElementById("kinds");
+  order.forEach(function (key) {
+    var item = document.createElement("li");
+    var link = document.createElement("a");
+    link.href = "demo.html?book=" + key;
+    if (key === wanted) link.setAttribute("aria-current", "page");
+    link.innerHTML = "<b>" + books[key].name + "</b><span>" + books[key].what + "</span>";
+    item.appendChild(link);
+    list.appendChild(item);
+  });
+
+  var book = books[wanted];
+  document.getElementById("about").innerHTML = book.about;
+  document.getElementById("credit").innerHTML =
+    'Hikari Flipbook, by <a href="https://www.hikashop.com">Hikari Software</a>. GPL-3.0-or-later. ' +
+    book.credit;
+
+  var payload = book.payload;
+  payload.lightbox = false;
+  payload.options.mode = "auto";
+  payload.options.maxHeight = 620;
+  payload.options.zoom = true;
+  payload.options.share = true;
+  payload.options.deepLink = true;
+  payload.options.soundUrl = ["media/sounds/page-turn-1.mp3", "media/sounds/page-turn-2.mp3"];
+
+  document.getElementById("hikari-flipbook-demo").setAttribute("data-flipbook", JSON.stringify(payload));
+})();
+</script>
 <script type="module" src="media/js/flipbook.js"></script>
 </body>
 </html>

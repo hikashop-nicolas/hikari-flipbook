@@ -122,6 +122,15 @@ file_put_contents($root . '/book.epub', 'PK');
 $epub = Source::fromPath(new FakePlatform($root), 'book.epub');
 check('reads an EPUB as an EPUB', $epub->kind() === Source::KIND_EPUB);
 
+@mkdir($root . '/pages');
+file_put_contents($root . '/pages/02.html', '<html></html>');
+file_put_contents($root . '/pages/01.html', '<html></html>');
+file_put_contents($root . '/pages/page.css', 'body{}');
+$html = Source::fromPath(new FakePlatform($root), 'pages');
+check('reads a folder of HTML pages', $html->kind() === Source::KIND_HTML);
+check('puts the pages in order', str_ends_with($html->files()[0], '01.html'));
+check('leaves the stylesheet out of the page list', count($html->files()) === 2);
+
 // --- Renderer ---------------------------------------------------------------
 $platform = new FakePlatform($root);
 $html = (new Renderer($platform))->render(

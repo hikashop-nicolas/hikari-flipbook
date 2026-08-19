@@ -4,6 +4,7 @@
 import {
   createEpubSource,
   createFlipview,
+  createHtmlSource,
   createImageSource,
   createPdfSource,
   openLightbox,
@@ -20,7 +21,7 @@ import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 const wasmUrl = new URL("./wasm/", import.meta.url).href;
 
 interface Payload {
-  kind: "pdf" | "images" | "epub";
+  kind: "pdf" | "images" | "epub" | "html";
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
@@ -63,6 +64,7 @@ function reporter(el: HTMLElement, payload: Payload) {
 /** A fresh source each time: closing a book destroys the document behind it. */
 function open(payload: Payload): Promise<PageSource> {
   if (payload.kind === "epub") return createEpubSource({ url: payload.pages[0] });
+  if (payload.kind === "html") return createHtmlSource(payload.pages);
 
   return payload.kind === "pdf"
     ? createPdfSource({ url: payload.pages[0], workerSrc, wasmUrl })

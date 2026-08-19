@@ -286,21 +286,20 @@ if (!(await exists(wp))) {
       if (!(await exists(join(site, needed)))) fail("site", `the demo needs ${needed}, which is not there`);
     }
 
+    // The demo names its documents in a script rather than an attribute, since it
+    // stands in for the module that would write one. Whatever it names has to be
+    // something the site serves, and it has to offer every kind of book there is.
     const demo = await read(join(site, "demo.html"));
-    const payload = demo.match(/data-flipbook='([\s\S]*?)'>/)?.[1];
 
-    if (!payload) {
-      fail("site", "the demo page carries no book at all");
-    } else {
-      try {
-        const book = JSON.parse(payload);
-        for (const url of [...book.pages, ...(book.options?.soundUrl ?? []), book.options?.downloadUrl].filter(Boolean)) {
-          // The version stamp is not part of the path.
-          const path = url.split("?")[0];
-          if (!(await exists(join(site, path)))) fail("site", `the demo points at ${url}, which the site does not serve`);
-        }
-      } catch (err) {
-        fail("site", `the demo's book is not readable JSON, so nothing would appear: ${err.message}`);
+    for (const [, path] of demo.matchAll(/"(demo\/[\w./-]+\.(?:pdf|epub|jpg|png|html))/g)) {
+      if (!(await exists(join(site, path)))) {
+        fail("site", `the demo points at ${path}, which the site does not serve`);
+      }
+    }
+
+    for (const kind of ["pdf", "epub", "images", "html"]) {
+      if (!demo.includes(`kind: "${kind}"`)) {
+        fail("site", `the demo offers no ${kind} book, and the point of it is to offer all four`);
       }
     }
 

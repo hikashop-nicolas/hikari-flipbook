@@ -38,13 +38,18 @@ A book's path is relative to the site root, and it has to stay inside it:
 `images/catalogue.pdf`, `wp-content/uploads/catalogue.pdf`. A path that climbs out of
 the site is refused rather than guessed at.
 
-Three kinds of document work:
+Four kinds of document work:
 
 | What | Notes |
 |---|---|
 | A **PDF** | The usual case. Scans work too, where the host has the tools below |
 | A folder of **images** | Used in natural order, so `page-2.jpg` comes before `page-10.jpg` |
 | An **EPUB** | Fixed-layout books show as they were designed; books that reflow are laid out into pages for the screen they are read on |
+| A folder of **HTML pages** | One file per page, in natural order. The pages are yours to edit, the text is real text and the links work |
+
+A folder holding pictures is a book of pictures; a folder holding HTML files and no
+pictures is a book of pages. Anything else in the folder, a stylesheet for instance,
+is left alone.
 
 An EPUB that reflows has no fixed pages: the number of them depends on the size of
 the screen, so page 12 on a laptop is not page 12 on a phone. Links to a page still

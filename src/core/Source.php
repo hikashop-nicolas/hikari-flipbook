@@ -20,11 +20,15 @@ final class Source
     public const KIND_PDF    = 'pdf';
     public const KIND_IMAGES = 'images';
     public const KIND_EPUB   = 'epub';
+    public const KIND_HTML   = 'html';
 
     /** One file is one of these, and the extension says which. */
     private const FILE_KINDS = ['pdf' => self::KIND_PDF, 'epub' => self::KIND_EPUB];
 
     private const IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'];
+
+    /** A folder of pages a browser can show as they are. */
+    private const PAGE_TYPES = ['html', 'xhtml', 'htm'];
 
     /** @var string */
     private $kind;
@@ -54,23 +58,39 @@ final class Source
         }
 
         $images = [];
+        $pages  = [];
+
         foreach (scandir($real) ?: [] as $entry) {
             $file = $real . '/' . $entry;
+
             if (!is_file($file)) {
                 continue;
             }
-            if (in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), self::IMAGE_TYPES, true)) {
+
+            $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+            if (in_array($type, self::IMAGE_TYPES, true)) {
                 $images[] = $file;
+            } elseif (in_array($type, self::PAGE_TYPES, true)) {
+                $pages[] = $file;
             }
         }
 
-        if ($images === []) {
-            throw new SourceException('That folder holds no images.');
+        // Pictures first, because a folder of pages usually has a picture or two in
+        // it and a folder of pictures never has pages.
+        if ($images !== []) {
+            natcasesort($images);
+
+            return new self(self::KIND_IMAGES, array_values($images));
         }
 
-        natcasesort($images);
+        if ($pages !== []) {
+            natcasesort($pages);
 
-        return new self(self::KIND_IMAGES, array_values($images));
+            return new self(self::KIND_HTML, array_values($pages));
+        }
+
+        throw new SourceException('That folder holds no pages: no images, and no HTML files.');
     }
 
     public function kind(): string
