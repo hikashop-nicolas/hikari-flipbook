@@ -858,3 +858,35 @@ all. It goes through a variable that starts null.
 
 A unit test covers the cap. Nothing covers the missing icon, because the failure was visual and the
 markup was correct throughout: inverting the default is the guard.
+
+
+## 29. The panel, again, and two books on one page (2026-08-19)
+
+**Marking and scrolling** (flipview 0.11.2). Three faults behind one report:
+
+- Only the page the engine counts a spread from was marked, so a reader looking at pages 4 and 5
+  saw one of them marked. The viewer now works out which pages are on show, using the same pairing
+  rule the binding uses, and the panel marks all of them.
+- The list grew as the thumbnails painted, so a scroll made while it was short left the marked page
+  far below. Every thumbnail reserves its box before its picture exists, and the first page that
+  paints tells the rest what shape they are.
+- The scroll itself never ran. `scrollTo({behavior: "smooth"})` is an animation the browser is free
+  to drop, and at least one drops it: the call was made, the list moved eleven pixels, and stopped.
+  It is assigned now.
+
+The middle one is the interesting one: the code was correct, the timing was not, and the symptom
+("no auto scroll") pointed at the feature rather than at the layout underneath it.
+
+**Two books on one page.** The URL belongs to the page. Two books both tracking `page` overwrite
+each other's number on every turn, and both jump to the same page when the link is opened. Two
+halves to the fix:
+
+- flipview refuses a parameter another book on the page already claimed, warns which one, and simply
+  does not track. Fighting silently is the worse failure.
+- The extension gives every book after the first its own: `page`, then `page2`, `page3`. The first
+  keeps the plain name so an ordinary page has an ordinary link. Verified on a real page carrying
+  two books.
+
+The trade-off is written down in the documentation: "first" means render order, so on a page whose
+modules come and go, a shared link can name a different book tomorrow. The alternative, naming the
+parameter after the element, makes every ordinary link ugly to save a rare case.
