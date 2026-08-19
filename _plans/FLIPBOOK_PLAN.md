@@ -921,3 +921,44 @@ Candidates weighed: NASA's e-books are born-digital with clean text and beautifu
 of them, and using a public body's publication as a shop-window demo invites the "implies
 endorsement" question. Standard Ebooks publish no PDF. The scan's text is OCR of 1900 type, so
 search finds what the machine could read: the demo page says so rather than pretending.
+
+
+## 32. Formats: the path to EPUB (2026-08-19)
+
+Decided: **fixed-layout EPUB first, reflowable after**, with the contract grown in that order so the
+second is an addition rather than a rewrite. The design is in flipview's own repository,
+[FORMATS.md](../../flipview/FORMATS.md), because it is the viewer's architecture rather than the
+extension's.
+
+Done now, before any EPUB code:
+
+- `src/source.ts` is the contract and nothing else, with no imports at all. PDF and images moved to
+  `src/sources/`, one file each.
+- A layering check runs in `npm test` and fails if a format library, or a format's name, appears
+  outside `src/sources`. Asserted boundaries rot; this one is checked. Proven by breaking it.
+
+The four steps, in order, and why that order:
+
+1. **Pages that are documents.** A source gains `mount()` beside `render()`, so a page can be live
+   DOM in an iframe rather than a picture. Thumbnails degrade to the page number, which the panel
+   already does when it cannot get a preview.
+2. **Locators.** `locate(index)` and `find(locator)`: where the reader is in the document's own
+   terms, a page number for PDF and a CFI for EPUB. Deep links, the panel and search all go through
+   it. Small while only fixed-layout exists, and impossible to retrofit quietly once anything stores
+   a page number.
+3. **A page count that changes.** `layout(box)` returns the count for a page of that size; the
+   viewer's relayout rebuilds the shells and restores the reader through step 2. Pagination itself
+   stays inside the source: a hidden iframe per section, CSS multi-column, a page is a column offset.
+4. **What stops making sense.** Hotspots are page-relative regions, so they belong to fixed-page
+   documents and the host should not offer them on a reflowable book. Search stays but locates hits
+   rather than numbering them.
+
+Library: **foliate-js**, MIT, no hard dependencies, EPUB plus MOBI, AZW3, FB2 and CBZ, and it hands
+over the spine, the contents and CFIs without rendering. It comes in as an optional peer dependency
+exactly as pdfjs-dist does: a site that never opens an EPUB should not download an EPUB reader.
+
+**The cost worth stating.** The flip engine draws the underside of a fold by cloning the page
+element. A cloned canvas is blank, which is why a rendered page is also set as a background image; a
+cloned iframe is worse. A mounted page therefore folds without its own picture on the back, unless
+the source can also produce a raster, which for the common fixed-layout page (one image with text
+over it) it can.
