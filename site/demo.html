@@ -25,6 +25,9 @@
   .kinds span { display: block; font-size: 13px; opacity: 0.75; }
   .kinds a[aria-current] span { opacity: 0.9; }
   .stage { padding: 26px 0 10px; }
+  /* The book gets more room than the prose does, so that a spread stays two pages
+     wide once the thumbnails panel is open beside it. */
+  .stage .wrap { max-width: 1180px; }
   .about { color: var(--dim); font-size: 15px; margin: 18px 0 0; }
   .about b { color: var(--ink); font-weight: 600; }
 </style>
@@ -108,7 +111,7 @@
     pdf: {
       name: "PDF",
       what: "A scanned catalogue",
-      about: "<b>A PDF.</b> Twelve pages of a Sydney seed catalogue from 1900, scanned. Its pages are pictures, so the words come from the scan's own OCR; two hotspots are outlined on page 3, over what they sell.",
+      about: "<b>A PDF.</b> Twelve pages of a Sydney seed catalogue from 1900, scanned. Its pages are pictures, so the words come from the scan's own OCR; two hotspots are outlined on page 5, over what they sell.",
       credit: 'The document is twelve pages of <a href="https://archive.org/details/Shepherd56406">P.L.C. Shepherd &amp; Son\'s catalogue of seeds &amp; plants, Sydney, 1900</a>, in the public domain, from the Internet Archive.',
       payload: {
         kind: "pdf",
@@ -117,10 +120,10 @@
         options: {
           downloadUrl: "demo/catalogue.pdf",
           hotspots: [
-            { page: 2, x: 0.12, y: 0.13, width: 0.22, height: 0.23,
-              href: "docs/hotspots.html", label: "Aster, Ball or Jewel, 6d a packet" },
-            { page: 2, x: 0.28, y: 0.44, width: 0.21, height: 0.2,
-              goToPage: 6, label: "Daisy, Snowball, 6d a packet: turn to the vegetables" }
+            { page: 4, x: 0.274, y: 0.115, width: 0.3, height: 0.325,
+              href: "docs/hotspots.html", label: "Marguerite Carnation, 6d a packet" },
+            { page: 4, x: 0.645, y: 0.425, width: 0.2, height: 0.195,
+              goToPage: 8, label: "Calendula pluvialis, 3d a packet: turn to more engravings" }
           ]
         }
       }

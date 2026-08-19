@@ -16,11 +16,12 @@
     "pot": "node build/make-pot.mjs",
     "update": "node build/update.mjs",
     "site": "npm run build:assets && node build/build-site.mjs",
-    "site:serve": "npm run site && node build/serve-site.mjs"
+    "site:serve": "npm run site && node build/serve-site.mjs",
+    "shots": "node build/shoot-site.mjs"
   },
   "dependencies": {
     "fflate": "^0.8.3",
-    "flipview": "github:hikashop-nicolas/flipview#v0.14.3",
+    "flipview": "github:hikashop-nicolas/flipview#v0.14.5",
     "pdfjs-dist": "^5.4.149"
   },
   "devDependencies": {
