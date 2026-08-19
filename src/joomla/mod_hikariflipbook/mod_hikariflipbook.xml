@@ -5,7 +5,7 @@
 	<creationDate>2026-08</creationDate>
 	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later</license>
-	<version>0.3.0</version>
+	<version>0.3.1</version>
 	<description>MOD_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_hikariflipbook">mod_hikariflipbook.php</filename>

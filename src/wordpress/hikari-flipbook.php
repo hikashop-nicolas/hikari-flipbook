@@ -3,7 +3,7 @@
  * Plugin Name:       Hikari Flipbook
  * Plugin URI:        https://github.com/hikashop-nicolas/hikari-flipbook
  * Description:       Shows a PDF, an EPUB, a Kindle book, a comic archive or a folder of pages as a book with turning pages.
- * Version:           0.3.0
+ * Version:           0.3.1
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Author:            Hikari Software
@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('HIKARI_FLIPBOOK_VERSION', '0.3.0');
+define('HIKARI_FLIPBOOK_VERSION', '0.3.1');
 define('HIKARI_FLIPBOOK_FILE', __FILE__);
 
 require_once __DIR__ . '/lib/bootstrap.php';

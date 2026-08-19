@@ -6,11 +6,17 @@
 	<creationDate>2026-08</creationDate>
 	<copyright>Copyright (C) 2026 Hikari Software. All rights reserved.</copyright>
 	<license>GNU General Public License version 3 or later</license>
-	<version>0.3.0</version>
+	<version>0.3.1</version>
 	<description>PKG_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
 	<updateservers>
 		<server type="extension" name="Hikari Flipbook" priority="1">https://raw.githubusercontent.com/hikashop-nicolas/hikari-flipbook/main/updates/pkg_hikariflipbook.xml</server>
 	</updateservers>
+
+	<!-- The installer reads the package's own name and description out of this,
+	     and shows the key itself when it is missing. -->
+	<languages folder="language">
+		<language tag="en-GB">en-GB/pkg_hikariflipbook.sys.ini</language>
+	</languages>
 
 	<files folder="packages">
 		<file type="file" id="hikariflipbook">files_hikariflipbook.zip</file>

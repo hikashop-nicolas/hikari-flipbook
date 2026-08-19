@@ -71,6 +71,10 @@ await cp(
 await installMedia(files);
 await zip(files, "", join(stage, "packages", "files_hikariflipbook.zip"));
 
+// The package's own words, which the installer shows while it installs. Without
+// them Joomla prints the language key at the top of the screen.
+await cp(join(root, "src/joomla/pkg_language"), join(stage, "language"), { recursive: true });
+
 const manifest = await readFile(join(root, "src/joomla/pkg_hikariflipbook.xml"), "utf8");
 await writeFile(join(stage, "pkg_hikariflipbook.xml"), manifest, "utf8");
 
