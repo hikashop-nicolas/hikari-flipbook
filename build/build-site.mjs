@@ -35,8 +35,14 @@ await cp(join(media, "js/wasm"), join(out, "media", "js", "wasm"), { recursive: 
 await cp(join(media, "sounds"), join(out, "media", "sounds"), { recursive: true });
 await cp(join(root, "site/demo"), join(out, "demo"), { recursive: true });
 
-const demo = (await readFile(join(root, "site/demo.html"), "utf8"));
-await writeFile(join(out, "demo.html"), demo, "utf8");
+// Assets carry the version, so a browser that saw the last build does not keep
+// showing it. Everything here is served from one folder with no hashing.
+const stamp = (html) =>
+  html
+    .replace(/(demo\/catalogue\.pdf)/g, `$1?v=${v}`)
+    .replace(/(media\/(?:js|css)\/[\w.-]+)"/g, `$1?v=${v}"`);
+
+await writeFile(join(out, "demo.html"), stamp(await readFile(join(root, "site/demo.html"), "utf8")), "utf8");
 
 // The presentation page, with the version filled in so it cannot go stale.
 const index = (await readFile(join(root, "site/index.html"), "utf8")).replace(

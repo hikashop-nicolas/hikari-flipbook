@@ -295,7 +295,9 @@ if (!(await exists(wp))) {
       try {
         const book = JSON.parse(payload);
         for (const url of [...book.pages, ...(book.options?.soundUrl ?? []), book.options?.downloadUrl].filter(Boolean)) {
-          if (!(await exists(join(site, url)))) fail("site", `the demo points at ${url}, which the site does not serve`);
+          // The version stamp is not part of the path.
+          const path = url.split("?")[0];
+          if (!(await exists(join(site, path)))) fail("site", `the demo points at ${url}, which the site does not serve`);
         }
       } catch (err) {
         fail("site", `the demo's book is not readable JSON, so nothing would appear: ${err.message}`);
