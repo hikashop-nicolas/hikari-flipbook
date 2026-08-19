@@ -5,6 +5,7 @@ import { readFile, readdir, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
 import { spawnSync } from "node:child_process";
 import { root, version } from "./lib.mjs";
+import { UPDATE_PATH, UPDATE_URL, downloadUrl } from "./update.mjs";
 
 const problems = [];
 const fail = (where, what) => problems.push(`${where}: ${what}`);
@@ -245,6 +246,52 @@ if (!(await exists(wp))) {
         fail("wordpress", `block.json points ${key} at ${ref}, which is not in the package`);
       }
     }
+  }
+}
+
+// --- the update server ---------------------------------------------------------
+// The update server is this repository, so three things have to agree: the version
+// in the update file, the version being built, and the release asset the file points
+// at. A site that is told about an update it cannot download is worse than a site
+// that is told about nothing.
+{
+  const file = join(root, UPDATE_PATH);
+
+  if (!(await exists(file))) {
+    fail("update", `${UPDATE_PATH} is missing; run npm run update`);
+  } else {
+    const xml = await read(file);
+    const offered = xml.match(/<version>([^<]+)<\/version>/)?.[1];
+
+    if (offered !== v) fail("update", `it offers ${offered}, but this build is ${v}; run npm run update`);
+    if (!xml.includes("<element>pkg_hikariflipbook</element>")) {
+      fail("update", "it does not name pkg_hikariflipbook as the element to update");
+    }
+    if (!xml.includes("<type>package</type>")) fail("update", "it does not declare the package type");
+    // Joomla defaults a missing client to "administrator", and a package is
+    // installed against the site: the update is then found and never offered.
+    if (!xml.includes("<client>site</client>")) {
+      fail("update", "it names no client, so Joomla will match it against nothing");
+    }
+    if (!xml.includes(downloadUrl(v))) {
+      fail("update", `it does not point at ${downloadUrl(v)}, which is the asset a v${v} release carries`);
+    }
+
+    // The name in the URL has to be the name the build actually writes, or the
+    // release will carry a file the update file cannot find.
+    const asset = downloadUrl(v).split("/").pop();
+    if (!(await exists(join(root, "dist", asset)))) {
+      fail("update", `the release asset would be ${asset}, which this build did not produce`);
+    }
+  }
+
+  const manifest = join(root, "src/joomla/pkg_hikariflipbook.xml");
+  const declared = (await read(manifest)).match(/<server[^>]*>([^<]+)<\/server>/)?.[1];
+
+  if (!declared) {
+    fail("update", "the package manifest declares no update server, so no site will ever be told");
+  } else if (declared !== UPDATE_URL) {
+    fail("update", `the manifest points at ${declared}, not at ${UPDATE_URL}`);
   }
 }
 

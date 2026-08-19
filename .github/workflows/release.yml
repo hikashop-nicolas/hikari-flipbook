@@ -1,0 +1,50 @@
+# A tag is the release. The packages are built here rather than uploaded by hand,
+# so what a site downloads is what the tagged source builds, and the update file in
+# the repository already points at these assets by name.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+      - run: npm ci
+      - name: Core tests
+        run: npm test
+      - name: Build both packages
+        run: npm run build
+      - name: Structure rules
+        run: npm run check
+
+      # The tag and the version have to be the same thing, or the update file will
+      # offer a download that does not exist.
+      - name: The tag is the version
+        run: |
+          tagged="${GITHUB_REF_NAME#v}"
+          built=$(node -p "require('./package.json').version")
+          test "$tagged" = "$built" || {
+            echo "tag $GITHUB_REF_NAME does not match package.json $built"
+            exit 1
+          }
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/pkg_hikariflipbook-*.zip
+            dist/hikari-flipbook-*.zip
+          generate_release_notes: true

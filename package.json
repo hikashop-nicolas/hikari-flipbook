@@ -6,14 +6,15 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "build": "npm run build:assets && npm run pot && npm run build:joomla && npm run build:wordpress",
+    "build": "npm run build:assets && npm run pot && npm run update && npm run build:joomla && npm run build:wordpress",
     "build:joomla": "node build/build-joomla.mjs",
     "build:wordpress": "node build/build-wordpress.mjs",
     "check": "node build/check-structure.mjs",
     "assets": "sh build/render-assets.sh",
     "build:assets": "node build/build-assets.mjs",
     "test": "php tests/CoreTest.php",
-    "pot": "node build/make-pot.mjs"
+    "pot": "node build/make-pot.mjs",
+    "update": "node build/update.mjs"
   },
   "dependencies": {
     "flipview": "github:hikashop-nicolas/flipview#v0.11.0",

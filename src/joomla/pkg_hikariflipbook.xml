@@ -8,12 +8,14 @@
 	<license>GNU General Public License version 3 or later</license>
 	<version>0.2.0</version>
 	<description>PKG_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
+	<updateservers>
+		<server type="extension" name="Hikari Flipbook" priority="1">https://raw.githubusercontent.com/hikashop-nicolas/hikari-flipbook/main/updates/pkg_hikariflipbook.xml</server>
+	</updateservers>
+
 	<files folder="packages">
 		<file type="file" id="hikariflipbook">files_hikariflipbook.zip</file>
 		<file type="component" id="com_hikariflipbook">com_hikariflipbook.zip</file>
 		<file type="module" client="site" id="mod_hikariflipbook">mod_hikariflipbook.zip</file>
 		<file type="plugin" group="content" id="hikariflipbook">plg_content_hikariflipbook.zip</file>
-		
-		
 	</files>
 </extension>

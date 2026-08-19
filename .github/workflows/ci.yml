@@ -29,6 +29,11 @@ jobs:
         run: npm run build
       - name: Structure rules
         run: npm run check
+
+      # npm run build rewrites the update file; if that changes anything, the
+      # committed one had drifted from the version being built.
+      - name: The update file is committed
+        run: git diff --exit-code updates/
       - uses: actions/upload-artifact@v4
         with:
           name: packages
