@@ -56,6 +56,18 @@
 				</field>
 				<field name="maxHeight" type="number" label="MOD_HIKARIFLIPBOOK_MAXHEIGHT_LABEL"
 					description="MOD_HIKARIFLIPBOOK_MAXHEIGHT_DESC" default="0" filter="integer" min="0" />
+				<field name="seo" type="radio" layout="joomla.form.field.radio.switcher"
+					label="MOD_HIKARIFLIPBOOK_SEO_LABEL"
+					description="MOD_HIKARIFLIPBOOK_SEO_DESC" default="1">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="analytics" type="list" label="MOD_HIKARIFLIPBOOK_ANALYTICS_LABEL"
+					description="MOD_HIKARIFLIPBOOK_ANALYTICS_DESC" default="">
+					<option value="">MOD_HIKARIFLIPBOOK_ANALYTICS_NONE</option>
+					<option value="dataLayer">MOD_HIKARIFLIPBOOK_ANALYTICS_DATALAYER</option>
+					<option value="gtag">MOD_HIKARIFLIPBOOK_ANALYTICS_GTAG</option>
+				</field>
 			</fieldset>
 		</fields>
 	</config>

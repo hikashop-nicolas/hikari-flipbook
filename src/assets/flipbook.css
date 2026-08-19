@@ -33,7 +33,11 @@
 
 .hikari-flipbook-cover img {
   display: block;
-  max-width: 100%;
+  /* The picture is drawn larger than it is shown, so it stays sharp on a retina
+     screen. Without the cap it fills whatever column it lands in, and a cover
+     that is the size of the book defeats the point of a cover. */
+  width: 100%;
+  max-width: var(--hikari-cover-width, 320px);
   height: auto;
   border-radius: 4px;
 }

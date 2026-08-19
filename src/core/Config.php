@@ -37,6 +37,11 @@ final class Config
         // reader is shown where they are instead of having to find them.
         'hotspots'      => [],
         'hotspotsShown' => false,
+        // Where what a reader does is reported, if anywhere.
+        'analytics'     => '',
+        // Put the document, and its words, in the page for whoever is not running
+        // the viewer: a crawler, or a reader with JavaScript off.
+        'seo'           => true,
         // Which buttons the toolbar shows
         'toolbar'      => true,
         'buttonNav'    => true,
@@ -48,6 +53,9 @@ final class Config
     ];
 
     private const MODES = ['auto', 'single', 'double'];
+
+    /** '' reports to the page and no further. */
+    private const ANALYTICS = ['', 'dataLayer', 'gtag'];
 
     /** @var array<string,mixed> */
     private $values;
@@ -68,6 +76,16 @@ final class Config
 
         if (!in_array($values['mode'], self::MODES, true)) {
             $values['mode'] = self::DEFAULTS['mode'];
+        }
+
+        // A host with a "site default" option needs a way to say "no, really,
+        // nothing", which an empty value cannot mean there.
+        if ($values['analytics'] === 'none') {
+            $values['analytics'] = '';
+        }
+
+        if (!in_array($values['analytics'], self::ANALYTICS, true)) {
+            $values['analytics'] = self::DEFAULTS['analytics'];
         }
 
         $values['breakpoint']   = max(240, min(2000, (int) $values['breakpoint']));

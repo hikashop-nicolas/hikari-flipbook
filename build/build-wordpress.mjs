@@ -50,6 +50,19 @@ Turn a PDF or a folder of images into a book your visitors can leaf through, wit
 real page turns, zoom and deep links to a page. Nothing is uploaded anywhere: the
 document is rendered in the visitor's browser.
 
+Features:
+
+* Real page turns, on a phone as well as a desktop, with a page turn sound you can
+  choose or replace.
+* Search inside the document, its own table of contents, and thumbnails of every page.
+* Hotspots: draw a region on a page and bind it to a link, another page, or a
+  WooCommerce product, which turns a catalogue into a shoppable one.
+* The document's text goes into the page as well, so search engines can read a
+  catalogue that is otherwise a picture of one.
+* Page turns, searches and hotspot clicks are reported to the page as an event, and
+  to Google Tag Manager or Google Analytics if you want them there.
+* Nothing is sent to us, and the plugin loads nothing from anyone else's server.
+
 == Installation ==
 
 1. Install the plugin and activate it.

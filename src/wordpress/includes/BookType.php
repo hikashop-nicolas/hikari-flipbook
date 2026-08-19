@@ -193,9 +193,15 @@ final class BookType
             'download'  => __('Offer the PDF for download', 'hikari-flipbook'),
             'share'     => __('Show a share button', 'hikari-flipbook'),
             'lightbox'  => __('Show the cover, open the book over the page', 'hikari-flipbook'),
+            'seo'       => __('Put the document and its text in the page for search engines', 'hikari-flipbook'),
         ] as $key => $label) {
             self::toggle($label, $key, $values[$key]);
         }
+        self::choice(__('Report to analytics', 'hikari-flipbook'), 'analytics', $values['analytics'], [
+            ''          => __('Only the page event', 'hikari-flipbook'),
+            'dataLayer' => __('Google Tag Manager (dataLayer)', 'hikari-flipbook'),
+            'gtag'      => __('Google Analytics (gtag)', 'hikari-flipbook'),
+        ]);
         self::text(__('Largest height (px)', 'hikari-flipbook'), 'maxHeight', $values['maxHeight']);
         self::text(__('Toolbar colour', 'hikari-flipbook'), 'barColour', $values['barColour']);
         self::text(__('Page colour', 'hikari-flipbook'), 'pageColour', $values['pageColour']);

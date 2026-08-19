@@ -107,6 +107,22 @@ final class WordPressPlatform implements Platform, Shop
         return untrailingslashit(ABSPATH);
     }
 
+    /**
+     * The uploads folder, not the plugin folder: uploads is the one place a
+     * WordPress site is expected to be writable, and it survives an update.
+     *
+     * @return array{path:string,url:string}
+     */
+    public function storage(): array
+    {
+        $uploads = wp_upload_dir();
+
+        return [
+            'path' => $uploads['basedir'] . '/hikari-flipbook',
+            'url'  => $uploads['baseurl'] . '/hikari-flipbook',
+        ];
+    }
+
     public function baseUrl(): string
     {
         return rtrim((string) wp_parse_url(home_url(), PHP_URL_PATH), '/');

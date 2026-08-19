@@ -52,6 +52,19 @@
 						}),
 						field(props, 'maxHeight', __('Largest height (px)', 'hikari-flipbook'),
 							__('Leave empty to use the site default.', 'hikari-flipbook')),
+						el(components.SelectControl, {
+							label: __('Report to analytics', 'hikari-flipbook'),
+							value: props.attributes.analytics,
+							options: [
+								{ label: __('Site default', 'hikari-flipbook'), value: '' },
+								{ label: __('Only the page event', 'hikari-flipbook'), value: 'none' },
+								{ label: __('Google Tag Manager (dataLayer)', 'hikari-flipbook'), value: 'dataLayer' },
+								{ label: __('Google Analytics (gtag)', 'hikari-flipbook'), value: 'gtag' },
+							],
+							onChange: function (value) { props.setAttributes({ analytics: value }); },
+						}),
+						field(props, 'seo', __('Text in the page for search engines', 'hikari-flipbook'),
+							__('1 or 0. Leave empty to use the site default.', 'hikari-flipbook')),
 						field(props, 'hotspotsShown', __('Outline the hotspots', 'hikari-flipbook'),
 							__('1 to outline every region as soon as the book opens. Leave empty to use the site default.', 'hikari-flipbook'))
 					)

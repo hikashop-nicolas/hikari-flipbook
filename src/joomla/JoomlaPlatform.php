@@ -67,6 +67,20 @@ final class JoomlaPlatform implements Platform, Shop
         return JPATH_ROOT;
     }
 
+    /**
+     * Under the extension's own media folder: writable on a normal Joomla site,
+     * public by definition, and removed with the extension.
+     *
+     * @return array{path:string,url:string}
+     */
+    public function storage(): array
+    {
+        return [
+            'path' => $this->mediaPath() . '/cache',
+            'url'  => Uri::root(true) . '/media/' . $this->media . '/cache',
+        ];
+    }
+
     public function baseUrl(): string
     {
         return Uri::root(true);

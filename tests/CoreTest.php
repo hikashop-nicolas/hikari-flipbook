@@ -48,6 +48,7 @@ class FakePlatform implements Platform
     public function translate(string $key): string { return $key; }
     public function asset(string $path): string { return '/media/' . $path; }
     public function cachePath(): string { return $this->root . '/cache'; }
+    public function storage(): array { return ['path' => $this->root . '/storage', 'url' => $this->base . '/storage']; }
     public function rootPath(): string { return $this->root; }
     public function mediaPath(): string { return $this->root . '/media'; }
     public function baseUrl(): string { return $this->base; }
@@ -284,6 +285,58 @@ check('hands the viewer only the hotspots that survived', count($config->toViewe
 check('says nothing about hotspots when a book has none', !isset((new Hikari\Flipbook\Core\Config())->toViewer()['hotspots']));
 check('takes hotspots a host already decoded', count((new Hikari\Flipbook\Core\Config(['hotspots' => [['page' => 1, 'width' => 0.5, 'height' => 0.5, 'goToPage' => 2]]]))->toViewer()['hotspots']) === 1);
 
+// --- the cover the server draws -----------------------------------------------
+$platform = new FakePlatform($root, '/site');
+$lightbox = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['lightbox' => '1']),
+    'book-cover'
+);
+// The stub PDF in this test is not a document any renderer can read, so what is
+// checked is that the page still renders and simply says nothing about a cover.
+check('never claims a cover it could not draw', strpos($lightbox, '"cover"') === false);
+check('still shows the book', strpos($lightbox, '"lightbox":true') !== false);
+check('asks for no cover unless the book opens over the page', strpos(
+    (new Renderer(new FakePlatform($root)))->render(
+        Source::fromPath(new FakePlatform($root), 'book.pdf'),
+        new Config([]),
+        'book-nocover'
+    ),
+    '"cover"'
+) === false);
+
+// --- what a crawler sees ------------------------------------------------------
+$platform = new FakePlatform($root);
+$seoHtml = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config([]),
+    'book-seo'
+);
+check('puts a link to the document in the page', strpos($seoHtml, '<noscript>') !== false
+    && strpos($seoHtml, 'Open the document') !== false);
+
+$platform = new FakePlatform($root);
+$seoOff = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'book.pdf'),
+    new Config(['seo' => '0']),
+    'book-seo-off'
+);
+check('says nothing when the site turned it off', strpos($seoOff, '<noscript>') === false);
+
+$platform = new FakePlatform($root);
+$images = (new Renderer($platform))->render(
+    Source::fromPath($platform, 'images'),
+    new Config([]),
+    'book-seo-images'
+);
+check('lists a picture book as pictures', substr_count($images, '<img ') >= 2);
+check('names each picture by its page', strpos($images, 'Page 1 of') !== false);
+
+$analytics = static fn ($value) => (new Hikari\Flipbook\Core\Config(['analytics' => $value]))->get('analytics');
+check('keeps an analytics service it knows', $analytics('dataLayer') === 'dataLayer');
+check('reads "none" as nothing', $analytics('none') === '');
+check('refuses a service it does not know', $analytics('; alert(1)') === '');
+
 // --- a shop behind the host ---------------------------------------------------
 /**
  * The hotspots as they reach the browser: through the whole renderer, since the
@@ -297,7 +350,7 @@ function renderHotspots(Platform $platform, array $spots): array
         'book-shop'
     );
 
-    preg_match("/data-flipbook='(.*)'><\\/div>/", $html, $found);
+    preg_match("/data-flipbook='(.*?)'>/", $html, $found);
     $payload = json_decode(html_entity_decode($found[1], ENT_QUOTES), true);
 
     return $payload['options']['hotspots'] ?? [];

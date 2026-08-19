@@ -46,6 +46,14 @@
     "hotspotsShown": {
       "type": "string",
       "default": ""
+    },
+    "analytics": {
+      "type": "string",
+      "default": ""
+    },
+    "seo": {
+      "type": "string",
+      "default": ""
     }
   },
   "editorScript": "file:./editor.js"

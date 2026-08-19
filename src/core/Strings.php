@@ -42,6 +42,11 @@ final class Strings
         'open'           => ['HIKARI_FLIPBOOK_OPEN', 'Open the book'],
     ];
 
+    /** Words the server writes into the page, for whoever is not running the viewer. */
+    private const SERVER = [
+        'openDocument' => ['HIKARI_FLIPBOOK_OPEN_DOCUMENT', 'Open the document'],
+    ];
+
     /**
      * What the host says, by the name the viewer knows it by.
      *
@@ -63,6 +68,23 @@ final class Strings
     }
 
     /**
+     * What the host says for the strings the server writes, same contract.
+     *
+     * @return array<string,string>
+     */
+    public static function server(Platform $platform): array
+    {
+        $out = [];
+
+        foreach (self::SERVER as $name => [$key, $english]) {
+            $said = $platform->translate($key);
+            $out[$name] = ($said === '' || $said === $key) ? $english : $said;
+        }
+
+        return $out;
+    }
+
+    /**
      * The keys and their English, for a host that has to map them, and for the
      * build that writes the translator's catalogue.
      *
@@ -72,7 +94,7 @@ final class Strings
     {
         $out = [];
 
-        foreach (self::VIEWER as [$key, $english]) {
+        foreach (array_merge(self::VIEWER, self::SERVER) as [$key, $english]) {
             $out[$key] = $english;
         }
 

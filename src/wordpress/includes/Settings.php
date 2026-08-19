@@ -32,6 +32,8 @@ final class Settings
         'share'      => 0,
         'lightbox'   => 0,
         'hotspotsShown' => 0,
+        'analytics'  => '',
+        'seo'        => 1,
         'maxHeight'  => 0,
         'barColour'  => '',
         'pageColour' => '',
@@ -148,6 +150,22 @@ final class Settings
             __('Zero lets the book use the height of the screen.', 'hikari-flipbook'));
         self::colour(__('Toolbar colour', 'hikari-flipbook'), 'barColour', $values['barColour']);
         self::colour(__('Page colour', 'hikari-flipbook'), 'pageColour', $values['pageColour']);
+        self::toggle(
+            __('Put the text in the page', 'hikari-flipbook'),
+            'seo',
+            $values['seo']
+        );
+        self::choice(
+            __('Report to analytics', 'hikari-flipbook'),
+            'analytics',
+            $values['analytics'],
+            [
+                ''          => __('Only the page event', 'hikari-flipbook'),
+                'dataLayer' => __('Google Tag Manager (dataLayer)', 'hikari-flipbook'),
+                'gtag'      => __('Google Analytics (gtag)', 'hikari-flipbook'),
+            ],
+            __('Every book already fires a hikari-flipbook event on the page. This only decides whether the same thing is handed to an analytics service the page already loads.', 'hikari-flipbook')
+        );
 
         echo '</table>';
         submit_button();

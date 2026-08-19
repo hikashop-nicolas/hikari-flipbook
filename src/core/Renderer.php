@@ -47,10 +47,24 @@ final class Renderer
             // Hotspots are invisible until a reader hovers one, which is right for
             // a magazine and wrong for a catalogue that is meant to be shoppable.
             'showHotspots' => (bool) $config->get('hotspotsShown'),
+            // What a reader does is always reported to the page as an event; this
+            // says whether the page should also hand it to an analytics service.
+            'analytics'    => (string) $config->get('analytics'),
             // Every word the viewer says, in the site's language. Without this a
             // French site has English tooltips and a screen reader hears English.
             'strings'  => Strings::viewer($this->platform),
         ];
+
+        // A book that opens over the page shows only its cover until it is asked
+        // for, so the cover is worth making on the server: otherwise every reader
+        // downloads the whole document to draw one thumbnail they may never use.
+        if ($payload['lightbox']) {
+            $cover = Cover::url($this->platform, $source);
+
+            if ($cover !== '') {
+                $payload['cover'] = $cover;
+            }
+        }
 
         if ($config->get('download') && $source->kind() === Source::KIND_PDF) {
             $payload['options']['downloadUrl'] = $urls[0];
@@ -69,10 +83,11 @@ final class Renderer
         $json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP);
 
         return sprintf(
-            '<div class="hikari-flipbook" id="%s" style="%s" data-flipbook=\'%s\'></div>',
+            '<div class="hikari-flipbook" id="%s" style="%s" data-flipbook=\'%s\'>%s</div>',
             $this->platform->escape($id),
             $this->platform->escape($this->style($config)),
-            $json === false ? '{}' : $json
+            $json === false ? '{}' : $json,
+            Seo::markup($this->platform, $source, $urls, $config)
         );
     }
 

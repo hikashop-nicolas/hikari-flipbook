@@ -38,7 +38,7 @@ use Joomla\CMS\Router\Route;
 				<?php endforeach; ?>
 			</div>
 			<div class="col-lg-6">
-				<?php foreach (['zoom', 'sound', 'soundFile', 'download', 'share', 'deepLink'] as $field) : ?>
+				<?php foreach (['zoom', 'sound', 'soundFile', 'download', 'share', 'deepLink', 'seo', 'analytics'] as $field) : ?>
 					<?php echo $this->form->renderField($field, 'params'); ?>
 				<?php endforeach; ?>
 			</div>

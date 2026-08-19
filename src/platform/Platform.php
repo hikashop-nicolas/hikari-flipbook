@@ -36,6 +36,16 @@ interface Platform
     /** Absolute path of a writable cache directory for rendered pages. */
     public function cachePath(): string;
 
+    /**
+     * A folder this extension may write to *and* a browser may read from, and the
+     * URL that folder answers on. Not the cache: on one host that is outside the
+     * public root, on the other it is inside it, and a picture nobody can fetch is
+     * not a picture.
+     *
+     * @return array{path:string,url:string}
+     */
+    public function storage(): array;
+
     /** Absolute filesystem path of the host's public root. */
     public function rootPath(): string;
 

@@ -10,8 +10,40 @@ interface Payload {
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
+  /** A picture of the first page the host made for us, if it could. */
+  cover?: string;
   showHotspots?: boolean;
+  analytics?: "" | "dataLayer" | "gtag";
   strings?: Record<string, string>;
+}
+
+/**
+ * Reports what a reader does.
+ *
+ * Every book fires a `hikari-flipbook` event on its own container, whatever the
+ * site's settings say: a site can listen for that without asking anyone, and it
+ * costs a page nothing. The setting only decides whether the same thing is also
+ * handed to an analytics service the page already has.
+ */
+function reporter(el: HTMLElement, payload: Payload) {
+  return (name: string, detail: Record<string, unknown>): void => {
+    const data = { book: el.id, document: payload.pages[0], ...detail };
+
+    el.dispatchEvent(new CustomEvent("hikari-flipbook", { detail: { name, ...data }, bubbles: true }));
+
+    const site = window as unknown as {
+      dataLayer?: unknown[];
+      gtag?: (kind: string, action: string, params: Record<string, unknown>) => void;
+    };
+
+    // A service the page does not have is not an error: nothing is loaded for
+    // this, and nothing is waited for.
+    if (payload.analytics === "dataLayer" && Array.isArray(site.dataLayer)) {
+      site.dataLayer.push({ event: `flipbook_${name}`, ...data });
+    } else if (payload.analytics === "gtag" && typeof site.gtag === "function") {
+      site.gtag("event", `flipbook_${name}`, data);
+    }
+  };
 }
 
 /** A fresh source each time: closing a book destroys the document behind it. */
@@ -33,18 +65,27 @@ async function mountCover(el: HTMLElement, payload: Payload): Promise<void> {
   // The picture is decorative: the button is what has to carry the name.
   button.setAttribute("aria-label", payload.strings?.open || "Open the book");
 
-  const source = await open(payload);
-  const canvas = document.createElement("canvas");
-  await source.render(0, canvas, 320);
   const img = new Image();
-  img.src = canvas.toDataURL("image/webp", 0.9);
   img.alt = "";
   img.decoding = "async";
+
+  if (payload.cover) {
+    // The host already drew it. Nothing of the document is fetched until a
+    // reader actually opens the book.
+    img.src = payload.cover;
+    img.loading = "lazy";
+  } else {
+    const source = await open(payload);
+    const canvas = document.createElement("canvas");
+    await source.render(0, canvas, 320);
+    img.src = canvas.toDataURL("image/webp", 0.9);
+    source.destroy();
+  }
+
   button.appendChild(img);
-  source.destroy();
 
   button.addEventListener("click", () => {
-    openLightbox(open(payload), payload.options);
+    openLightbox(open(payload), { ...payload.options, onEvent: reporter(el, payload) });
     if (payload.showHotspots) {
       // The lightbox builds its own root, on the body rather than in here.
       requestAnimationFrame(() => document.querySelector(".fv-lightbox .fv-root")?.classList.add("fv-hotspots-shown"));
@@ -74,7 +115,7 @@ async function mount(el: HTMLElement): Promise<void> {
     return;
   }
 
-  createFlipview(el, await open(payload), payload.options);
+  createFlipview(el, await open(payload), { ...payload.options, onEvent: reporter(el, payload) });
 
   if (payload.showHotspots) el.querySelector(".fv-root")?.classList.add("fv-hotspots-shown");
 }
