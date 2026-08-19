@@ -770,8 +770,37 @@ client to *administrator*. The update is then found, stored with `extension_id =
 no installed extension, and never shown to anyone. Nothing errors, nothing warns, and the Updates
 screen simply stays quiet forever. Reading the XML back would never have shown it.
 
-### WordPress is still open
+### WordPress: decided (2026-08-19)
 
-wordpress.org hosts and updates plugins it lists, and a plugin listed there must not update itself
-from anywhere else. Phase 8 plans to submit, so the choice is: wait for the listing and use theirs,
-or ship a GitHub updater now and drop it on approval. Not decided.
+Updates come from the wordpress.org listing, and we build nothing for it. A plugin installed by hand
+does not update itself, so the README and the installing page point at the releases page for the
+manual download and say so plainly. One less mechanism to own, and no risk of a self-updater
+fighting the directory's once the plugin is listed.
+
+
+## 26. Documentation (2026-08-19)
+
+`docs/` in the repository, Markdown, readable on GitHub as it stands and ready to be a Pages site
+later:
+
+| Page | For |
+|---|---|
+| README | What it is, what it does not do, and a working book in three steps |
+| installing | Both hosts, what the Joomla package contains, updates, and the two optional server tools |
+| placing-a-book | Module, `{flipbook}`, shortcode, block, and the book manager on both hosts |
+| options | Every setting in one table, plus the analytics event and the CSS custom properties |
+| hotspots | Drawing them, what a region can be bound to, and how products resolve |
+| translations | Overrides on Joomla, the .pot on WordPress, and a book per language |
+| troubleshooting | The failures we have actually seen, and what each one means |
+
+The repository README was rewritten with it: it had gone stale enough to say hotspots and the
+accessibility pass were not written, and to name a Joomla artefact the build stopped producing.
+
+**A rule keeps the options page honest**, in both directions: every setting in `Config::DEFAULTS`
+has to appear in `docs/options.md`, and every setting the page documents has to still exist.
+Documentation drifts silently otherwise, and the failure mode is a merchant reading about a setting
+that does nothing. Both directions were tested by breaking them.
+
+Not written, deliberately: a tutorial with screenshots. Screenshots of an admin screen age badly and
+are the first thing to rot; the pages describe where things are instead. That decision is worth
+revisiting once the JED and wordpress.org listings need images anyway.

@@ -249,6 +249,37 @@ if (!(await exists(wp))) {
   }
 }
 
+// --- the documentation matches the code ---------------------------------------
+// Documentation drifts silently: a setting is added, the page that lists them is not,
+// and nobody notices until someone asks why a setting they read about does nothing.
+{
+  const options = join(root, "docs/options.md");
+
+  if (!(await exists(options))) {
+    fail("docs", "docs/options.md is missing; every setting has to be written down somewhere");
+  } else {
+    const page = await read(options);
+    const config = await read(join(root, "src/core/Config.php"));
+    const declared = [...config.matchAll(/^\s{8}'(\w+)'\s*=>/gm)].map((m) => m[1]);
+
+    for (const name of declared) {
+      // hotspots are drawn, not typed, and are documented as a screen of their own.
+      if (name === "hotspots") continue;
+      if (!page.includes(`\`${name}\``)) {
+        fail("docs", `docs/options.md never mentions ${name}, which is a setting a site can use`);
+      }
+    }
+
+    for (const [, name] of page.matchAll(/^\| `(\w+)` \|/gm)) {
+      // path and book say which document to show; they are not viewer settings.
+      if (["path", "book"].includes(name)) continue;
+      if (!declared.includes(name)) {
+        fail("docs", `docs/options.md documents ${name}, which no longer exists`);
+      }
+    }
+  }
+}
+
 // --- the update server ---------------------------------------------------------
 // The update server is this repository, so three things have to agree: the version
 // in the update file, the version being built, and the release asset the file points
@@ -377,7 +408,7 @@ for (const [label, dir] of [["joomla", joomla], ["wordpress", wp]]) {
   if (!(await exists(dir))) continue;
   const files = (await walk(dir)).map((f) => relative(dir, f));
   for (const file of files) {
-    if (/(^|\/)(assets|_plans|build|tests|node_modules)\//.test(file)) {
+    if (/(^|\/)(assets|_plans|build|tests|docs|updates|node_modules)\//.test(file)) {
       fail(label, `${file} is repository material and must not ship`);
     }
     if (/\.(map|bak|zip)$/.test(file) || /(^|\/)\.(git|DS_Store)/.test(file)) {
