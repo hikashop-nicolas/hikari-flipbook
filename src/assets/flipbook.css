@@ -13,6 +13,14 @@
   font-size: 0.95em;
 }
 
+/* Where a book someone has to buy would have been. Quiet on purpose: it is an
+   ordinary sentence on the page, not a warning about anything. */
+.hikari-flipbook-buyers {
+  margin: 0 0 1rem;
+  opacity: 0.85;
+  font-size: 0.95em;
+}
+
 .hikari-flipbook-cover {
   display: inline-block;
   padding: 0;

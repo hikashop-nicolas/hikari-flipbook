@@ -392,9 +392,17 @@ function renderHotspots(Platform $platform, array $spots): array
 
 final class ShopPlatform extends FakePlatform implements Hikari\Flipbook\Core\Shop
 {
+    /** @var array<int,string> What this visitor has bought. */
+    public $bought = [];
+
     public function product(string $id): ?array
     {
         return $id === '42' ? ['url' => '/shop/blue-kettle', 'name' => 'Blue kettle'] : null;
+    }
+
+    public function hasBought(string $id): bool
+    {
+        return in_array($id, $this->bought, true);
     }
 }
 
@@ -412,6 +420,43 @@ check('never overrides a link the site typed', $shopped[2]['href'] === '/mine' &
 
 $plain = renderHotspots(new FakePlatform($root), $spots);
 check('leaves hotspots alone on a host with no shop', !isset($plain[0]['href']));
+
+// --- a book only its buyers may read -----------------------------------------
+
+/** The whole rendering, since the gate has to come before anything is written. */
+function renderBought(Platform $platform, string $bought): string
+{
+    return (new Renderer($platform))->render(
+        Source::fromPath($platform, 'book.pdf'),
+        new Config(['bought' => $bought]),
+        'book-bought'
+    );
+}
+
+$buyer = new ShopPlatform($root);
+$buyer->bought = ['42'];
+
+check('shows the book to whoever bought it', strpos(renderBought($buyer, '42'), 'data-flipbook') !== false);
+check(
+    'shows it when any one of several was bought',
+    strpos(renderBought($buyer, '7,42'), 'data-flipbook') !== false
+);
+
+$stranger = new ShopPlatform($root);
+$locked   = renderBought($stranger, '42');
+
+check('never writes the document for someone who did not buy it', strpos($locked, 'data-flipbook') === false);
+check('says the book is for buyers, and where to buy it', strpos($locked, '/shop/blue-kettle') !== false);
+check(
+    'says only that much when the shop cannot name the product',
+    strpos(renderBought($stranger, '99'), 'buyers') !== false
+        && strpos(renderBought($stranger, '99'), '<a ') === false
+);
+check(
+    'shows nothing at all on a host with no shop to ask',
+    renderBought(new FakePlatform($root), '42') === ''
+);
+check('leaves a book with no product alone', strpos(renderBought($stranger, ''), 'data-flipbook') !== false);
 
 echo $failures === 0 ? "\nall good\n" : "\n$failures failing\n";
 exit($failures === 0 ? 0 : 1);

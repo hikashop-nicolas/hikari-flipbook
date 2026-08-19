@@ -143,4 +143,79 @@ final class JoomlaPlatform implements Platform, Shop
 
         return ['url' => Route::_($url), 'name' => (string) $row['product_name']];
     }
+
+    /**
+     * Whether the visitor has an order for this product that HikaShop counts.
+     *
+     * Which statuses count is the shop's own setting, the one it uses to decide
+     * whether a downloadable file may be fetched: a book sold as a download and a
+     * book shown as a flipbook are the same sale, and should let a reader in at
+     * the same moment.
+     */
+    public function hasBought(string $id): bool
+    {
+        $id   = (int) $id;
+        $user = Factory::getApplication()->getIdentity();
+
+        if ($id <= 0 || $user === null || $user->guest || !is_dir(JPATH_ROOT . '/components/com_hikashop')) {
+            return false;
+        }
+
+        $cms = (int) $user->id;
+        $db  = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+
+        $query = $db->getQuery(true)
+            ->select('1')
+            ->from($db->quoteName('#__hikashop_order_product', 'op'))
+            ->innerJoin(
+                $db->quoteName('#__hikashop_order', 'o')
+                . ' ON ' . $db->quoteName('o.order_id') . ' = ' . $db->quoteName('op.order_id')
+            )
+            // The order belongs to a shop account, which belongs to a site account.
+            ->innerJoin(
+                $db->quoteName('#__hikashop_user', 'u')
+                . ' ON ' . $db->quoteName('u.user_id') . ' = ' . $db->quoteName('o.order_user_id')
+            )
+            ->where($db->quoteName('op.product_id') . ' = :id')
+            ->where($db->quoteName('u.user_cms_id') . ' = :cms')
+            // Carts and wishlists live in the same table as sales do.
+            ->where($db->quoteName('o.order_type') . ' = ' . $db->quote('sale'))
+            ->whereIn($db->quoteName('o.order_status'), $this->paidStatuses(), ParameterType::STRING)
+            ->bind(':id', $id, ParameterType::INTEGER)
+            ->bind(':cms', $cms, ParameterType::INTEGER)
+            ->setLimit(1);
+
+        try {
+            return $db->setQuery($query)->loadResult() !== null;
+        } catch (\Throwable $e) {
+            // A site with the folder but not the tables: nobody has bought anything.
+            return false;
+        }
+    }
+
+    /**
+     * The order statuses HikaShop treats as paid for, from its own configuration.
+     *
+     * @return array<int,string>
+     */
+    private function paidStatuses(): array
+    {
+        $fallback = ['confirmed', 'shipped'];
+        $db       = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('config_value'))
+            ->from($db->quoteName('#__hikashop_config'))
+            ->where($db->quoteName('config_namekey') . ' = ' . $db->quote('order_status_for_download'));
+
+        try {
+            $value = (string) $db->setQuery($query)->loadResult();
+        } catch (\Throwable $e) {
+            return $fallback;
+        }
+
+        $statuses = array_filter(array_map('trim', explode(',', $value)), 'strlen');
+
+        return $statuses === [] ? $fallback : array_values($statuses);
+    }
 }

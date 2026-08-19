@@ -22,6 +22,8 @@
 					key_field="value" value_field="text">
 					<option value="0">MOD_HIKARIFLIPBOOK_BOOK_NONE</option>
 				</field>
+				<field name="bought" type="text" label="MOD_HIKARIFLIPBOOK_BOUGHT_LABEL"
+					description="MOD_HIKARIFLIPBOOK_BOUGHT_DESC" />
 				<field name="mode" type="list" label="MOD_HIKARIFLIPBOOK_MODE_LABEL" default="auto">
 					<option value="auto">MOD_HIKARIFLIPBOOK_MODE_AUTO</option>
 					<option value="single">MOD_HIKARIFLIPBOOK_MODE_SINGLE</option>

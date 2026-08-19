@@ -23,6 +23,10 @@
       "type": "string",
       "default": ""
     },
+    "bought": {
+      "type": "string",
+      "default": ""
+    },
     "mode": {
       "type": "string",
       "default": ""

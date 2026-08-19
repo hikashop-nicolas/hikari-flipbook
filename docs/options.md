@@ -40,6 +40,30 @@ Which book is "first" is the order they are rendered in, so on a page whose modu
 come and go, a link shared today may name a different book tomorrow. Where that
 matters, place the books that matter first, or give one a fixed name of its own.
 
+## Who may read it
+
+| Setting | Default | What it does |
+|---|---|---|
+| `bought` | none | Show the book only to a visitor who has bought this product |
+
+`bought="42"` is a product id from the shop the site runs, and several ids separated
+by commas mean any of them: an edition sold on its own and the bundle it is also part
+of both let a reader in. A visitor who has not bought it is told so, with a link to
+the product; the book itself is never rendered, so the document's address is not in
+the page either.
+
+The shop decides what counts as bought. On HikaShop it is the order statuses the shop
+already uses to release a file someone paid for, so a flipbook and a download become
+available at the same moment. WooCommerce is asked the same question in its own terms.
+
+A page cache serves logged-out visitors, who are never buyers, so a cached page
+carries the message rather than the book. If something on the site caches pages for
+logged-in visitors as well, leave a page with a buyers-only book out of it.
+
+A site with no shop cannot tell a buyer from anyone else, so a book with `bought` set
+is shown to nobody there. Access levels are a separate thing and still apply: this is
+about one purchase, not about a group a visitor belongs to.
+
 ## The toolbar
 
 | Setting | Default | What it does |

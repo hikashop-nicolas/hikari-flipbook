@@ -45,6 +45,10 @@ final class Strings
     /** Words the server writes into the page, for whoever is not running the viewer. */
     private const SERVER = [
         'openDocument' => ['HIKARI_FLIPBOOK_OPEN_DOCUMENT', 'Open the document'],
+        // {product} is replaced by a link to the product, so it has to survive
+        // translation: a translator moves it, and must not drop it.
+        'buyersOnly'   => ['HIKARI_FLIPBOOK_BUYERS_ONLY', 'This book is for buyers of {product}.'],
+        'buyersOnlyPlain' => ['HIKARI_FLIPBOOK_BUYERS_ONLY_PLAIN', 'This book is for buyers only.'],
     ];
 
     /**

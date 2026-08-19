@@ -61,6 +61,8 @@ Features:
   catalogue that is otherwise a picture of one.
 * Page turns, searches and hotspot clicks are reported to the page as an event, and
   to Google Tag Manager or Google Analytics if you want them there.
+* A book can be sold: name the product it belongs to and only a visitor who has
+  bought it is shown the book, on WooCommerce or on HikaShop.
 * Nothing is sent to us, and the plugin loads nothing from anyone else's server.
 
 == Installation ==

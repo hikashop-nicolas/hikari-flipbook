@@ -44,8 +44,12 @@ final class Books
             ? array_merge(Settings::all(), $book->merged())
             : Settings::all();
 
+        // path and bought are not site-wide defaults, so they are not in the base
+        // and would be dropped: a setting nothing defaults to still has to be read.
+        $always = ['path' => $base['path'] ?? '', 'bought' => $base['bought'] ?? ''];
+
         $params = [];
-        foreach (array_merge($base, ['path' => $base['path'] ?? '']) as $key => $default) {
+        foreach (array_merge($base, $always) as $key => $default) {
             $params[$key] = $lower[strtolower($key)] ?? $default;
         }
 

@@ -161,7 +161,7 @@ final class BookType
     public static function render(\WP_Post $post): void
     {
         $saved = get_post_meta($post->ID, self::META, true);
-        $values = array_merge(['path' => ''], Settings::all(), is_array($saved) ? $saved : []);
+        $values = array_merge(['path' => '', 'bought' => ''], Settings::all(), is_array($saved) ? $saved : []);
 
         wp_nonce_field('hikari_flipbook_book', 'hikari_flipbook_nonce');
 
@@ -171,6 +171,15 @@ final class BookType
             . esc_attr((string) $values['path']) . '"></p>';
         echo '<p class="description">' . esc_html__(
             'Relative to the site, for example wp-content/uploads/catalogue.pdf',
+            'hikari-flipbook'
+        ) . '</p>';
+
+        echo '<p><label for="hikari-bought"><strong>'
+            . esc_html__('Only for buyers of', 'hikari-flipbook') . '</strong></label><br>';
+        echo '<input type="text" id="hikari-bought" name="hikari_flipbook[bought]" class="regular-text" value="'
+            . esc_attr((string) $values['bought']) . '"></p>';
+        echo '<p class="description">' . esc_html__(
+            'A product id, or several separated by commas. The book is then shown only to a visitor who has bought one of them. Leave empty to show it to everyone.',
             'hikari-flipbook'
         ) . '</p>';
 
@@ -232,6 +241,8 @@ final class BookType
         // book cannot hold a value the site itself could not.
         $clean         = Settings::sanitise($input);
         $clean['path'] = sanitize_text_field((string) ($input['path'] ?? ''));
+        // Not a site default: which product a book is sold as belongs to that book.
+        $clean['bought'] = sanitize_text_field((string) ($input['bought'] ?? ''));
 
         // Hotspots travel in their own field: they are JSON, and the settings
         // sanitiser would flatten them into a text line.

@@ -33,6 +33,9 @@ final class Config
         'download'     => false,
         'share'        => false,
         'lightbox'     => false,
+        // Who may read it: the product, or products, a visitor has to have bought
+        // for the book to appear at all. Empty means everyone who reaches the page.
+        'bought'       => '',
         // Regions drawn on the pages, as the host stored them, and whether a
         // reader is shown where they are instead of having to find them.
         'hotspots'      => [],

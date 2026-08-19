@@ -39,6 +39,8 @@
 							__('The id of a book from the Flipbooks screen. Leave empty to use a path.', 'hikari-flipbook')),
 						field(props, 'path', __('PDF or image folder', 'hikari-flipbook'),
 							__('Relative to the site, for example wp-content/uploads/catalogue.pdf', 'hikari-flipbook')),
+						field(props, 'bought', __('Only for buyers of', 'hikari-flipbook'),
+							__('A product id, or several separated by commas. The book is shown only to a visitor who has bought one of them.', 'hikari-flipbook')),
 						el(components.SelectControl, {
 							label: __('Pages shown', 'hikari-flipbook'),
 							value: props.attributes.mode,

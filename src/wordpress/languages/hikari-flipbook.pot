@@ -9,16 +9,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: hikari-flipbook\n"
 
-#: blocks/flipbook/editor.js:67
+#: blocks/flipbook/editor.js:69
 msgid "1 or 0. Leave empty to use the site default."
 msgstr ""
 
-#: blocks/flipbook/editor.js:69
+#: blocks/flipbook/editor.js:71
 msgid "1 to outline every region as soon as the book opens. Leave empty to use the site default."
 msgstr ""
 
 #: includes/Settings.php:136
 msgid "A different one each turn"
+msgstr ""
+
+#: blocks/flipbook/editor.js:43
+msgid "A product id, or several separated by commas. The book is shown only to a visitor who has bought one of them."
 msgstr ""
 
 #: includes/BookType.php:38
@@ -29,7 +33,7 @@ msgstr ""
 msgid "Add a region"
 msgstr ""
 
-#: includes/BookType.php:190 includes/Settings.php:129
+#: includes/BookType.php:199 includes/Settings.php:129
 msgid "Allow zooming"
 msgstr ""
 
@@ -81,15 +85,15 @@ msgstr ""
 msgid "First page"
 msgstr ""
 
-#: includes/BookType.php:189 includes/Settings.php:128
+#: includes/BookType.php:198 includes/Settings.php:128
 msgid "First page stands alone as a cover"
 msgstr ""
 
-#: blocks/flipbook/editor.js:77 includes/BookType.php:37
+#: blocks/flipbook/editor.js:79 includes/BookType.php:37
 msgid "Flipbook"
 msgstr ""
 
-#: includes/Books.php:77
+#: includes/Books.php:81
 msgid "Flipbook: %s"
 msgstr ""
 
@@ -105,11 +109,11 @@ msgstr ""
 msgid "Go to page"
 msgstr ""
 
-#: blocks/flipbook/editor.js:62 includes/BookType.php:203 includes/Settings.php:165
+#: blocks/flipbook/editor.js:64 includes/BookType.php:212 includes/Settings.php:165
 msgid "Google Analytics (gtag)"
 msgstr ""
 
-#: blocks/flipbook/editor.js:61 includes/BookType.php:202 includes/Settings.php:164
+#: blocks/flipbook/editor.js:63 includes/BookType.php:211 includes/Settings.php:164
 msgid "Google Tag Manager (dataLayer)"
 msgstr ""
 
@@ -125,11 +129,11 @@ msgstr ""
 msgid "Hotspots"
 msgstr ""
 
-#: includes/BookType.php:192 includes/Settings.php:140
+#: includes/BookType.php:201 includes/Settings.php:140
 msgid "Keep the page number in the address bar"
 msgstr ""
 
-#: blocks/flipbook/editor.js:53 includes/BookType.php:205 includes/Settings.php:149
+#: blocks/flipbook/editor.js:55 includes/BookType.php:214 includes/Settings.php:149
 msgid "Largest height (px)"
 msgstr ""
 
@@ -137,7 +141,7 @@ msgstr ""
 msgid "Last page"
 msgstr ""
 
-#: blocks/flipbook/editor.js:54
+#: blocks/flipbook/editor.js:56
 msgid "Leave empty to use the site default."
 msgstr ""
 
@@ -169,19 +173,23 @@ msgstr ""
 msgid "No region selected."
 msgstr ""
 
-#: includes/BookType.php:193 includes/Settings.php:141
+#: includes/BookType.php:202 includes/Settings.php:141
 msgid "Offer the PDF for download"
 msgstr ""
 
-#: blocks/flipbook/editor.js:47 includes/BookType.php:184 includes/Settings.php:124
+#: blocks/flipbook/editor.js:49 includes/BookType.php:193 includes/Settings.php:124
 msgid "One or two, depending on the screen"
 msgstr ""
 
-#: blocks/flipbook/editor.js:48 includes/BookType.php:185 includes/Settings.php:125
+#: blocks/flipbook/editor.js:50 includes/BookType.php:194 includes/Settings.php:125
 msgid "One page"
 msgstr ""
 
-#: blocks/flipbook/editor.js:60 includes/BookType.php:201 includes/Settings.php:163
+#: blocks/flipbook/editor.js:42 includes/BookType.php:178
+msgid "Only for buyers of"
+msgstr ""
+
+#: blocks/flipbook/editor.js:62 includes/BookType.php:210 includes/Settings.php:163
 msgid "Only the page event"
 msgstr ""
 
@@ -205,7 +213,7 @@ msgstr ""
 msgid "Outline every region as soon as the book opens"
 msgstr ""
 
-#: blocks/flipbook/editor.js:68
+#: blocks/flipbook/editor.js:70
 msgid "Outline the hotspots"
 msgstr ""
 
@@ -213,23 +221,23 @@ msgstr ""
 msgid "Page {page} of {total}"
 msgstr ""
 
-#: includes/BookType.php:207 includes/Settings.php:152
+#: includes/BookType.php:216 includes/Settings.php:152
 msgid "Page colour"
 msgstr ""
 
-#: includes/BookType.php:191 includes/Settings.php:130
+#: includes/BookType.php:200 includes/Settings.php:130
 msgid "Page turn sound"
 msgstr ""
 
-#: blocks/flipbook/editor.js:43 includes/BookType.php:183 includes/Settings.php:123
+#: blocks/flipbook/editor.js:45 includes/BookType.php:192 includes/Settings.php:123
 msgid "Pages shown"
 msgstr ""
 
-#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:80 includes/BookType.php:169
+#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:82 includes/BookType.php:169
 msgid "PDF or image folder"
 msgstr ""
 
-#: includes/BookType.php:210
+#: includes/BookType.php:219
 msgid "Place it with:"
 msgstr ""
 
@@ -241,7 +249,7 @@ msgstr ""
 msgid "Product id"
 msgstr ""
 
-#: includes/BookType.php:196
+#: includes/BookType.php:205
 msgid "Put the document and its text in the page for search engines"
 msgstr ""
 
@@ -253,11 +261,11 @@ msgstr ""
 msgid "Region"
 msgstr ""
 
-#: blocks/flipbook/editor.js:41 blocks/flipbook/editor.js:81
+#: blocks/flipbook/editor.js:41 blocks/flipbook/editor.js:83
 msgid "Relative to the site, for example wp-content/uploads/catalogue.pdf"
 msgstr ""
 
-#: blocks/flipbook/editor.js:56 includes/BookType.php:200 includes/Settings.php:159
+#: blocks/flipbook/editor.js:58 includes/BookType.php:209 includes/Settings.php:159
 msgid "Report to analytics"
 msgstr ""
 
@@ -273,19 +281,19 @@ msgstr ""
 msgid "Search books"
 msgstr ""
 
-#: includes/BookType.php:194 includes/Settings.php:142
+#: includes/BookType.php:203 includes/Settings.php:142
 msgid "Show a share button"
 msgstr ""
 
-#: includes/BookType.php:195 includes/Settings.php:143
+#: includes/BookType.php:204 includes/Settings.php:143
 msgid "Show the cover, open the book over the page"
 msgstr ""
 
-#: blocks/flipbook/editor.js:46 blocks/flipbook/editor.js:59
+#: blocks/flipbook/editor.js:48 blocks/flipbook/editor.js:61
 msgid "Site default"
 msgstr ""
 
-#: blocks/flipbook/editor.js:66
+#: blocks/flipbook/editor.js:68
 msgid "Text in the page for search engines"
 msgstr ""
 
@@ -301,7 +309,15 @@ msgstr ""
 msgid "This book could not be opened."
 msgstr ""
 
-#: includes/BookType.php:206 includes/Settings.php:151
+#: src/core/Strings.php
+msgid "This book is for buyers of {product}."
+msgstr ""
+
+#: src/core/Strings.php
+msgid "This book is for buyers only."
+msgstr ""
+
+#: includes/BookType.php:215 includes/Settings.php:151
 msgid "Toolbar colour"
 msgstr ""
 
@@ -309,7 +325,7 @@ msgstr ""
 msgid "Top %"
 msgstr ""
 
-#: blocks/flipbook/editor.js:49 includes/BookType.php:186 includes/Settings.php:126
+#: blocks/flipbook/editor.js:51 includes/BookType.php:195 includes/Settings.php:126
 msgid "Two pages"
 msgstr ""
 
@@ -321,7 +337,7 @@ msgstr ""
 msgid "Width %"
 msgstr ""
 
-#: includes/BookType.php:256 includes/Settings.php:195
+#: includes/BookType.php:267 includes/Settings.php:195
 msgid "Yes"
 msgstr ""
 

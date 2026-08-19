@@ -22,4 +22,13 @@ interface Shop
      * @return array{url:string,name:string}|null Null when there is no such product.
      */
     public function product(string $id): ?array;
+
+    /**
+     * Whether the visitor reading this page has bought that product.
+     *
+     * What counts as bought is the shop's business, not ours: an order that was
+     * placed and never paid for is not a purchase, and only the shop knows which
+     * of its statuses mean it was. A host that cannot tell says no.
+     */
+    public function hasBought(string $id): bool;
 }

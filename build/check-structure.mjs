@@ -2,7 +2,7 @@
 // and locally with `npm run check`. Everything here is a hard failure: a warning
 // nobody reads is how the two builds start drifting apart.
 import { readFile, readdir, stat } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { basename, join, relative } from "node:path";
 import { spawnSync } from "node:child_process";
 import { root, version } from "./lib.mjs";
 import { UPDATE_PATH, UPDATE_URL, downloadUrl } from "./update.mjs";
@@ -111,6 +111,12 @@ for (const ext of joomlaExtensions) {
   }
 
   for (const file of files.filter((f) => f.endsWith(".ini"))) {
+    // Joomla loads <name>.ini out of the extension's own language folder. A copy
+    // named en-GB.<name>.ini is the old convention, is never read, and the strings
+    // in it come out as their keys.
+    if (basename(file).startsWith("en-GB.")) {
+      fail(ext.name, `${file} is named for its locale, so Joomla never loads it`);
+    }
     for (const line of (await read(join(dir, file))).split("\n")) {
       if (line.trim() === "" || line.startsWith(";")) continue;
       const key = line.split("=")[0];

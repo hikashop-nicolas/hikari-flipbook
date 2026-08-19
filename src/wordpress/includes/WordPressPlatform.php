@@ -225,6 +225,79 @@ final class WordPressPlatform implements Platform, Shop
         return $url ? ['url' => (string) $url, 'name' => (string) $product->product_name] : null;
     }
 
+    /**
+     * Whether the visitor has bought this product, from whichever shop has it.
+     *
+     * Asked of both shops for the same reason the link is: a WordPress site can
+     * be running HikaShop, WooCommerce, or both.
+     */
+    public function hasBought(string $id): bool
+    {
+        if (!function_exists('is_user_logged_in') || !is_user_logged_in()) {
+            return false;
+        }
+
+        return $this->boughtOnHikaShop($id) || $this->boughtOnWooCommerce($id);
+    }
+
+    private function boughtOnHikaShop(string $id): bool
+    {
+        global $wpdb;
+
+        $id = (int) $id;
+
+        if ($id <= 0 || !isset($wpdb) || !function_exists('hikashop_completeLink')) {
+            return false;
+        }
+
+        $statuses = $this->hikaShopPaidStatuses();
+        $marks    = implode(',', array_fill(0, count($statuses), '%s'));
+
+        // The order belongs to a shop account, which belongs to a site account.
+        $found = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT 1 FROM {$wpdb->prefix}hikashop_order_product AS op"
+                . " INNER JOIN {$wpdb->prefix}hikashop_order AS o ON o.order_id = op.order_id"
+                . " INNER JOIN {$wpdb->prefix}hikashop_user AS u ON u.user_id = o.order_user_id"
+                . ' WHERE op.product_id = %d AND u.user_cms_id = %d'
+                // Carts and wishlists live in the same table as sales do.
+                . " AND o.order_type = 'sale' AND o.order_status IN ($marks) LIMIT 1",
+                array_merge([$id, get_current_user_id()], $statuses)
+            )
+        );
+
+        return $found !== null;
+    }
+
+    /**
+     * The order statuses HikaShop treats as paid for, from its own configuration:
+     * the same ones that let a customer download a file they bought.
+     *
+     * @return array<int,string>
+     */
+    private function hikaShopPaidStatuses(): array
+    {
+        global $wpdb;
+
+        $value = (string) $wpdb->get_var(
+            "SELECT config_value FROM {$wpdb->prefix}hikashop_config"
+            . " WHERE config_namekey = 'order_status_for_download'"
+        );
+
+        $statuses = array_filter(array_map('trim', explode(',', $value)), 'strlen');
+
+        return $statuses === [] ? ['confirmed', 'shipped'] : array_values($statuses);
+    }
+
+    private function boughtOnWooCommerce(string $id): bool
+    {
+        if (!function_exists('wc_customer_bought_product')) {
+            return false;
+        }
+
+        return (bool) wc_customer_bought_product('', get_current_user_id(), (int) $id);
+    }
+
     /** @return array{url:string,name:string}|null */
     private function fromWooCommerce(string $id): ?array
     {
