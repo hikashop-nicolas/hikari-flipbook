@@ -1014,3 +1014,24 @@ hiding output hides failure. Do not redirect a build's output away.
   correct and unpleasant. A minimum sensible page width, or steering such books towards the lightbox,
   is the obvious next thing.
 - The site demo is still the seed catalogue only; an EPUB demo would show this off.
+
+
+## 34. Four kinds of book, and the demo that shows them (2026-08-19)
+
+The demo now offers a PDF, an EPUB, a folder of images and a folder of HTML pages, each on its own
+URL. The page writes the container and the payload the Joomla module would write, so what runs below
+it is the extension rather than an imitation of it.
+
+**HTML pages are the new fourth kind**, and they cost almost nothing: one file per page, in an
+iframe with a `src`. There is no archive to unpack and nothing to rewrite, because the site already
+serves the pages and every relative reference resolves the way it always would. What they buy over a
+PDF is that the pages are alive: real text, working links, and a page edited the way any other page
+on the site is edited. They exist because step 1 of the EPUB work built `mount()`; before that, a
+page had to be a picture.
+
+Both hosts read a folder of them. A folder holding pictures is still a book of pictures, and a
+stylesheet sitting beside the pages is left alone rather than treated as a page.
+
+The demo documents: the 1900 seed catalogue as a PDF and again as six JPEGs, *La Page Blanche* (CC
+BY-SA 3.0, from the IDPF samples) as a fixed-layout EPUB, and four HTML pages written for it. Each
+one is credited in the footer of the page that shows it.
