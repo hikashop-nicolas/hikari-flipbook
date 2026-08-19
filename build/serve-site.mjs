@@ -35,7 +35,12 @@ createServer(async (req, res) => {
     return;
   }
 
-  res.writeHead(200, { "content-type": TYPES[extname(path)] || "application/octet-stream" });
+  res.writeHead(200, {
+    "content-type": TYPES[extname(path)] || "application/octet-stream",
+    // Never cached: this server exists to look at a change that was just made,
+    // and a stale stylesheet here reads exactly like the bug you just fixed.
+    "cache-control": "no-store",
+  });
   createReadStream(path).pipe(res);
 }).listen(port, () => {
   console.log(`\nThe site is at http://localhost:${port}/  (demo: /demo.html)`);
