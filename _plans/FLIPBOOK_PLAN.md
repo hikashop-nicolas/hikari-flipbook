@@ -1035,3 +1035,18 @@ stylesheet sitting beside the pages is left alone rather than treated as a page.
 The demo documents: the 1900 seed catalogue as a PDF and again as six JPEGs, *La Page Blanche* (CC
 BY-SA 3.0, from the IDPF samples) as a fixed-layout EPUB, and four HTML pages written for it. Each
 one is credited in the footer of the page that shows it.
+
+
+## 35. Shops, and how loudly to talk about them (2026-08-19)
+
+**HikaShop runs on WordPress.** The WordPress platform asked WooCommerce and nothing else, so a
+HikaShop-on-WordPress site would have drawn hotspots that linked nowhere: our own users, missed
+because the Joomla side was written first and the WordPress side was written as its mirror rather
+than from the same question. It asks HikaShop first now, through `hikashop_completeLink` so the URL
+comes from the shop rather than being guessed at, and falls back to WooCommerce. Verified on the
+running WordPress site.
+
+**Tone.** The documentation had hotspots as the reason the extension exists and named HikaShop
+throughout. That is our reason, not the reader's: most people putting a PDF on a page will never
+draw a region. Hotspots are one feature among several now, the shops are named once and evenly, and
+the site says "your shop" rather than ours. The feature is unchanged; only the volume is.
