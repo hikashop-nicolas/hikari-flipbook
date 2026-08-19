@@ -270,6 +270,29 @@ if (!(await exists(wp))) {
       }
     }
 
+    // The demo is a real book: it needs the bundle, the worker and a document, and
+    // its payload has to parse. A payload that does not parse fails silently, which
+    // is exactly how it would reach the site unnoticed.
+    for (const needed of ["demo.html", "demo/catalogue.pdf", "media/js/flipbook.js", "media/js/pdf.worker.mjs", "media/css/flipbook.css"]) {
+      if (!(await exists(join(site, needed)))) fail("site", `the demo needs ${needed}, which is not there`);
+    }
+
+    const demo = await read(join(site, "demo.html"));
+    const payload = demo.match(/data-flipbook='([\s\S]*?)'>/)?.[1];
+
+    if (!payload) {
+      fail("site", "the demo page carries no book at all");
+    } else {
+      try {
+        const book = JSON.parse(payload);
+        for (const url of [...book.pages, ...(book.options?.soundUrl ?? []), book.options?.downloadUrl].filter(Boolean)) {
+          if (!(await exists(join(site, url)))) fail("site", `the demo points at ${url}, which the site does not serve`);
+        }
+      } catch (err) {
+        fail("site", `the demo's book is not readable JSON, so nothing would appear: ${err.message}`);
+      }
+    }
+
     // A Markdown link that survived into the HTML is a link to a file the site
     // does not serve.
     for (const page of await readdir(join(site, "docs"))) {

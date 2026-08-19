@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo — Hikari Flipbook</title>
+<meta name="description" content="A real Hikari Flipbook book, running the same front-end both the Joomla package and the WordPress plugin ship.">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="media/css/flipbook.css">
+<style>
+  .stage { padding: 26px 0 10px; }
+  .stage .hikari-flipbook { --fv-page-bg: #fff; }
+  .hint { color: var(--dim); font-size: 15px; margin: 6px 0 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 18px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--dim); }
+  .legend b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="index.html">
+      <img src="img/icon.svg" alt="" width="28" height="28">
+      <span>Hikari <strong>Flipbook</strong></span>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="docs/">Documentation</a>
+      <a href="https://github.com/hikashop-nicolas/hikari-flipbook/releases/latest">Download</a>
+      <a href="https://github.com/hikashop-nicolas/hikari-flipbook">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section style="padding-bottom: 18px;">
+  <div class="wrap">
+    <h2>A book, not a picture of one</h2>
+    <p class="sub">
+      This is the front-end both packages ship, loaded exactly the way the Joomla module
+      and the WordPress shortcode load it. The document is a PDF sitting next to this page;
+      nothing is uploaded and no server does any work.
+    </p>
+  </div>
+</section>
+
+<div class="stage">
+  <div class="wrap">
+    <!-- The same container and the same payload the PHP side writes. -->
+    <div class="hikari-flipbook" id="hikari-flipbook-demo" data-flipbook='{
+      "kind": "pdf",
+      "pages": ["demo/catalogue.pdf"],
+      "lightbox": false,
+      "showHotspots": true,
+      "options": {
+        "mode": "auto",
+        "breakpoint": 700,
+        "flippingTime": 700,
+        "showCover": true,
+        "zoom": true,
+        "share": true,
+        "deepLink": true,
+        "maxHeight": 620,
+        "downloadUrl": "demo/catalogue.pdf",
+        "soundUrl": ["media/sounds/page-turn-1.mp3", "media/sounds/page-turn-2.mp3"],
+        "hotspots": [
+          { "page": 1, "x": 0.09, "y": 0.3, "width": 0.55, "height": 0.28,
+            "goToPage": 4, "label": "Jump to the size guide" },
+          { "page": 2, "x": 0.09, "y": 0.3, "width": 0.55, "height": 0.28,
+            "href": "docs/hotspots.html", "label": "A product hotspot: this one opens the documentation" }
+        ]
+      }
+    }'></div>
+  </div>
+</div>
+
+<section style="border-top: 0; padding-top: 18px;">
+  <div class="wrap">
+    <p class="hint">
+      Drag a corner to turn a page, or use the toolbar. Arrow keys, Home and End work once
+      the book has focus.
+    </p>
+    <ul class="legend">
+      <li><b>Search</b> the document from the toolbar</li>
+      <li><b>Contents and pages</b> from the button beside it</li>
+      <li><b>Two hotspots</b> are outlined on pages 2 and 3</li>
+      <li><b>Sound</b> plays from the first turn a visitor makes</li>
+    </ul>
+    <p style="margin-top: 26px;">
+      <a href="docs/placing-a-book.html">How a book is placed on a page →</a>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Hikari Flipbook, by <a href="https://www.hikashop.com">Hikari Software</a>. GPL-3.0-or-later.
+    The sample document is generated, and carries no real content.
+  </div>
+</footer>
+
+<script type="module" src="media/js/flipbook.js"></script>
+</body>
+</html>

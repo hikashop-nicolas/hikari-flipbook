@@ -15,7 +15,8 @@
     "test": "php tests/CoreTest.php",
     "pot": "node build/make-pot.mjs",
     "update": "node build/update.mjs",
-    "site": "node build/build-site.mjs"
+    "site": "npm run build:assets && node build/build-site.mjs",
+    "site:serve": "npm run site && node build/serve-site.mjs"
   },
   "dependencies": {
     "flipview": "github:hikashop-nicolas/flipview#v0.11.0",

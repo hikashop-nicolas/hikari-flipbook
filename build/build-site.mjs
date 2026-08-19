@@ -3,16 +3,37 @@
 //
 // One source for the documentation, two places it can be read: docs/*.md on GitHub,
 // and the same words as pages here. Nothing is written twice.
-import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { marked } from "marked";
 import { root, version } from "./lib.mjs";
+
+const exists = async (path) => access(path).then(() => true, () => false);
 
 const out = join(root, "dist", "site");
 const v = await version();
 
 await rm(out, { recursive: true, force: true });
 await mkdir(join(out, "docs"), { recursive: true });
+
+// The demo is the real front-end, not a recording of it, so the site carries the
+// same bundle the packages do. The hotspot editor is admin-only and stays out.
+const media = join(root, "dist", "media");
+
+if (!(await exists(media))) {
+  throw new Error("dist/media is missing: run npm run build:assets before the site");
+}
+
+for (const file of ["js/flipbook.js", "js/pdf.worker.mjs", "css/flipbook.css"]) {
+  await mkdir(join(out, "media", file.split("/")[0]), { recursive: true });
+  await cp(join(media, file), join(out, "media", file));
+}
+
+await cp(join(media, "sounds"), join(out, "media", "sounds"), { recursive: true });
+await cp(join(root, "site/demo"), join(out, "demo"), { recursive: true });
+
+const demo = (await readFile(join(root, "site/demo.html"), "utf8"));
+await writeFile(join(out, "demo.html"), demo, "utf8");
 
 // The presentation page, with the version filled in so it cannot go stale.
 const index = (await readFile(join(root, "site/index.html"), "utf8")).replace(
@@ -45,6 +66,7 @@ function page(title, body, depth) {
       <span>Hikari <strong>Flipbook</strong></span>
     </a>
     <nav>
+      <a href="${up}demo.html">Demo</a>
       <a href="${up}docs/">Documentation</a>
       <a href="https://github.com/hikashop-nicolas/hikari-flipbook/releases/latest">Download</a>
       <a href="https://github.com/hikashop-nicolas/hikari-flipbook">GitHub</a>
@@ -86,4 +108,4 @@ for (const file of files) {
 // underscore and rewrites what it feels like. This turns it off.
 await writeFile(join(out, ".nojekyll"), "", "utf8");
 
-console.log(`site: dist/site (${files.length} documentation pages, version ${v})`);
+console.log(`site: dist/site (${files.length} documentation pages, a live demo, version ${v})`);

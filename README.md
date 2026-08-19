@@ -8,7 +8,8 @@ Built on [flipview](https://github.com/hikashop-nicolas/flipview), our standalon
 page-flip viewer.
 
 **[hikashop-nicolas.github.io/hikari-flipbook](https://hikashop-nicolas.github.io/hikari-flipbook/)**
-— what it is, screenshots, downloads, and the documentation.
+— what it is, a [live demo](https://hikashop-nicolas.github.io/hikari-flipbook/demo.html)
+running the same front-end both packages ship, downloads, and the documentation.
 
 **[Documentation](docs/README.md)** — installing, placing a book, every setting,
 hotspots, translating it, and what to do when something is wrong. Readable here as
@@ -51,7 +52,7 @@ src/
   assets/      the shared front-end, bundled into both packages
 build/         the two builders, the shared helpers and the rule engine
 docs/          the documentation, one source for GitHub and for the site
-site/          the presentation page and its stylesheet
+site/          the presentation page, the live demo and their stylesheet
 updates/       the update file Joomla reads, generated from package.json
 ```
 
@@ -71,7 +72,8 @@ npm install
 npm run build     # both packages into dist/
 npm run check     # the structure rules, run in CI too
 npm test          # the core tests, plain PHP, no framework
-npm run site      # the site into dist/site, published to Pages on every push
+npm run site        # the site into dist/site, published to Pages on every push
+npm run site:serve  # build it and serve it on localhost:4173, to look before pushing
 ```
 
 Output: `dist/pkg_hikariflipbook-<version>.zip` for Joomla, and

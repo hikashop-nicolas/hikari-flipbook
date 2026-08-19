@@ -824,5 +824,14 @@ hotspot regions outlined. The marketplace logo could not be the site's header ma
 drawn on a hard white background and the site has a dark theme: the header uses the icon plus the
 name in text, which follows the theme.
 
-Still open: the site says nothing about a live demo, because there is not one yet. A page with a
-real book on it, rather than a picture of one, is the obvious next thing.
+**The live demo** (added the same day) is a real book, not a recording: `site/demo.html` carries the
+same container and the same JSON payload the PHP writes, and the site ships the same
+`media/js/flipbook.js` both packages do. It has hotspots outlined, sound, search, download and deep
+links, so the whole thing can be tried before anything is installed.
+
+Rules cover it too, including one that parses the demo's payload. That failure is not theoretical:
+a payload that does not parse leaves the container empty and says nothing at all, which is precisely
+how it would reach the site unnoticed.
+
+`npm run site:serve` builds the site and serves it on localhost:4173, so it can be looked at before
+anything is pushed.
