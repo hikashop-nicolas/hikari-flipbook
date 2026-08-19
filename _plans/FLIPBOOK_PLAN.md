@@ -804,3 +804,25 @@ that does nothing. Both directions were tested by breaking them.
 Not written, deliberately: a tutorial with screenshots. Screenshots of an admin screen age badly and
 are the first thing to rot; the pages describe where things are instead. That decision is worth
 revisiting once the JED and wordpress.org listings need images anyway.
+
+
+## 27. The site (2026-08-19)
+
+`site/` holds the presentation page and one stylesheet; `build/build-site.mjs` renders it together
+with `docs/*.md` into `dist/site`, and `.github/workflows/pages.yml` publishes that to GitHub Pages
+on every push to main. The documentation has one source: the Markdown the repository shows is the
+Markdown the site renders, with `.md` links rewritten to `.html` on the way.
+
+The page carries the version from package.json, so it cannot claim an old one, and the download
+buttons point at `releases/latest`, which never needs updating.
+
+Three rules keep it honest: the version was filled in and matches the build, every `docs/*.md` was
+rendered, and no Markdown link survived into the HTML. All three were tested by breaking them.
+
+Two screenshots, taken from a real book: a two-page spread with the toolbar, and a spread with the
+hotspot regions outlined. The marketplace logo could not be the site's header mark, because it is
+drawn on a hard white background and the site has a dark theme: the header uses the icon plus the
+name in text, which follows the theme.
+
+Still open: the site says nothing about a live demo, because there is not one yet. A page with a
+real book on it, rather than a picture of one, is the obvious next thing.

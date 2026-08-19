@@ -249,6 +249,37 @@ if (!(await exists(wp))) {
   }
 }
 
+// --- the site can be built, and points somewhere ------------------------------
+{
+  const site = join(root, "dist/site");
+
+  if (!(await exists(site))) {
+    // The site is built by its own script, so this only checks it when it is there.
+  } else {
+    const index = await read(join(site, "index.html"));
+
+    if (index.includes(">—</span>")) fail("site", "the version was never filled in");
+    if (!index.includes(`>${v}<`)) fail("site", `the page does not name version ${v}`);
+
+    // Every documentation page has to have been rendered, or a link on the site
+    // leads nowhere.
+    for (const file of (await readdir(join(root, "docs"))).filter((f) => f.endsWith(".md"))) {
+      const name = file === "README.md" ? "index.html" : file.replace(/\.md$/, ".html");
+      if (!(await exists(join(site, "docs", name)))) {
+        fail("site", `docs/${file} was never rendered to docs/${name}`);
+      }
+    }
+
+    // A Markdown link that survived into the HTML is a link to a file the site
+    // does not serve.
+    for (const page of await readdir(join(site, "docs"))) {
+      const html = await read(join(site, "docs", page));
+      const dangling = [...html.matchAll(/href="([^":]+\.md)"/g)].map((m) => m[1]);
+      if (dangling.length) fail("site", `docs/${page} still links to ${dangling.join(", ")}`);
+    }
+  }
+}
+
 // --- the documentation matches the code ---------------------------------------
 // Documentation drifts silently: a setting is added, the page that lists them is not,
 // and nobody notices until someone asks why a setting they read about does nothing.

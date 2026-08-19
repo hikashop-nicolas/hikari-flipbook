@@ -1,0 +1,207 @@
+/* One stylesheet for the presentation page and the documentation pages, so the site
+   is one thing rather than a page and some Markdown. */
+:root {
+  --ink: #10151c;
+  --dim: #55606f;
+  --line: #e2e6eb;
+  --paper: #ffffff;
+  --wash: #f6f8fa;
+  --brand: #2b6cb0;
+  --brand-dark: #1f5185;
+  --button: #2b6cb0;
+  --button-dark: #1f5185;
+  --accent: #b45309;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8ecf1;
+    --dim: #a3aebd;
+    --line: #263041;
+    --paper: #0f141b;
+    --wash: #151c26;
+    --brand: #6aa8e6;
+    --brand-dark: #8cc0f2;
+    /* Links can be pale on a dark page; white text on a pale button cannot. */
+    --button: #2f74bd;
+    --button-dark: #3f88d4;
+    --accent: #f0a552;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--brand); }
+a:hover { color: var(--brand-dark); }
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 22px; }
+
+/* --- the bar --- */
+.top {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.top .wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 62px;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.mark img { height: 26px; width: 26px; border-radius: 5px; }
+.mark strong { font-weight: 700; }
+
+.top nav {
+  margin-left: auto;
+  display: flex;
+  gap: 18px;
+  font-size: 15px;
+}
+
+.top nav a { color: var(--dim); text-decoration: none; }
+.top nav a:hover { color: var(--ink); }
+
+/* --- the hero --- */
+.hero { padding: 64px 0 12px; text-align: center; }
+
+.hero h1 {
+  font-size: clamp(34px, 6vw, 52px);
+  line-height: 1.1;
+  margin: 0 0 14px;
+  letter-spacing: -0.02em;
+}
+
+.hero p.lead {
+  font-size: clamp(18px, 2.4vw, 21px);
+  color: var(--dim);
+  margin: 0 auto 26px;
+  max-width: 44ch;
+}
+
+.buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+.btn {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 8px;
+  background: var(--button);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.btn:hover { background: var(--button-dark); color: #fff; }
+
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.btn.ghost:hover { background: var(--wash); color: var(--ink); }
+
+.note { color: var(--dim); font-size: 14px; margin-top: 14px; }
+
+.shot {
+  margin: 44px auto 0;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 34px rgb(16 21 28 / 0.14);
+  display: block;
+}
+
+/* --- sections --- */
+section { padding: 52px 0; border-top: 1px solid var(--line); }
+section:first-of-type { border-top: 0; }
+
+h2 { font-size: 27px; margin: 0 0 8px; letter-spacing: -0.01em; }
+h2 + p.sub { color: var(--dim); margin: 0 0 26px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px;
+  background: var(--wash);
+}
+
+.card h3 { margin: 0 0 6px; font-size: 17px; }
+.card p { margin: 0; color: var(--dim); font-size: 15px; }
+
+pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+pre {
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 14.5px;
+}
+
+:not(pre) > code {
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.9em;
+}
+
+table { border-collapse: collapse; width: 100%; font-size: 15px; display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--line); padding: 8px 11px; text-align: left; vertical-align: top; }
+th { background: var(--wash); }
+
+blockquote {
+  margin: 0;
+  padding: 2px 18px;
+  border-left: 3px solid var(--line);
+  color: var(--dim);
+}
+
+/* --- documentation pages --- */
+.doc { padding: 40px 0 70px; }
+.doc h1 { font-size: 32px; margin: 0 0 22px; letter-spacing: -0.02em; }
+.doc h2 { margin-top: 38px; }
+.doc h3 { margin-top: 26px; font-size: 18px; }
+.doc img { max-width: 100%; }
+
+.crumb { font-size: 14px; color: var(--dim); margin: 26px 0 0; }
+.crumb a { text-decoration: none; }
+
+/* --- foot --- */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 30px 0 50px;
+  color: var(--dim);
+  font-size: 14px;
+}
+
+footer a { color: var(--dim); }

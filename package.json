@@ -14,7 +14,8 @@
     "build:assets": "node build/build-assets.mjs",
     "test": "php tests/CoreTest.php",
     "pot": "node build/make-pot.mjs",
-    "update": "node build/update.mjs"
+    "update": "node build/update.mjs",
+    "site": "node build/build-site.mjs"
   },
   "dependencies": {
     "flipview": "github:hikashop-nicolas/flipview#v0.11.0",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "archiver": "^7.0.1",
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.25.0",
+    "marked": "^18.0.10"
   }
 }
