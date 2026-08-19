@@ -20,8 +20,8 @@ Markdown, and on the site as pages.
 - Real page turns, on a phone as well as a desktop, with an optional page-turn sound.
 - Zoom, fullscreen, a link to the current page, and an optional download button.
 - Search inside the document, its own table of contents, and thumbnails of every page.
-- **Hotspots**: draw a region on a page and bind it to a link, another page, or a
-  product, which turns a catalogue into one a visitor can buy from.
+- **Hotspots**, for the books that want them: draw a region on a page and bind it to a
+  link, another page, or a product in your shop.
 - The document's text in the page for search engines, and a text layer a reader can
   select from.
 - Reduced motion honoured, every control reachable by keyboard and named for a screen

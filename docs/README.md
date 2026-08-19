@@ -7,7 +7,7 @@ nothing is uploaded anywhere and no service is called.
 - [Installing it](installing.md)
 - [Placing a book on a page](placing-a-book.md)
 - [Every setting](options.md)
-- [Hotspots: making a catalogue shoppable](hotspots.md)
+- [Hotspots: clickable regions on a page](hotspots.md)
 - [Translating it](translations.md)
 - [When something is wrong](troubleshooting.md)
 
@@ -27,7 +27,7 @@ That is a working book. Everything else is a setting with a sensible default.
 - Real page turns, on a phone as well as a desktop, with an optional page-turn sound.
 - Zoom, fullscreen, a link to the current page, and an optional download button.
 - Search inside the document, its own table of contents, and thumbnails of every page.
-- Hotspots: regions drawn on a page and bound to a link, another page, or a product.
+- Hotspots, if you want them: regions drawn on a page that link somewhere.
 - The document's text in the page for search engines, and a text layer a reader can
   select from.
 - Reduced motion is honoured; every control is reachable by keyboard and named for a
@@ -36,6 +36,7 @@ That is a working book. Everything else is a setting with a sensible default.
 ## What it does not do
 
 - It does not upload, convert, or send your document anywhere.
-- It does not add to the cart. A product hotspot links to the product page, because a
-  cart button that ignored options, stock or variants would be worse than a link.
+- It does not add to the cart. A hotspot bound to a product links to that product's
+  page, because a cart button that ignored options, stock or variants would be worse
+  than a link.
 - It does not need a licence key, an account, or a connection to us.

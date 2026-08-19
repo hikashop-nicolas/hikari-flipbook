@@ -189,6 +189,45 @@ final class WordPressPlatform implements Platform, Shop
      */
     public function product(string $id): ?array
     {
+        // Whichever shop the site has. HikaShop runs on WordPress as well as on
+        // Joomla, so asking WooCommerce and stopping there would leave half our
+        // own users with hotspots that link nowhere.
+        return $this->fromHikaShop($id) ?? $this->fromWooCommerce($id);
+    }
+
+    /** @return array{url:string,name:string}|null */
+    private function fromHikaShop(string $id): ?array
+    {
+        global $wpdb;
+
+        // The link builder is HikaShop's own, so the URL respects the shop's
+        // pages and permalinks rather than being guessed at here.
+        if (!function_exists('hikashop_completeLink') || !isset($wpdb)) {
+            return null;
+        }
+
+        $product = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT product_name, product_alias FROM {$wpdb->prefix}hikashop_product"
+                . ' WHERE product_id = %d AND product_published = 1',
+                (int) $id
+            )
+        );
+
+        if (!$product) {
+            return null;
+        }
+
+        $url = hikashop_completeLink(
+            'product&task=show&cid=' . (int) $id . '&name=' . rawurlencode((string) $product->product_alias)
+        );
+
+        return $url ? ['url' => (string) $url, 'name' => (string) $product->product_name] : null;
+    }
+
+    /** @return array{url:string,name:string}|null */
+    private function fromWooCommerce(string $id): ?array
+    {
         if (!function_exists('wc_get_product')) {
             return null;
         }

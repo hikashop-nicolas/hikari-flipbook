@@ -1,8 +1,8 @@
 # Hotspots
 
 A hotspot is a region drawn on a page and bound to something: a link, another page in
-the book, or a product in the shop. It is what turns a PDF catalogue into a catalogue
-a visitor can buy from.
+the book, or a product in a shop. Most books need none of this; a catalogue usually
+does.
 
 Regions are stored as fractions of a page rather than pixels, so one stays where it was
 put through zoom, a resize, and the single-page layout a phone gets.
@@ -45,15 +45,13 @@ dropped when the book is saved.
 
 ## Products
 
-A region with a product id becomes a link to that product, worked out on the server:
+A region with a product id becomes a link to that product, worked out on the server
+using the shop's own link builder, so it respects your permalinks, menu items and SEF
+settings. HikaShop and WooCommerce are both understood, on either platform.
 
-- **Joomla**: the product's HikaShop page, built with the site's own router, so it
-  respects your SEF settings and menu items.
-- **WordPress**: the product's WooCommerce page.
-
-If the shop is not installed, or the product does not exist or is unpublished, the
-region stays a plain region rather than linking somewhere broken. If you filled in a
-link as well, your link wins.
+If there is no shop, or the product does not exist or is unpublished, the region stays
+a plain region rather than linking somewhere broken. If you filled in a link as well,
+your link wins.
 
 Because it is an ordinary link in the page, it works with the keyboard, it can be
 opened in a new tab, and a screen reader announces the product's name.
