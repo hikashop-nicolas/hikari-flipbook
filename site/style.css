@@ -127,6 +127,9 @@ a:hover { color: var(--brand-dark); }
 .shot {
   margin: 44px auto 0;
   max-width: 100%;
+  /* The tag carries the picture's real size, so that the page does not jump as it
+     loads. Without this the height stays at that size while the width shrinks. */
+  height: auto;
   border: 1px solid var(--line);
   border-radius: 10px;
   box-shadow: 0 10px 34px rgb(16 21 28 / 0.14);
