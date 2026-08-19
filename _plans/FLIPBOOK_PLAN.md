@@ -835,3 +835,26 @@ how it would reach the site unnoticed.
 
 `npm run site:serve` builds the site and serves it on localhost:4173, so it can be looked at before
 anything is pushed.
+
+
+## 28. Two bugs in the contents and pages button (2026-08-19)
+
+Both reported from the demo, both real, fixed in flipview 0.11.1.
+
+**No icon.** The glyph is three horizontal lines, a stroked path, and the stylesheet filled it: a
+filled line has no area, so the button was there, named, focusable and clickable, with nothing drawn
+in it. Four icons had explicit stroke rules and the rest inherited a fill; the panel was the one
+nobody remembered to add. Stroking is now the default and the four arrow glyphs are the exception,
+which is the safer way round: a new stroked icon works without anyone remembering anything.
+
+**The panel pushed the toolbar down the page.** Its cap was `max-height: 100%`, a percentage against
+a flex line whose height is set by the panel itself, so it resolved to nothing: twelve thumbnails
+made the stage taller than the book and the toolbar went with it. The viewer now hands the panel the
+book's height in pixels whenever it sizes the book, and the list scrolls inside that.
+
+The fix was briefly worse than the bug: the first version called `panel.fit()` from `size()`, which
+runs while the panel is still being built, so naming the const threw and the book never appeared at
+all. It goes through a variable that starts null.
+
+A unit test covers the cap. Nothing covers the missing icon, because the failure was visual and the
+markup was correct throughout: inverting the default is the guard.
