@@ -890,3 +890,34 @@ halves to the fix:
 The trade-off is written down in the documentation: "first" means render order, so on a page whose
 modules come and go, a shared link can name a different book tomorrow. The alternative, naming the
 parameter after the element, makes every ordinary link ugly to save a rare case.
+
+
+## 30. A scanned document was blank, and nobody would have told us (2026-08-19)
+
+Putting a real document in the demo found the worst bug of the project so far.
+
+pdf.js decodes JPEG 2000 and JBIG2 in wasm that it fetches at render time, and those two are what a
+scanner produces: almost every scanned catalogue is one or the other. We shipped the worker and not
+the decoders, so a scan rendered as blank white pages, with nothing in the console and nothing for a
+merchant to report beyond "it does not work". Both packages, the hotspot editor and the site now
+carry `pdfjs-dist/wasm/`, and a rule checks the site does.
+
+flipview grew `wasmUrl` and `cMapUrl` for this, both normalised to end in a slash: pdf.js throws
+"Invalid factory url" otherwise, and that kills the whole document rather than one picture in it.
+A host naming a folder should not have to know that.
+
+**Worth remembering**: the generated sample was born-digital, so every test until now used the one
+kind of document that could not expose this. A demo made of real material is not decoration.
+
+## 31. The demo document (2026-08-19)
+
+Twelve pages of *P.L.C. Shepherd & Son's catalogue of seeds & plants*, Sydney, 1900, from the
+Internet Archive: public domain (CC PDM 1.0), 1.1 MB after taking the cover and eleven illustrated
+pages with `pdfseparate` and `pdfunite`. The engraving pages carry names and prices, so the hotspots
+sit over things that were actually for sale, which is the product's own use case rather than a
+coloured rectangle.
+
+Candidates weighed: NASA's e-books are born-digital with clean text and beautiful, but 80 MB for one
+of them, and using a public body's publication as a shop-window demo invites the "implies
+endorsement" question. Standard Ebooks publish no PDF. The scan's text is OCR of 1900 type, so
+search finds what the machine could read: the demo page says so rather than pretending.
