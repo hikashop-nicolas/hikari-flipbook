@@ -36,7 +36,7 @@ await writeFile(
 Contributors: hikarisoftware
 Tags: flipbook, pdf, page flip, catalogue, viewer
 Requires at least: 6.4
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 8.1
 Stable tag: ${v}
 License: GPL-3.0-or-later
