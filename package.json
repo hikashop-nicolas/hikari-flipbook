@@ -19,7 +19,7 @@
     "site:serve": "npm run site && node build/serve-site.mjs"
   },
   "dependencies": {
-    "flipview": "github:hikashop-nicolas/flipview#v0.11.2",
+    "flipview": "github:hikashop-nicolas/flipview#v0.11.3",
     "pdfjs-dist": "^5.4.149"
   },
   "devDependencies": {
