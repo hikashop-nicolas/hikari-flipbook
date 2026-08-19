@@ -2,3 +2,7 @@ node_modules
 dist
 .DS_Store
 vendor
+
+# Local planning notes. They go stale and contradict the code; the
+# documentation and the commits are what is published.
+_plans
