@@ -17,7 +17,7 @@ namespace Hikari\Flipbook\Core;
 final class Shops
 {
     /** Only a document is a book. A shop sells plenty of other files. */
-    private const SHOWABLE = ['pdf', 'epub', 'cbz'];
+    private const SHOWABLE = ['pdf', 'epub', 'cbz', 'fb2', 'fbz', 'mobi', 'azw', 'azw3', 'prc'];
 
     /**
      * The first of a product's files this server can read and we can show.

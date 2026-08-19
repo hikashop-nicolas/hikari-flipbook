@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demo — Hikari Flipbook</title>
-<meta name="description" content="Five books, five kinds of document, one viewer: a PDF, an EPUB, a comic archive, a folder of images and a folder of HTML pages.">
+<meta name="description" content="Seven books, seven kinds of document, one viewer: a PDF, an EPUB, a Kindle book, a FictionBook, a comic archive, a folder of images and a folder of HTML pages.">
 <link rel="icon" href="img/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="media/css/flipbook.css">
@@ -53,10 +53,10 @@
 
 <section style="padding-bottom: 0;">
   <div class="wrap">
-    <h2>Five books, one viewer</h2>
+    <h2>Seven books, one viewer</h2>
     <p class="sub">
-      A document can be a PDF, an EPUB, a comic archive, a folder of images or a folder
-      of HTML pages.
+      A document can be a PDF, an EPUB, a Kindle book, a FictionBook, a comic archive,
+      a folder of images or a folder of HTML pages.
       This is the front-end both packages ship, loaded the way the Joomla module and the
       WordPress shortcode load it. Everything happens in your browser.
     </p>
@@ -136,6 +136,20 @@
       credit: '<a href="https://github.com/IDPF/epub3-samples">La Page Blanche</a> by Boulet and Pénélope Bagieu, éditions Delcourt, from the IDPF EPUB 3 samples, under CC BY-SA 3.0.',
       payload: { kind: "epub", pages: ["demo/comic.epub"], options: {} }
     },
+    azw3: {
+      name: "Kindle",
+      what: "An AZW3 book",
+      about: "<b>A Kindle book.</b> MOBI and AZW3 are unpacked here in the browser: the text, its pictures, and the chapters they are cut into. Books with DRM are refused, since the encryption is the point of it.",
+      credit: '<a href="https://standardebooks.org/ebooks/lewis-carroll/alices-adventures-in-wonderland/john-tenniel">Alice\'s Adventures in Wonderland</a> from Standard Ebooks, with John Tenniel\'s illustrations: public domain, and their own work on it dedicated to the public domain under CC0.',
+      payload: { kind: "azw3", pages: ["demo/alice.azw3"], options: {} }
+    },
+    fb2: {
+      name: "FB2",
+      what: "A FictionBook",
+      about: "<b>A FictionBook.</b> One XML file holding the whole book, pictures included. It reflows like an EPUB does, and its cover and title become a first page.",
+      credit: 'Built from the same Project Gutenberg text of <a href="https://www.gutenberg.org/ebooks/11">Alice\'s Adventures in Wonderland</a>, in the public domain.',
+      payload: { kind: "fb2", pages: ["demo/alice.fb2"], options: {} }
+    },
     cbz: {
       name: "CBZ",
       what: "A comic archive",
@@ -159,7 +173,7 @@
     }
   };
 
-  var order = ["pdf", "epub", "cbz", "images", "html"];
+  var order = ["pdf", "epub", "azw3", "fb2", "cbz", "images", "html"];
   var wanted = new URLSearchParams(location.search).get("book");
   if (!books[wanted]) wanted = "pdf";
 

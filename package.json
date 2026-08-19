@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "fflate": "^0.8.3",
-    "flipview": "github:hikashop-nicolas/flipview#v0.15.0",
+    "flipview": "github:hikashop-nicolas/flipview#v0.17.2",
     "pdfjs-dist": "^5.4.149"
   },
   "devDependencies": {

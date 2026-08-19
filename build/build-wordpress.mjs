@@ -42,11 +42,11 @@ Stable tag: ${v}
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Shows a PDF, an EPUB, a comic archive or a folder of pages as a book with turning pages.
+Shows a PDF, an EPUB, a Kindle book, a comic archive or a folder of pages as a book with turning pages.
 
 == Description ==
 
-Turn a PDF, an EPUB, a comic archive, a folder of images or a folder of HTML pages
+Turn a PDF, an EPUB, a Kindle book, a FictionBook, a comic archive, a folder of images or a folder of HTML pages
 into a book your visitors can leaf through, with real page turns, zoom and deep links
 to a page. Nothing is uploaded anywhere: the document is rendered in the visitor's
 browser.

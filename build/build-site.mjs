@@ -69,7 +69,7 @@ async function stamp(html) {
   };
 
   const paths = [
-    ...html.matchAll(/(demo\/[\w./-]+\.(?:pdf|epub|cbz|jpg|png|html))/g),
+    ...html.matchAll(/(demo\/[\w./-]+\.(?:pdf|epub|cbz|fb2|azw3|jpg|png|html))/g),
     ...html.matchAll(/(media\/(?:js|css)\/[\w.-]+)"/g),
   ].map((match) => match[1]);
 

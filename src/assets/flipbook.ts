@@ -4,9 +4,11 @@
 import {
   createComicSource,
   createEpubSource,
+  createFb2Source,
   createFlipview,
   createHtmlSource,
   createImageSource,
+  createMobiSource,
   createPdfSource,
   openLightbox,
   setStrings,
@@ -22,7 +24,7 @@ import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 const wasmUrl = new URL("./wasm/", import.meta.url).href;
 
 interface Payload {
-  kind: "pdf" | "images" | "epub" | "html" | "cbz";
+  kind: "pdf" | "images" | "epub" | "html" | "cbz" | "fb2" | "mobi" | "azw3";
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
@@ -66,6 +68,12 @@ function reporter(el: HTMLElement, payload: Payload) {
 function open(payload: Payload): Promise<PageSource> {
   if (payload.kind === "epub") return createEpubSource({ url: payload.pages[0] });
   if (payload.kind === "cbz") return createComicSource({ url: payload.pages[0] });
+  if (payload.kind === "fb2") return createFb2Source({ url: payload.pages[0] });
+
+  if (payload.kind === "mobi" || payload.kind === "azw3") {
+    return createMobiSource({ url: payload.pages[0] });
+  }
+
   if (payload.kind === "html") return createHtmlSource(payload.pages);
 
   return payload.kind === "pdf"

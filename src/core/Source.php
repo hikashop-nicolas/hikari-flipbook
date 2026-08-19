@@ -23,12 +23,23 @@ final class Source
     public const KIND_HTML   = 'html';
     /** A comic archive: a zip of pictures, one per page. */
     public const KIND_CBZ    = 'cbz';
+    /** FictionBook: one XML file holding the whole book. */
+    public const KIND_FB2    = 'fb2';
+    /** A Kindle book. MOBI and AZW3 are read the same way and named apart. */
+    public const KIND_MOBI   = 'mobi';
+    public const KIND_AZW3   = 'azw3';
 
     /** One file is one of these, and the extension says which. */
     private const FILE_KINDS = [
         'pdf'  => self::KIND_PDF,
         'epub' => self::KIND_EPUB,
         'cbz'  => self::KIND_CBZ,
+        'fb2'  => self::KIND_FB2,
+        'fbz'  => self::KIND_FB2,
+        'mobi' => self::KIND_MOBI,
+        'prc'  => self::KIND_MOBI,
+        'azw'  => self::KIND_MOBI,
+        'azw3' => self::KIND_AZW3,
     ];
 
     private const IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'];
@@ -66,7 +77,9 @@ final class Source
             $kind = self::FILE_KINDS[strtolower(pathinfo($real, PATHINFO_EXTENSION))] ?? null;
 
             if ($kind === null) {
-                throw new SourceException('A single file source must be a PDF, an EPUB or a CBZ.');
+                throw new SourceException(
+                    'A single file source must be a PDF, an EPUB, a Kindle book, an FB2 or a CBZ.'
+                );
             }
 
             return new self($kind, [$real]);

@@ -5,7 +5,7 @@
   "title": "Flipbook",
   "category": "media",
   "icon": "book-alt",
-  "description": "Shows a PDF, an EPUB, a comic archive or a folder of pages as a book with turning pages.",
+  "description": "Shows a PDF, an EPUB, a Kindle book, a comic archive or a folder of pages as a book with turning pages.",
   "textdomain": "hikari-flipbook",
   "supports": {
     "html": false,

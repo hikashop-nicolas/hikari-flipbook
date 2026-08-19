@@ -1,7 +1,8 @@
 # Hikari Flipbook
 
-A free flipbook for **Joomla and WordPress**: it shows a PDF, an EPUB, a comic
-archive, a folder of images or a folder of HTML pages as a book with turning pages. The document is rendered in the visitor's browser, so
+A free flipbook for **Joomla and WordPress**: it shows a PDF, an EPUB, a Kindle
+book, a FictionBook, a comic archive, a folder of images or a folder of HTML pages as
+a book with turning pages. The document is rendered in the visitor's browser, so
 nothing is uploaded anywhere and no service is called.
 
 Built on [flipview](https://github.com/hikashop-nicolas/flipview), our standalone
