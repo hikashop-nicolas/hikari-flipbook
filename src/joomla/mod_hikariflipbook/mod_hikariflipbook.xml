@@ -9,6 +9,7 @@
 	<description>MOD_HIKARIFLIPBOOK_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_hikariflipbook">mod_hikariflipbook.php</filename>
+		<filename>helper.php</filename>
 		<folder>lib</folder>
 		<folder>tmpl</folder>
 		<folder>language</folder>

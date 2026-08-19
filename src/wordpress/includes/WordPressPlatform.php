@@ -8,6 +8,7 @@
 namespace Hikari\Flipbook\Platform;
 
 use Hikari\Flipbook\Core\Shop;
+use Hikari\Flipbook\Core\Shops;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -287,6 +288,104 @@ final class WordPressPlatform implements Platform, Shop
         $statuses = array_filter(array_map('trim', explode(',', $value)), 'strlen');
 
         return $statuses === [] ? ['confirmed', 'shipped'] : array_values($statuses);
+    }
+
+    /**
+     * The document either shop holds for this product, and where we answer for it.
+     *
+     * Neither shop's own download address is used: HikaShop counts one against the
+     * customer's limit, and WooCommerce ties one to an order and a key. A book
+     * being read is not a download.
+     *
+     * @return array{path:string,url:string}|null
+     */
+    public function productDocument(string $id): ?array
+    {
+        $path = $this->hikaShopDocument($id) ?? $this->wooCommerceDocument($id);
+
+        return $path === null ? null : ['path' => $path, 'url' => self::documentUrl($id)];
+    }
+
+    /** Where a buyer's browser asks for it. Answered on init, before any output. */
+    public static function documentUrl(string $id): string
+    {
+        return add_query_arg(
+            ['hikari_flipbook_book' => (int) $id],
+            home_url('/')
+        );
+    }
+
+    private function hikaShopDocument(string $id): ?string
+    {
+        global $wpdb;
+
+        $id = (int) $id;
+
+        if ($id <= 0 || !isset($wpdb) || !function_exists('hikashop_completeLink')) {
+            return null;
+        }
+
+        $paths = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT file_path FROM {$wpdb->prefix}hikashop_file"
+                . " WHERE file_ref_id = %d AND file_type = 'file'"
+                . ' ORDER BY file_ordering ASC, file_id ASC',
+                $id
+            )
+        );
+
+        $folder = (string) $wpdb->get_var(
+            "SELECT config_value FROM {$wpdb->prefix}hikashop_config"
+            . " WHERE config_namekey = 'uploadsecurefolder'"
+        );
+
+        return Shops::hikaShopFile($paths ?: [], ABSPATH, $folder);
+    }
+
+    /**
+     * WooCommerce keeps a downloadable file as a URL, usually inside the uploads
+     * folder and closed off by a rule in the web server. The path underneath it is
+     * what we read.
+     */
+    private function wooCommerceDocument(string $id): ?string
+    {
+        if (!function_exists('wc_get_product')) {
+            return null;
+        }
+
+        $product = wc_get_product((int) $id);
+
+        if (!$product) {
+            return null;
+        }
+
+        $uploads = wp_upload_dir();
+
+        foreach ($product->get_downloads() as $download) {
+            $file = (string) $download->get_file();
+
+            if ($file === '') {
+                continue;
+            }
+
+            // Either a path already, or a URL under this site's uploads folder.
+            $candidate = strpos($file, '://') === false
+                ? $file
+                : str_replace($uploads['baseurl'], $uploads['basedir'], $file);
+
+            if (strpos($candidate, '://') !== false) {
+                // Somebody else's server: we cannot read it, and will not proxy it.
+                continue;
+            }
+
+            $real = Shops::showable($candidate);
+
+            if ($real !== null) {
+                return $real;
+            }
+        }
+
+        return null;
     }
 
     private function boughtOnWooCommerce(string $id): bool

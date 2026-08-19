@@ -45,6 +45,12 @@ final class Paths
      */
     public static function urls(Platform $platform, Source $source): array
     {
+        // A document the source carries an address for is not under the site at
+        // all: it is read out by the host to whoever may have it.
+        if ($source->urls() !== []) {
+            return $source->urls();
+        }
+
         $root = self::root($platform);
         $base = rtrim($platform->baseUrl(), '/');
         $urls = [];

@@ -15,6 +15,8 @@
  * @package Hikari.Flipbook
  */
 
+use Hikari\Flipbook\Core\Buyers;
+use Hikari\Flipbook\Platform\WordPressPlatform;
 use Hikari\Flipbook\WordPress\Books;
 use Hikari\Flipbook\WordPress\BookType;
 use Hikari\Flipbook\WordPress\Settings;
@@ -60,7 +62,33 @@ function hikari_flipbook_render_block(array $attributes): string
     }));
 }
 
+/**
+ * The address a bought book is read from.
+ *
+ * A document sold as a product is not a public file, so it is read out here. The
+ * purchase is checked again on every request: somebody who has the address but
+ * not the order gets nothing, and so does a search engine.
+ */
+function hikari_flipbook_serve(): void
+{
+    $product = isset($_GET['hikari_flipbook_book'])
+        ? (string) (int) $_GET['hikari_flipbook_book']
+        : '';
+
+    if ($product === '' || $product === '0') {
+        return;
+    }
+
+    if (!Buyers::send(new WordPressPlatform([]), $product)) {
+        status_header(404);
+        exit;
+    }
+
+    exit;
+}
+
 add_shortcode('hikari_flipbook', 'hikari_flipbook_shortcode');
+add_action('init', 'hikari_flipbook_serve');
 
 add_action('init', static function (): void {
     load_plugin_textdomain('hikari-flipbook', false, dirname(plugin_basename(HIKARI_FLIPBOOK_FILE)) . '/languages');

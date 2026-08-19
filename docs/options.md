@@ -52,6 +52,26 @@ of both let a reader in. A visitor who has not bought it is told so, with a link
 the product; the book itself is never rendered, so the document's address is not in
 the page either.
 
+### The book can be the product's own file
+
+A placement with `bought` and no `path` shows the file the product is sold with:
+the publisher has already uploaded the PDF or EPUB to the product, and should not
+have to put a second copy somewhere the web can read it.
+
+```
+{flipbook bought="42"}
+[hikari_flipbook bought="42"]
+```
+
+The document is read out by the site itself, at an address that checks the purchase
+again on every request, so it is never a public file. A search engine, or anyone
+with the address and no order, gets nothing. For the same reason a book that is
+sold never has its words put in the page for crawlers, and its cover is drawn in the
+reader's browser rather than saved as a picture anyone could fetch.
+
+Files the shop keeps somewhere else, on S3 or another server, are passed over: only
+what is on this server can be read out. Name a `path` for those.
+
 The shop decides what counts as bought. On HikaShop it is the order statuses the shop
 already uses to release a file someone paid for, so a flipbook and a download become
 available at the same moment. WooCommerce is asked the same question in its own terms.

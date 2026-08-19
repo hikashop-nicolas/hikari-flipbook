@@ -62,7 +62,9 @@ Features:
 * Page turns, searches and hotspot clicks are reported to the page as an event, and
   to Google Tag Manager or Google Analytics if you want them there.
 * A book can be sold: name the product it belongs to and only a visitor who has
-  bought it is shown the book, on WooCommerce or on HikaShop.
+  bought it is shown the book, on WooCommerce or on HikaShop. With no file of its
+  own it shows the one the product is sold with, read out by the site rather than
+  left in a public folder.
 * Nothing is sent to us, and the plugin loads nothing from anyone else's server.
 
 == Installation ==

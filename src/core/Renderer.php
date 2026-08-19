@@ -36,12 +36,20 @@ final class Renderer
         $this->platform = $platform;
     }
 
-    public function render(Source $source, Config $config, string $id): string
+    /**
+     * @param Source|null $source Null when the placement had nothing to show, which
+     *                            is what a book sold to someone else looks like.
+     */
+    public function render(?Source $source, Config $config, string $id): string
     {
-        $locked = $this->locked($config);
+        $locked = Buyers::locked($this->platform, $config);
 
         if ($locked !== null) {
             return $locked;
+        }
+
+        if ($source === null) {
+            return '';
         }
 
         $this->platform->enqueue('hikari-flipbook', 'js/flipbook.js', 'script');
@@ -80,7 +88,9 @@ final class Renderer
         // A book that opens over the page shows only its cover until it is asked
         // for, so the cover is worth making on the server: otherwise every reader
         // downloads the whole document to draw one thumbnail they may never use.
-        if ($payload['lightbox']) {
+        // Never for a book that is sold: the cover is written into a folder the
+        // web can read, and page one of a paid book is not ours to publish.
+        if ($payload['lightbox'] && Buyers::wanted($config) === []) {
             $cover = Cover::url($this->platform, $source);
 
             if ($cover !== '') {
@@ -109,7 +119,9 @@ final class Renderer
             $this->platform->escape($id),
             $this->platform->escape($this->style($config)),
             $json === false ? '{}' : $json,
-            Seo::markup($this->platform, $source, $urls, $config)
+            // A crawler is nobody's customer, so the words of a book that is sold
+            // do not go into the page for one.
+            Buyers::wanted($config) === [] ? Seo::markup($this->platform, $source, $urls, $config) : ''
         );
     }
 
@@ -127,64 +139,6 @@ final class Renderer
     public static function deepLinkName($value, int $instance)
     {
         return $value === true && $instance > 1 ? 'page' . $instance : $value;
-    }
-
-    /**
-     * A book sold as a product: shown to whoever bought it, and to nobody else.
-     *
-     * The check is here rather than in the browser because a book hidden by
-     * JavaScript is not hidden: the document's URL is in the payload, and anyone
-     * reading the page source has it. A locked book is never rendered at all, so
-     * the URL is never written, no asset is enqueued and no cover is made.
-     *
-     * A site with no shop cannot tell a buyer from anyone else, so it shows the
-     * book to nobody: a setting that cannot be honoured must not be ignored.
-     *
-     * @return string|null Null when the book may be shown, otherwise what goes in
-     *                     its place.
-     */
-    private function locked(Config $config): ?string
-    {
-        $wanted = array_filter(array_map('trim', explode(',', (string) $config->get('bought'))), 'strlen');
-
-        if ($wanted === []) {
-            return null;
-        }
-
-        if (!$this->platform instanceof Shop) {
-            return '';
-        }
-
-        // Several products means any of them: an edition sold on its own and the
-        // bundle it is also part of both let a reader in.
-        foreach ($wanted as $id) {
-            if ($this->platform->hasBought($id)) {
-                return null;
-            }
-        }
-
-        return $this->buyersOnly(reset($wanted));
-    }
-
-    /** Says why the book is not there, and where the reader can buy it. */
-    private function buyersOnly(string $id): string
-    {
-        $words   = Strings::server($this->platform);
-        $product = $this->platform instanceof Shop ? $this->platform->product($id) : null;
-
-        if ($product === null || $product['name'] === '') {
-            return '<p class="hikari-flipbook-buyers">'
-                . $this->platform->escape($words['buyersOnlyPlain']) . '</p>';
-        }
-
-        // The message is escaped first and the link put in after, so a translated
-        // string is text and only the link we built is markup.
-        $link = '<a href="' . $this->platform->escape($product['url']) . '">'
-            . $this->platform->escape($product['name']) . '</a>';
-
-        return '<p class="hikari-flipbook-buyers">'
-            . str_replace('{product}', $link, $this->platform->escape($words['buyersOnly']))
-            . '</p>';
     }
 
     /**

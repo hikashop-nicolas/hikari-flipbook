@@ -5,6 +5,7 @@
  * @license     GNU General Public License version 3 or later
  */
 
+use Hikari\Flipbook\Core\Buyers;
 use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
 use Hikari\Flipbook\Core\Source;
@@ -72,8 +73,15 @@ class PlgContentHikariflipbook extends CMSPlugin
         $params   = new Registry($settings);
         $platform = new JoomlaPlatform($params, 'hikariflipbook');
 
+        $config = new Config($settings);
+        $path   = (string) ($settings['path'] ?? '');
+
         try {
-            $source = Source::fromPath($platform, (string) ($settings['path'] ?? ''));
+            // A book sold as a product needs no path of its own: the file the
+            // product is sold with is the book.
+            $source = $path === '' && $config->get('bought') !== ''
+                ? Buyers::document($platform, $config)
+                : Source::fromPath($platform, $path);
         } catch (SourceException $e) {
             return $this->complain($e->getMessage());
         }
@@ -82,7 +90,7 @@ class PlgContentHikariflipbook extends CMSPlugin
 
         return (new Renderer($platform))->render(
             $source,
-            new Config($settings),
+            $config,
             'hikari-flipbook-content-' . $this->count
         );
     }

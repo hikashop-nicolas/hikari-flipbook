@@ -31,4 +31,19 @@ interface Shop
      * of its statuses mean it was. A host that cannot tell says no.
      */
     public function hasBought(string $id): bool;
+
+    /**
+     * The document this product is sold with, when the shop holds one we can show.
+     *
+     * A publisher selling a book has already uploaded it to the product; asking
+     * them to put a second copy somewhere the web can read would be asking them to
+     * publish for free what they are selling.
+     *
+     * The path is on this server and need not be public. The URL is where this
+     * host answers for it, checking the purchase again as it does.
+     *
+     * @return array{path:string,url:string}|null Null when there is no such file,
+     *                                            or it is not one we can show.
+     */
+    public function productDocument(string $id): ?array;
 }

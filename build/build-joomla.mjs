@@ -39,6 +39,8 @@ async function extension(name, from, files) {
 await extension("mod_hikariflipbook", join(root, "src/joomla/mod_hikariflipbook"), [
   "mod_hikariflipbook.php",
   "mod_hikariflipbook.xml",
+  // The address a bought book is read from, answered through com_ajax.
+  "helper.php",
   "tmpl",
   "language",
 ]);

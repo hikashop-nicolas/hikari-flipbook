@@ -8,6 +8,7 @@
 namespace Hikari\Flipbook\Platform;
 
 use Hikari\Flipbook\Core\Shop;
+use Hikari\Flipbook\Core\Shops;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -194,28 +195,83 @@ final class JoomlaPlatform implements Platform, Shop
     }
 
     /**
+     * The document HikaShop holds for this product, and where we answer for it.
+     *
+     * The shop's own download address is deliberately not used: it counts against
+     * the customer's download limit, and a book being read is not a download.
+     *
+     * @return array{path:string,url:string}|null
+     */
+    public function productDocument(string $id): ?array
+    {
+        $id = (int) $id;
+
+        if ($id <= 0 || !is_dir(JPATH_ROOT . '/components/com_hikashop')) {
+            return null;
+        }
+
+        $db    = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('file_path'))
+            ->from($db->quoteName('#__hikashop_file'))
+            ->where($db->quoteName('file_ref_id') . ' = :id')
+            ->where($db->quoteName('file_type') . ' = ' . $db->quote('file'))
+            ->order($db->quoteName('file_ordering') . ' ASC, ' . $db->quoteName('file_id') . ' ASC')
+            ->bind(':id', $id, ParameterType::INTEGER);
+
+        try {
+            $paths = $db->setQuery($query)->loadColumn();
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $path = Shops::hikaShopFile($paths ?: [], JPATH_ROOT, $this->hikaShopSetting('uploadsecurefolder'));
+
+        return $path === null ? null : ['path' => $path, 'url' => $this->documentUrl($id)];
+    }
+
+    /**
+     * Where a buyer's browser asks for it. com_ajax rather than a page of our own:
+     * it is Joomla's own address for an extension that has to answer a request,
+     * and it needs nothing installed beyond the module, which is already here.
+     */
+    private function documentUrl(int $id): string
+    {
+        return Route::_(
+            'index.php?option=com_ajax&module=hikariflipbook&method=book&format=raw&product=' . $id,
+            false
+        );
+    }
+
+    /** One value out of HikaShop's own configuration table. */
+    private function hikaShopSetting(string $key): string
+    {
+        $db    = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('config_value'))
+            ->from($db->quoteName('#__hikashop_config'))
+            ->where($db->quoteName('config_namekey') . ' = :key')
+            ->bind(':key', $key);
+
+        try {
+            return (string) $db->setQuery($query)->loadResult();
+        } catch (\Throwable $e) {
+            return '';
+        }
+    }
+
+    /**
      * The order statuses HikaShop treats as paid for, from its own configuration.
      *
      * @return array<int,string>
      */
     private function paidStatuses(): array
     {
-        $fallback = ['confirmed', 'shipped'];
-        $db       = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+        $statuses = array_filter(
+            array_map('trim', explode(',', $this->hikaShopSetting('order_status_for_download'))),
+            'strlen'
+        );
 
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('config_value'))
-            ->from($db->quoteName('#__hikashop_config'))
-            ->where($db->quoteName('config_namekey') . ' = ' . $db->quote('order_status_for_download'));
-
-        try {
-            $value = (string) $db->setQuery($query)->loadResult();
-        } catch (\Throwable $e) {
-            return $fallback;
-        }
-
-        $statuses = array_filter(array_map('trim', explode(',', $value)), 'strlen');
-
-        return $statuses === [] ? $fallback : array_values($statuses);
+        return $statuses === [] ? ['confirmed', 'shipped'] : array_values($statuses);
     }
 }

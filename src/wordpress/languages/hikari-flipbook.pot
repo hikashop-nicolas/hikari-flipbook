@@ -93,7 +93,7 @@ msgstr ""
 msgid "Flipbook"
 msgstr ""
 
-#: includes/Books.php:81
+#: includes/Books.php:88
 msgid "Flipbook: %s"
 msgstr ""
 

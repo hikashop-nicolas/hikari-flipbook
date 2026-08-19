@@ -400,9 +400,21 @@ final class ShopPlatform extends FakePlatform implements Hikari\Flipbook\Core\Sh
         return $id === '42' ? ['url' => '/shop/blue-kettle', 'name' => 'Blue kettle'] : null;
     }
 
+    /** @var string|null A file this shop sells, outside the site's own root. */
+    public $sells = null;
+
     public function hasBought(string $id): bool
     {
         return in_array($id, $this->bought, true);
+    }
+
+    public function productDocument(string $id): ?array
+    {
+        if ($this->sells === null || $id !== '42') {
+            return null;
+        }
+
+        return ['path' => $this->sells, 'url' => '/read/42'];
     }
 }
 
@@ -452,11 +464,58 @@ check(
     strpos(renderBought($stranger, '99'), 'buyers') !== false
         && strpos(renderBought($stranger, '99'), '<a ') === false
 );
+$noShop = renderBought(new FakePlatform($root), '42');
 check(
-    'shows nothing at all on a host with no shop to ask',
-    renderBought(new FakePlatform($root), '42') === ''
+    'shows the book to nobody on a host with no shop to ask',
+    strpos($noShop, 'data-flipbook') === false && strpos($noShop, 'buyers') !== false
 );
 check('leaves a book with no product alone', strpos(renderBought($stranger, ''), 'data-flipbook') !== false);
+
+// --- and the book is the file the product is sold with -----------------------
+
+/** What a placement with a product and no path of its own ends up showing. */
+function renderSold(ShopPlatform $platform, string $bought): string
+{
+    $config = new Config(['bought' => $bought]);
+
+    try {
+        $source = Hikari\Flipbook\Core\Buyers::document($platform, $config);
+    } catch (SourceException $e) {
+        return 'error: ' . $e->getMessage();
+    }
+
+    return (new Renderer($platform))->render($source, $config, 'book-sold');
+}
+
+// Outside the site root on purpose: a shop keeps what it sells where the web
+// cannot read it, which is the whole reason the host has to read it out.
+$sold = sys_get_temp_dir() . '/hikari-flipbook-sold.pdf';
+file_put_contents($sold, "%PDF-1.4\n");
+
+$seller = new ShopPlatform($root);
+$seller->sells  = $sold;
+$seller->bought = ['42'];
+
+$page = renderSold($seller, '42');
+check('shows the file the product is sold with', strpos($page, 'data-flipbook') !== false);
+check('reads it from the address the host answers on', strpos($page, '/read/42') !== false);
+check('never puts the words of a book that is sold in the page', strpos($page, 'fv-seo') === false);
+
+$other = new ShopPlatform($root);
+$other->sells = $sold;
+check(
+    'offers the file to nobody who has not bought it',
+    strpos(renderSold($other, '42'), 'data-flipbook') === false
+);
+
+$nothing = new ShopPlatform($root);
+$nothing->bought = ['42'];
+check(
+    'says so when the product has nothing to show',
+    strpos(renderSold($nothing, '42'), 'error:') === 0
+);
+
+unlink($sold);
 
 echo $failures === 0 ? "\nall good\n" : "\n$failures failing\n";
 exit($failures === 0 ? 0 : 1);

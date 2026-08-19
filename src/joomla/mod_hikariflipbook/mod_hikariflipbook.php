@@ -5,6 +5,7 @@
  * @license     GNU General Public License version 3 or later
  */
 
+use Hikari\Flipbook\Core\Buyers;
 use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
 use Hikari\Flipbook\Core\Source;
@@ -34,8 +35,13 @@ try {
         throw new SourceException(Text::_('MOD_HIKARIFLIPBOOK_BOOK_UNAVAILABLE'));
     }
 
-    $source = Source::fromPath($platform, (string) ($settings['path'] ?? ''));
     $config = new Config($settings);
+    // A book sold as a product needs no path of its own: the file the product is
+    // sold with is the book. Null when this visitor may not have it, which the
+    // renderer answers rather than treating as a mistake.
+    $source = (string) ($settings['path'] ?? '') === '' && $config->get('bought') !== ''
+        ? Buyers::document($platform, $config)
+        : Source::fromPath($platform, (string) ($settings['path'] ?? ''));
     $html   = (new Renderer($platform))->render($source, $config, 'hikari-flipbook-' . $module->id);
 } catch (SourceException $e) {
     $error = $e->getMessage();

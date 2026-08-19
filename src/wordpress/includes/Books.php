@@ -8,6 +8,7 @@
 namespace Hikari\Flipbook\WordPress;
 
 use Hikari\Flipbook\Core\Book;
+use Hikari\Flipbook\Core\Buyers;
 use Hikari\Flipbook\Core\Config;
 use Hikari\Flipbook\Core\Renderer;
 use Hikari\Flipbook\Core\Source;
@@ -55,8 +56,14 @@ final class Books
 
         $platform = new WordPressPlatform($params);
 
+        $config = new Config($params);
+
         try {
-            $source = Source::fromPath($platform, (string) $params['path']);
+            // A book sold as a product needs no path of its own: the file the
+            // product is sold with is the book.
+            $source = (string) $params['path'] === '' && $config->get('bought') !== ''
+                ? Buyers::document($platform, $config)
+                : Source::fromPath($platform, (string) $params['path']);
         } catch (SourceException $e) {
             return self::complain($e->getMessage());
         }
@@ -65,7 +72,7 @@ final class Books
 
         return (new Renderer($platform))->render(
             $source,
-            new Config($params),
+            $config,
             'hikari-flipbook-' . self::$count
         );
     }

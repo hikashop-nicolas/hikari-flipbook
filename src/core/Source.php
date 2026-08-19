@@ -36,10 +36,19 @@ final class Source
     /** @var string[] */
     private $files;
 
-    private function __construct(string $kind, array $files)
+    /**
+     * Where a browser is to fetch these files, when it cannot work it out from
+     * where they are. Empty for an ordinary book, which is a file under the site.
+     *
+     * @var string[]
+     */
+    private $urls = [];
+
+    private function __construct(string $kind, array $files, array $urls = [])
     {
         $this->kind  = $kind;
         $this->files = $files;
+        $this->urls  = $urls;
     }
 
     /** @throws SourceException when the path escapes the root or holds nothing usable */
@@ -93,9 +102,38 @@ final class Source
         throw new SourceException('That folder holds no pages: no images, and no HTML files.');
     }
 
+    /**
+     * A document the shop holds, which is not a path a site typed and need not be
+     * anywhere a browser can reach: it is served by the host, at the address given
+     * here, to whoever bought it.
+     *
+     * @param  string[] $urls One per file, in the same order.
+     * @throws SourceException when it is not a document we can show
+     */
+    public static function fromShopFile(string $path, array $urls): self
+    {
+        $kind = self::FILE_KINDS[strtolower(pathinfo($path, PATHINFO_EXTENSION))] ?? null;
+
+        if ($kind === null || !is_file($path)) {
+            throw new SourceException('That product\'s file is not a PDF or an EPUB.');
+        }
+
+        return new self($kind, [Paths::normalise($path)], $urls);
+    }
+
     public function kind(): string
     {
         return $this->kind;
+    }
+
+    /**
+     * The addresses the browser is given, when they are not the files' own.
+     *
+     * @return string[]
+     */
+    public function urls(): array
+    {
+        return $this->urls;
     }
 
     /** @return string[] absolute paths */
