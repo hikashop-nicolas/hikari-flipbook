@@ -3,6 +3,7 @@
 //
 // One source for the documentation, two places it can be read: docs/*.md on GitHub,
 // and the same words as pages here. Nothing is written twice.
+import { createHash } from "node:crypto";
 import { access, cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { marked } from "marked";
@@ -37,13 +38,58 @@ await cp(join(root, "site/demo"), join(out, "demo"), { recursive: true });
 
 // Assets carry the version, so a browser that saw the last build does not keep
 // showing it. Everything here is served from one folder with no hashing.
-const stamp = (html) =>
-  html
-    // Anything the demo names out of demo/, and the bundle and stylesheet with it.
-    .replace(/(demo\/[\w./-]+\.(?:pdf|epub|jpg|png|html))/g, `$1?v=${v}`)
-    .replace(/(media\/(?:js|css)\/[\w.-]+)"/g, `$1?v=${v}"`);
+/**
+ * Stamps every asset a page names with a hash of that file's contents.
+ *
+ * The version was the obvious thing to stamp with and it was wrong: two builds of
+ * the same version produce the same URL, so a browser that saw the first one keeps
+ * showing it however many times the file changes underneath. A hash changes when
+ * the bytes change, which is the only thing that matters here.
+ */
+async function stamp(html) {
+  const seen = new Map();
 
-await writeFile(join(out, "demo.html"), stamp(await readFile(join(root, "site/demo.html"), "utf8")), "utf8");
+  const hashOf = async (path) => {
+    if (seen.has(path)) return seen.get(path);
+
+    let hash = "";
+
+    try {
+      hash = createHash("sha256")
+        .update(await readFile(join(out, path)))
+        .digest("hex")
+        .slice(0, 8);
+    } catch {
+      // A path the site does not serve: left alone, and the rules will say so.
+    }
+
+    seen.set(path, hash);
+
+    return hash;
+  };
+
+  const paths = [
+    ...html.matchAll(/(demo\/[\w./-]+\.(?:pdf|epub|jpg|png|html))/g),
+    ...html.matchAll(/(media\/(?:js|css)\/[\w.-]+)"/g),
+  ].map((match) => match[1]);
+
+  let out2 = html;
+
+  for (const path of new Set(paths)) {
+    const hash = await hashOf(path);
+    if (!hash) continue;
+
+    out2 = out2.split(path).join(`${path}?v=${hash}`);
+  }
+
+  return out2;
+}
+
+await writeFile(
+  join(out, "demo.html"),
+  await stamp(await readFile(join(root, "site/demo.html"), "utf8")),
+  "utf8",
+);
 
 // The presentation page, with the version filled in so it cannot go stale.
 const index = (await readFile(join(root, "site/index.html"), "utf8")).replace(

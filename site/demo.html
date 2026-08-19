@@ -88,8 +88,21 @@
 // document from the URL. Nothing here is part of the extension: it stands in for the
 // module or the shortcode, so that what runs below is exactly what a site runs.
 (function () {
-  var pages = [];
-  for (var i = 2; i <= 7; i++) pages.push("demo/pages/pg-0" + i + ".jpg");
+  // Written out rather than built in a loop: the build stamps every asset a page
+  // names with a hash of it, and it can only stamp what it can see.
+  //
+  // From the cover, too. Starting at page two puts every spread out by one, so the
+  // pages that were on the left in the book turn up on the right.
+  var pages = [
+    "demo/pages/im-01.jpg",
+    "demo/pages/im-02.jpg",
+    "demo/pages/im-03.jpg",
+    "demo/pages/im-04.jpg",
+    "demo/pages/im-05.jpg",
+    "demo/pages/im-06.jpg",
+    "demo/pages/im-07.jpg",
+    "demo/pages/im-08.jpg"
+  ];
 
   var books = {
     pdf: {
