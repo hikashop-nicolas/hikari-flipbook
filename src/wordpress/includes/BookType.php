@@ -166,7 +166,7 @@ final class BookType
         wp_nonce_field('hikari_flipbook_book', 'hikari_flipbook_nonce');
 
         echo '<p><label for="hikari-path"><strong>'
-            . esc_html__('PDF or image folder', 'hikari-flipbook') . '</strong></label><br>';
+            . esc_html__('Document or folder of pages', 'hikari-flipbook') . '</strong></label><br>';
         echo '<input type="text" id="hikari-path" name="hikari_flipbook[path]" class="large-text" value="'
             . esc_attr((string) $values['path']) . '"></p>';
         echo '<p class="description">' . esc_html__(

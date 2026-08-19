@@ -19,6 +19,7 @@ final class Download
     private const TYPES = [
         'pdf'   => 'application/pdf',
         'epub'  => 'application/epub+zip',
+        'cbz'   => 'application/vnd.comicbook+zip',
         'jpg'   => 'image/jpeg',
         'jpeg'  => 'image/jpeg',
         'png'   => 'image/png',

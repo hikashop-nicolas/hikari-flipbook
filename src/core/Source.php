@@ -21,9 +21,15 @@ final class Source
     public const KIND_IMAGES = 'images';
     public const KIND_EPUB   = 'epub';
     public const KIND_HTML   = 'html';
+    /** A comic archive: a zip of pictures, one per page. */
+    public const KIND_CBZ    = 'cbz';
 
     /** One file is one of these, and the extension says which. */
-    private const FILE_KINDS = ['pdf' => self::KIND_PDF, 'epub' => self::KIND_EPUB];
+    private const FILE_KINDS = [
+        'pdf'  => self::KIND_PDF,
+        'epub' => self::KIND_EPUB,
+        'cbz'  => self::KIND_CBZ,
+    ];
 
     private const IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'];
 
@@ -60,7 +66,7 @@ final class Source
             $kind = self::FILE_KINDS[strtolower(pathinfo($real, PATHINFO_EXTENSION))] ?? null;
 
             if ($kind === null) {
-                throw new SourceException('A single file source must be a PDF or an EPUB.');
+                throw new SourceException('A single file source must be a PDF, an EPUB or a CBZ.');
             }
 
             return new self($kind, [$real]);

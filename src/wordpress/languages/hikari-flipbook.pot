@@ -57,6 +57,10 @@ msgstr ""
 msgid "Delete this region"
 msgstr ""
 
+#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:82 includes/BookType.php:169
+msgid "Document or folder of pages"
+msgstr ""
+
 #: src/core/Strings.php
 msgid "Download"
 msgstr ""
@@ -231,10 +235,6 @@ msgstr ""
 
 #: blocks/flipbook/editor.js:45 includes/BookType.php:192 includes/Settings.php:123
 msgid "Pages shown"
-msgstr ""
-
-#: blocks/flipbook/editor.js:40 blocks/flipbook/editor.js:82 includes/BookType.php:169
-msgid "PDF or image folder"
 msgstr ""
 
 #: includes/BookType.php:219

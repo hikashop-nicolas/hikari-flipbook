@@ -297,13 +297,13 @@ if (!(await exists(wp))) {
     // something the site serves, and it has to offer every kind of book there is.
     const demo = await read(join(site, "demo.html"));
 
-    for (const [, path] of demo.matchAll(/"(demo\/[\w./-]+\.(?:pdf|epub|jpg|png|html))/g)) {
+    for (const [, path] of demo.matchAll(/"(demo\/[\w./-]+\.(?:pdf|epub|cbz|jpg|png|html))/g)) {
       if (!(await exists(join(site, path)))) {
         fail("site", `the demo points at ${path}, which the site does not serve`);
       }
     }
 
-    for (const kind of ["pdf", "epub", "images", "html"]) {
+    for (const kind of ["pdf", "epub", "cbz", "images", "html"]) {
       if (!demo.includes(`kind: "${kind}"`)) {
         fail("site", `the demo offers no ${kind} book, and the point of it is to offer all four`);
       }

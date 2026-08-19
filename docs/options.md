@@ -8,7 +8,7 @@ or a tag.
 
 | Setting | Default | What it does |
 |---|---|---|
-| `path` | none | The PDF, or a folder of images, relative to the site root |
+| `path` | none | The document, or the folder of pages, relative to the site root |
 | `book` | none | The id of a saved book instead of a path |
 | `mode` | `auto` | `single`, `double`, or `auto` to choose by the width available |
 | `breakpoint` | `700` | Below this container width in pixels, `auto` shows one page |

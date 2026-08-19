@@ -38,13 +38,14 @@ A book's path is relative to the site root, and it has to stay inside it:
 `images/catalogue.pdf`, `wp-content/uploads/catalogue.pdf`. A path that climbs out of
 the site is refused rather than guessed at.
 
-Four kinds of document work:
+Five kinds of document work:
 
 | What | Notes |
 |---|---|
 | A **PDF** | The usual case. Scans work too, where the host has the tools below |
 | A folder of **images** | Used in natural order, so `page-2.jpg` comes before `page-10.jpg` |
 | An **EPUB** | Fixed-layout books show as they were designed; books that reflow are laid out into pages for the screen they are read on |
+| A **CBZ** | A comic archive: a zip of pictures, in natural order. CBR is not read, since RAR needs a decoder we will not ship; rezip it as a CBZ |
 | A folder of **HTML pages** | One file per page, in natural order. The pages are yours to edit, the text is real text and the links work |
 
 A folder holding pictures is a book of pictures; a folder holding HTML files and no

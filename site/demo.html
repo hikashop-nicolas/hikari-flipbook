@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demo — Hikari Flipbook</title>
-<meta name="description" content="Four books, four kinds of document, one viewer: a PDF, an EPUB, a folder of images and a folder of HTML pages.">
+<meta name="description" content="Five books, five kinds of document, one viewer: a PDF, an EPUB, a comic archive, a folder of images and a folder of HTML pages.">
 <link rel="icon" href="img/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="media/css/flipbook.css">
@@ -53,9 +53,10 @@
 
 <section style="padding-bottom: 0;">
   <div class="wrap">
-    <h2>Four books, one viewer</h2>
+    <h2>Five books, one viewer</h2>
     <p class="sub">
-      A document can be a PDF, an EPUB, a folder of images or a folder of HTML pages.
+      A document can be a PDF, an EPUB, a comic archive, a folder of images or a folder
+      of HTML pages.
       This is the front-end both packages ship, loaded the way the Joomla module and the
       WordPress shortcode load it. Everything happens in your browser.
     </p>
@@ -135,6 +136,13 @@
       credit: '<a href="https://github.com/IDPF/epub3-samples">La Page Blanche</a> by Boulet and Pénélope Bagieu, éditions Delcourt, from the IDPF EPUB 3 samples, under CC BY-SA 3.0.',
       payload: { kind: "epub", pages: ["demo/comic.epub"], options: {} }
     },
+    cbz: {
+      name: "CBZ",
+      what: "A comic archive",
+      about: "<b>A comic archive.</b> A CBZ is a zip of pictures with no manifest, so the pages are its filenames read in natural order. This one holds the same eight pages as the folder beside it, zipped.",
+      credit: 'The pictures are pages of the same 1900 catalogue, from <a href="https://archive.org/details/Shepherd56406">the Internet Archive</a>, in the public domain.',
+      payload: { kind: "cbz", pages: ["demo/catalogue.cbz"], options: {} }
+    },
     images: {
       name: "Images",
       what: "A folder of pictures",
@@ -151,7 +159,7 @@
     }
   };
 
-  var order = ["pdf", "epub", "images", "html"];
+  var order = ["pdf", "epub", "cbz", "images", "html"];
   var wanted = new URLSearchParams(location.search).get("book");
   if (!books[wanted]) wanted = "pdf";
 

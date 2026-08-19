@@ -2,6 +2,7 @@
 // PHP side emitted and mounts a viewer on it. Nothing here knows which host it
 // is running on: the container's data attribute says everything.
 import {
+  createComicSource,
   createEpubSource,
   createFlipview,
   createHtmlSource,
@@ -21,7 +22,7 @@ import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 const wasmUrl = new URL("./wasm/", import.meta.url).href;
 
 interface Payload {
-  kind: "pdf" | "images" | "epub" | "html";
+  kind: "pdf" | "images" | "epub" | "html" | "cbz";
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
@@ -64,6 +65,7 @@ function reporter(el: HTMLElement, payload: Payload) {
 /** A fresh source each time: closing a book destroys the document behind it. */
 function open(payload: Payload): Promise<PageSource> {
   if (payload.kind === "epub") return createEpubSource({ url: payload.pages[0] });
+  if (payload.kind === "cbz") return createComicSource({ url: payload.pages[0] });
   if (payload.kind === "html") return createHtmlSource(payload.pages);
 
   return payload.kind === "pdf"
