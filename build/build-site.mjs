@@ -29,6 +29,9 @@ for (const file of ["js/flipbook.js", "js/pdf.worker.mjs", "css/flipbook.css"]) 
   await cp(join(media, file), join(out, "media", file));
 }
 
+// The decoders too: the demo is a scan, and without them it is blank white pages.
+await cp(join(media, "js/wasm"), join(out, "media", "js", "wasm"), { recursive: true });
+
 await cp(join(media, "sounds"), join(out, "media", "sounds"), { recursive: true });
 await cp(join(root, "site/demo"), join(out, "demo"), { recursive: true });
 

@@ -6,6 +6,9 @@ import { createImageSource, createPdfSource } from "flipview";
 import type { PageSource } from "flipview";
 import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 
+/** As in the viewer: without these a scan is blank pages to draw hotspots on. */
+const wasmUrl = new URL("./wasm/", import.meta.url).href;
+
 interface Spot {
   page: number;
   x: number;
@@ -78,7 +81,7 @@ async function mount(root: HTMLElement): Promise<void> {
   try {
     source =
       payload.kind === "pdf"
-        ? await createPdfSource({ url: payload.pages[0], workerSrc })
+        ? await createPdfSource({ url: payload.pages[0], workerSrc, wasmUrl })
         : await createImageSource(payload.pages);
   } catch {
     root.appendChild(el("p", "hikari-hs-error", say("unreadable", "This book could not be opened.")));

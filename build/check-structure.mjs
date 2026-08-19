@@ -273,7 +273,16 @@ if (!(await exists(wp))) {
     // The demo is a real book: it needs the bundle, the worker and a document, and
     // its payload has to parse. A payload that does not parse fails silently, which
     // is exactly how it would reach the site unnoticed.
-    for (const needed of ["demo.html", "demo/catalogue.pdf", "media/js/flipbook.js", "media/js/pdf.worker.mjs", "media/css/flipbook.css"]) {
+    for (const needed of [
+      "demo.html",
+      "demo/catalogue.pdf",
+      "media/js/flipbook.js",
+      "media/js/pdf.worker.mjs",
+      "media/css/flipbook.css",
+      // A scanned document is decoded in wasm; without these it is blank pages.
+      "media/js/wasm/openjpeg.wasm",
+      "media/js/wasm/jbig2.wasm",
+    ]) {
       if (!(await exists(join(site, needed)))) fail("site", `the demo needs ${needed}, which is not there`);
     }
 

@@ -5,6 +5,13 @@ import { createFlipview, createImageSource, createPdfSource, openLightbox, setSt
 import type { FlipviewOptions, PageSource } from "flipview";
 import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 
+/**
+ * pdf.js's own decoders, shipped beside this bundle. A scanned catalogue is JPEG
+ * 2000 or JBIG2, and without these it renders as blank white pages with nothing
+ * logged, which is the hardest kind of broken to report.
+ */
+const wasmUrl = new URL("./wasm/", import.meta.url).href;
+
 interface Payload {
   kind: "pdf" | "images";
   pages: string[];
@@ -49,7 +56,7 @@ function reporter(el: HTMLElement, payload: Payload) {
 /** A fresh source each time: closing a book destroys the document behind it. */
 function open(payload: Payload): Promise<PageSource> {
   return payload.kind === "pdf"
-    ? createPdfSource({ url: payload.pages[0], workerSrc })
+    ? createPdfSource({ url: payload.pages[0], workerSrc, wasmUrl })
     : createImageSource(payload.pages);
 }
 

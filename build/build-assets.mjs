@@ -1,7 +1,7 @@
 // Bundles the shared front-end into the files both packages ship. One bundle,
 // two destinations: whatever the two builds disagree about, it is not this.
 import { build } from "esbuild";
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -20,6 +20,10 @@ for (const name of ["page-turn-1.mp3", "page-turn-2.mp3"]) {
 // to the copy we ship rather than to node_modules.
 const worker = "pdf.worker.mjs";
 await copyFile(join(root, "node_modules/pdfjs-dist/build", worker), join(out, "js", worker));
+
+// And its decoders. A scanned catalogue is JPEG 2000 or JBIG2, decoded in wasm that
+// pdf.js fetches at render time: without these, a scan is blank white pages.
+await cp(join(root, "node_modules/pdfjs-dist/wasm"), join(out, "js", "wasm"), { recursive: true });
 
 const workerUrlPlugin = {
   name: "worker-url",
