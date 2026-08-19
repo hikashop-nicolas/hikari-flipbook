@@ -962,3 +962,55 @@ element. A cloned canvas is blank, which is why a rendered page is also set as a
 cloned iframe is worse. A mounted page therefore folds without its own picture on the back, unless
 the source can also produce a raster, which for the common fixed-layout page (one image with text
 over it) it can.
+
+
+## 33. EPUB, all four steps (2026-08-19)
+
+Done, in the order the design set out, and the order turned out to matter every time.
+
+**Step 1, pages that are documents.** A source can paint a page as live DOM as well as into a
+canvas. A fixed-layout page that is one picture is mounted as that picture rather than an iframe: it
+clones for the fold, draws as a thumbnail, and is what the book actually is. Everything else gets a
+frame.
+
+**Step 2, locators.** The deep link stores what the document calls a place. For a PDF that is still
+a page number, so ordinary links are unchanged; for a book that reflows it is a section and how far
+through it. Finding a place became asynchronous, and that bit immediately: the first page turn wrote
+its own place over the incoming link before the lookup came back, so the link is now read before
+anything can overwrite it.
+
+**Step 3, a page count that changes.** `layout(box)` returns the count for a page of that size. The
+viewer rebuilds shells and engine and puts the reader back by locator. Sections are laid out as CSS
+columns the width of a page, in a frame off-screen; a page is a column, slid into view with a
+transform.
+
+**Step 4, what stops making sense.** Hotspots are refused on a document that reflows, with a
+sentence saying why. A search hit is reported against the page its chapter starts on rather than
+against all forty pages of it.
+
+Both hosts accept `.epub` now, verified on the running Joomla site with a comic and a novel.
+
+### Four bugs, all of them worth the record
+
+- **A new iframe already has a document**, a blank one, and it is complete. The column stylesheet
+  went into the document the real content then replaced, so every chapter measured as one page.
+- **Two pages of one chapter cannot share one frame.** Measuring uses one per section, showing uses
+  one per page.
+- **Laying out changes the book, which asks for a layout.** A source that takes its page shape from
+  the box it is offered repaginates for ever. The shape is the source's to state.
+- **An element with hidden overflow accepts a scrollLeft and ignores it**, which looks exactly like
+  every page being page one. Transform instead.
+
+### And one about me
+
+The extension's asset build had been failing for several minutes without my noticing, because I was
+running `npm run build >/dev/null 2>&1` and reading the structure check, which was happily checking
+the previous build's files. Same family as the `php tests/CoreTest.php | tail -2` trap from phase 2:
+hiding output hides failure. Do not redirect a build's output away.
+
+### Still open
+
+- A reflowable book in a narrow column paginates into hundreds of very small pages, which is
+  correct and unpleasant. A minimum sensible page width, or steering such books towards the lightbox,
+  is the obvious next thing.
+- The site demo is still the seed catalogue only; an EPUB demo would show this off.
