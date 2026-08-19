@@ -219,7 +219,7 @@ current WP, PHP 8.1+, no jQuery.
 | 4 | hikari-flipbook | WordPress plugin: block, shortcode, settings, book CPT | 4-5 days |
 | 5 | both | Book manager: Joomla component and WP CPT admin, ACL, hotspot editor | 1-2 weeks |
 | 6 | flipview | Differentiators: accessibility pass, search, outline, thumbnails | 1 week |
-| 7 | hikari-flipbook | Hotspots **done 2026-08-19, section 23**. Left: SEO layer, server-side cache, analytics | 1 week |
+| 7 | hikari-flipbook | **Done 2026-08-19.** Hotspots (23), analytics, SEO layer and server-drawn cover (24) | 1 week |
 | 8 | both | Release: JED submission, wordpress.org submission, update server XML, docs, demo site | few days |
 
 CI rules land in phase 2, before there is any real code to violate them. Retrofitting a
@@ -696,3 +696,53 @@ for that now too.
   to cart is worth doing once the product actually has no options.
 - The editor draws on one page at a time and has no way to copy a region to another page, which a
   catalogue with a repeated layout will want.
+
+
+## 24. Phase 7 finished (2026-08-19)
+
+The three pieces that were left, all verified on the running Joomla and WordPress sites.
+
+**Counting.** flipview 0.11.0 reports everything a reader does through one `onEvent` hook, and the
+extension turns that into a `hikari-flipbook` event on the book's own container. That happens
+whatever the settings say, so a site can listen for it without asking anyone and without loading
+anything. The setting only decides whether the same thing is also pushed to Google Tag Manager or
+handed to gtag, both of which the page has to be loading already: nothing is fetched for this, and a
+service that is not there is not an error. A handler that throws is caught, because counting a page
+turn must never stop one.
+
+**Crawlers.** A book is built by JavaScript, so a search engine saw an empty box: a catalogue was
+a picture of a catalogue. The page now carries a link to the document and the words on its pages,
+read with pdftotext where the host has it, cached per document by path, size and time, and pruned
+so the folder cannot grow forever. It goes in `<noscript>`, deliberately: text hidden with CSS from
+readers and shown to crawlers is the oldest way there is to be penalised for cloaking. A book of
+images has no words, so it lists its pages as `<img>` instead, which is something a crawler can
+index. A host without pdftotext gets the link and no text, which is worth having on its own.
+
+**The cover.** A book that opens over the page showed only its cover, and the browser got that cover
+by downloading the whole PDF and rendering a page of it: several megabytes on every page view, for
+every reader, most of whom never open the book. Where the host can draw the picture itself, through
+Imagick or pdftoppm, it is drawn once and cached. Measured on the WordPress page: no PDF and no
+pdf.js worker are fetched at all now, just a 16 KB PNG.
+
+Covers need a folder that is both writable and public, and that is the media folder on Joomla and
+uploads on WordPress, so `Platform` grew a `storage()` rather than pretending the cache folder would
+do: on one host it is outside the public root, and a picture nobody can fetch is not a picture.
+
+### Judgement calls
+
+- The text goes in `<noscript>` rather than a visually-hidden div. It is the honest version and the
+  one that cannot be read as cloaking, at the cost of not being in the page for a reader who has
+  JavaScript and simply wants to select the text: they have the text layer for that.
+- Extraction shells out to pdftotext rather than parsing PDFs in PHP. A PHP parser handles simple
+  documents and produces convincing rubbish on the rest, and rubbish text on a shop's pages is worse
+  than no text.
+- Only the cover is pre-rendered, not every page. Pre-rendering a whole document would remove
+  pdf.js from the reader's page entirely, but it would also cost the search and the text layer,
+  which are worth more.
+
+### Still open
+
+- The cover is drawn at 640px and shown at 320: fine for a thumbnail, not for a poster on the
+  inline book, which still shows nothing until pdf.js has painted page one.
+- Nothing invalidates a cover or a text cache when the document is replaced *in place* with the same
+  size and timestamp, which is rare enough to live with and impossible to detect cheaply.
