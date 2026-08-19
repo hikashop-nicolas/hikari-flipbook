@@ -1,6 +1,6 @@
 {
   "name": "hikari-flipbook",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Free flipbook extension for Joomla and WordPress, built on flipview.",
   "license": "GPL-3.0-or-later",
@@ -15,6 +15,7 @@
     "test": "php tests/CoreTest.php",
     "pot": "node build/make-pot.mjs",
     "update": "node build/update.mjs",
+    "version": "node build/stamp-version.mjs && npm run update && npm run pot && git add -A",
     "site": "npm run build:assets && node build/build-site.mjs",
     "site:serve": "npm run site && node build/serve-site.mjs",
     "shots": "node build/shoot-site.mjs"

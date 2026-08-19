@@ -3,17 +3,17 @@
 <updates>
 	<update>
 		<name>Hikari Flipbook</name>
-		<description>Shows a PDF or a folder of images as a book with turning pages.</description>
+		<description>Shows a PDF, an EPUB, a Kindle book, a comic archive or a folder of pages as a book with turning pages.</description>
 		<element>pkg_hikariflipbook</element>
 		<type>package</type>
 		<!-- Without this Joomla assumes "administrator", and the update then matches
 		     no installed extension at all: a package is installed against the site.
 		     The check finds an update, records it, and never offers it to anyone. -->
 		<client>site</client>
-		<version>0.2.0</version>
+		<version>0.3.0</version>
 		<infourl title="Hikari Flipbook">https://github.com/hikashop-nicolas/hikari-flipbook</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/hikashop-nicolas/hikari-flipbook/releases/download/v0.2.0/pkg_hikariflipbook-0.2.0.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/hikashop-nicolas/hikari-flipbook/releases/download/v0.3.0/pkg_hikariflipbook-0.3.0.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>

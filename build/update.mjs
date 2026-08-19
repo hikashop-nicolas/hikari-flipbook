@@ -25,7 +25,7 @@ export async function writeUpdateXml(v) {
 <updates>
 	<update>
 		<name>Hikari Flipbook</name>
-		<description>Shows a PDF or a folder of images as a book with turning pages.</description>
+		<description>Shows a PDF, an EPUB, a Kindle book, a comic archive or a folder of pages as a book with turning pages.</description>
 		<element>pkg_hikariflipbook</element>
 		<type>package</type>
 		<!-- Without this Joomla assumes "administrator", and the update then matches

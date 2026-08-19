@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-3.0-or-later licence.
 msgid ""
 msgstr ""
-"Project-Id-Version: Hikari Flipbook 0.2.0\n"
+"Project-Id-Version: Hikari Flipbook 0.3.0\n"
 "Report-Msgid-Bugs-To: https://github.com/hikashop-nicolas/hikari-flipbook/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
