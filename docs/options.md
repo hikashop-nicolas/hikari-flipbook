@@ -30,6 +30,16 @@ or a tag.
 | `download` | off | A button that downloads the original PDF |
 | `lightbox` | off | Show only the cover, and open the book over the page when clicked |
 
+### Several books on one page
+
+The URL belongs to the page, not to a book, so books that track their page have to
+take turns naming the parameter. The first book on the page uses `#page=N` and every
+book after it gets its own, `#page2=N` and so on, worked out for you.
+
+Which book is "first" is the order they are rendered in, so on a page whose modules
+come and go, a link shared today may name a different book tomorrow. Where that
+matters, place the books that matter first, or give one a fixed name of its own.
+
 ## The toolbar
 
 | Setting | Default | What it does |

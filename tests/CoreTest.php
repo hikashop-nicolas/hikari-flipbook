@@ -285,6 +285,27 @@ check('hands the viewer only the hotspots that survived', count($config->toViewe
 check('says nothing about hotspots when a book has none', !isset((new Hikari\Flipbook\Core\Config())->toViewer()['hotspots']));
 check('takes hotspots a host already decoded', count((new Hikari\Flipbook\Core\Config(['hotspots' => [['page' => 1, 'width' => 0.5, 'height' => 0.5, 'goToPage' => 2]]]))->toViewer()['hotspots']) === 1);
 
+// --- two books on one page ----------------------------------------------------
+check('the first book keeps the plain page parameter', Renderer::deepLinkName(true, 1) === true);
+check('a second book gets its own', Renderer::deepLinkName(true, 2) === 'page2');
+check('and a third', Renderer::deepLinkName(true, 3) === 'page3');
+check('a book that tracks nothing still tracks nothing', Renderer::deepLinkName(false, 2) === false);
+check('a name the site chose is left alone', Renderer::deepLinkName('catalogue', 3) === 'catalogue');
+
+$platform = new FakePlatform($root);
+$rendered = [];
+foreach (['one', 'two', 'three'] as $id) {
+    $html = (new Renderer($platform))->render(
+        Source::fromPath($platform, 'book.pdf'),
+        new Config(['deepLink' => '1']),
+        $id
+    );
+    preg_match('/"deepLink":([^,]+)/', $html, $found);
+    $rendered[] = $found[1];
+}
+
+check('no two books on a page track the same parameter', count(array_unique($rendered)) === 3);
+
 // --- the cover the server draws -----------------------------------------------
 $platform = new FakePlatform($root, '/site');
 $lightbox = (new Renderer($platform))->render(

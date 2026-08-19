@@ -18,6 +18,16 @@ use Hikari\Flipbook\Platform\Platform;
  */
 final class Renderer
 {
+    /**
+     * Books rendered in this request. The page number lives in the URL, and the
+     * URL is one thing the whole page shares: two books both tracking "page"
+     * would overwrite each other on every turn, and both would jump to the same
+     * page when the link is opened.
+     *
+     * @var int
+     */
+    private static $rendered = 0;
+
     /** @var Platform */
     private $platform;
 
@@ -33,7 +43,13 @@ final class Renderer
 
         $urls = Paths::urls($this->platform, $source);
 
+        self::$rendered++;
+
         $options = $config->toViewer();
+
+        if (isset($options['deepLink'])) {
+            $options['deepLink'] = self::deepLinkName($options['deepLink'], self::$rendered);
+        }
 
         if (isset($options['hotspots'])) {
             $options['hotspots'] = $this->shoppable($options['hotspots']);
@@ -89,6 +105,22 @@ final class Renderer
             $json === false ? '{}' : $json,
             Seo::markup($this->platform, $source, $urls, $config)
         );
+    }
+
+    /**
+     * Which URL parameter a book tracks its page in.
+     *
+     * The first book on the page keeps the plain name, so an ordinary page with
+     * one book has an ordinary link. Every book after it gets its own, because
+     * the URL is shared and two books writing the same parameter would overwrite
+     * each other on every turn.
+     *
+     * @param  mixed $value What the settings asked for.
+     * @return mixed
+     */
+    public static function deepLinkName($value, int $instance)
+    {
+        return $value === true && $instance > 1 ? 'page' . $instance : $value;
     }
 
     /**
