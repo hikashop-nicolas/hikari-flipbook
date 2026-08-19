@@ -19,6 +19,10 @@ final class Source
 {
     public const KIND_PDF    = 'pdf';
     public const KIND_IMAGES = 'images';
+    public const KIND_EPUB   = 'epub';
+
+    /** One file is one of these, and the extension says which. */
+    private const FILE_KINDS = ['pdf' => self::KIND_PDF, 'epub' => self::KIND_EPUB];
 
     private const IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'];
 
@@ -40,10 +44,13 @@ final class Source
         $real = self::resolve($platform, $path);
 
         if (is_file($real)) {
-            if (strtolower(pathinfo($real, PATHINFO_EXTENSION)) !== 'pdf') {
-                throw new SourceException('A single file source must be a PDF.');
+            $kind = self::FILE_KINDS[strtolower(pathinfo($real, PATHINFO_EXTENSION))] ?? null;
+
+            if ($kind === null) {
+                throw new SourceException('A single file source must be a PDF or an EPUB.');
             }
-            return new self(self::KIND_PDF, [$real]);
+
+            return new self($kind, [$real]);
         }
 
         $images = [];

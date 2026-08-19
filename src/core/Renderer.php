@@ -82,7 +82,7 @@ final class Renderer
             }
         }
 
-        if ($config->get('download') && $source->kind() === Source::KIND_PDF) {
+        if ($config->get('download') && $source->kind() !== Source::KIND_IMAGES) {
             $payload['options']['downloadUrl'] = $urls[0];
         }
 

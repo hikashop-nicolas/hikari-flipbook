@@ -7,6 +7,11 @@ a visitor can buy from.
 Regions are stored as fractions of a page rather than pixels, so one stays where it was
 put through zoom, a resize, and the single-page layout a phone gets.
 
+They need a page that holds still, so they work on PDFs, on folders of images, and on
+fixed-layout EPUBs. A reflowable EPUB has no such page: the words on page 12 are on
+page 15 on a narrower screen, and a region drawn over them would be a region over
+something else. Those books are shown without hotspots.
+
 ## Drawing them
 
 Open a book in the manager: **Components, Hikari Flipbook** on Joomla, **Flipbooks** on

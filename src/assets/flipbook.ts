@@ -1,7 +1,14 @@
 // The one front-end entry point both builds ship. It finds every container the
 // PHP side emitted and mounts a viewer on it. Nothing here knows which host it
 // is running on: the container's data attribute says everything.
-import { createFlipview, createImageSource, createPdfSource, openLightbox, setStrings } from "flipview";
+import {
+  createEpubSource,
+  createFlipview,
+  createImageSource,
+  createPdfSource,
+  openLightbox,
+  setStrings,
+} from "flipview";
 import type { FlipviewOptions, PageSource } from "flipview";
 import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 
@@ -13,7 +20,7 @@ import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 const wasmUrl = new URL("./wasm/", import.meta.url).href;
 
 interface Payload {
-  kind: "pdf" | "images";
+  kind: "pdf" | "images" | "epub";
   pages: string[];
   options: FlipviewOptions & { downloadUrl?: string };
   lightbox?: boolean;
@@ -55,6 +62,8 @@ function reporter(el: HTMLElement, payload: Payload) {
 
 /** A fresh source each time: closing a book destroys the document behind it. */
 function open(payload: Payload): Promise<PageSource> {
+  if (payload.kind === "epub") return createEpubSource({ url: payload.pages[0] });
+
   return payload.kind === "pdf"
     ? createPdfSource({ url: payload.pages[0], workerSrc, wasmUrl })
     : createImageSource(payload.pages);

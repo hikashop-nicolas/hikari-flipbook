@@ -116,7 +116,11 @@ check('refuses a path outside the site', $refused);
 $refused = false;
 try { Source::fromPath(new FakePlatform($root), 'images/notes.txt'); }
 catch (SourceException $e) { $refused = true; }
-check('refuses a file that is not a PDF', $refused);
+check('refuses a file it cannot show', $refused);
+
+file_put_contents($root . '/book.epub', 'PK');
+$epub = Source::fromPath(new FakePlatform($root), 'book.epub');
+check('reads an EPUB as an EPUB', $epub->kind() === Source::KIND_EPUB);
 
 // --- Renderer ---------------------------------------------------------------
 $platform = new FakePlatform($root);

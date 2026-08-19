@@ -38,8 +38,18 @@ A book's path is relative to the site root, and it has to stay inside it:
 `images/catalogue.pdf`, `wp-content/uploads/catalogue.pdf`. A path that climbs out of
 the site is refused rather than guessed at.
 
-A folder of images works as well as a PDF. The files are used in natural order, so
-`page-2.jpg` comes before `page-10.jpg`.
+Three kinds of document work:
+
+| What | Notes |
+|---|---|
+| A **PDF** | The usual case. Scans work too, where the host has the tools below |
+| A folder of **images** | Used in natural order, so `page-2.jpg` comes before `page-10.jpg` |
+| An **EPUB** | Fixed-layout books show as they were designed; books that reflow are laid out into pages for the screen they are read on |
+
+An EPUB that reflows has no fixed pages: the number of them depends on the size of
+the screen, so page 12 on a laptop is not page 12 on a phone. Links to a page still
+work, because what is stored is the place in the book rather than the number of the
+page. Hotspots are not offered on such a book, for the same reason.
 
 ## What the server can do for you, if it has the tools
 
