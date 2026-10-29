@@ -17,9 +17,10 @@ for (const name of ["page-turn-1.mp3", "page-turn-2.mp3"]) {
 }
 
 // pdf.js wants its worker as a separate file, and the ?url import has to resolve
-// to the copy we ship rather than to node_modules.
-const worker = "pdf.worker.mjs";
-await copyFile(join(root, "node_modules/pdfjs-dist/build", worker), join(out, "js", worker));
+// to the copy we ship rather than to node_modules. Shipped as .js: servers with no
+// .mjs MIME type send octet-stream and browsers refuse the module worker.
+const worker = "pdf.worker.js";
+await copyFile(join(root, "node_modules/pdfjs-dist/build/pdf.worker.mjs"), join(out, "js", worker));
 
 // And its decoders. A scanned catalogue is JPEG 2000 or JBIG2, decoded in wasm that
 // pdf.js fetches at render time: without these, a scan is blank white pages.

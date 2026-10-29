@@ -57,6 +57,17 @@ folder.
 - A 200 MB scanned PDF is a 200 MB download whatever the viewer does. Compress it, or
   export it as a folder of images and point the book at the folder.
 
+## A PDF stays empty but a folder of images works
+
+Open the browser console. If it says "Failed to load module script" with a MIME type
+of `application/octet-stream`, your server does not know the `.mjs` file type, which
+versions before 0.3.2 used for the PDF reader's worker. Update the extension, or add
+this line to the site's `.htaccess`:
+
+```
+AddType text/javascript .mjs
+```
+
 ## Reporting something
 
 Please include the extension version, the Joomla or WordPress version, whether the

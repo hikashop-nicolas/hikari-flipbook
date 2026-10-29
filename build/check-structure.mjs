@@ -283,7 +283,7 @@ if (!(await exists(wp))) {
       "demo.html",
       "demo/catalogue.pdf",
       "media/js/flipbook.js",
-      "media/js/pdf.worker.mjs",
+      "media/js/pdf.worker.js",
       "media/css/flipbook.css",
       // A scanned document is decoded in wasm; without these it is blank pages.
       "media/js/wasm/openjpeg.wasm",

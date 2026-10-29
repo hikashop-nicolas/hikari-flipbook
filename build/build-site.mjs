@@ -25,7 +25,7 @@ if (!(await exists(media))) {
   throw new Error("dist/media is missing: run npm run build:assets before the site");
 }
 
-for (const file of ["js/flipbook.js", "js/pdf.worker.mjs", "css/flipbook.css"]) {
+for (const file of ["js/flipbook.js", "js/pdf.worker.js", "css/flipbook.css"]) {
   await mkdir(join(out, "media", file.split("/")[0]), { recursive: true });
   await cp(join(media, file), join(out, "media", file));
 }
